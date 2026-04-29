@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Clínico - MahuDent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            /* Paleta Clínica MahuDent */
+            --brand-primary: #0f766e; 
+            --brand-secondary: #ccfbf1; 
+            --brand-accent: #14b8a6; 
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc; 
+        }
+        
+        .bg-brand { background-color: var(--brand-primary); }
+        .text-brand { color: var(--brand-primary); }
+        .bg-brand-light { background-color: var(--brand-secondary); }
+        .text-brand-accent { color: var(--brand-accent); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden relative">
+
+    <aside class="w-64 bg-brand text-white flex flex-col shadow-2xl z-20 hidden md:flex shrink-0">
+        <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand shadow-md">
+                    <i data-lucide="smile" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
+                    <span class="text-[9px] text-brand-secondary tracking-widest uppercase">Clínica Odontológica</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                Panel Principal
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                Pacientes
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                Agenda
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                Presupuestos
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm shrink-0">
+            <div class="flex items-center gap-4 w-1/2">
+                <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                <input type="text" placeholder="Buscar en el sistema..." class="w-full bg-transparent outline-none text-slate-600 placeholder-slate-400 font-medium">
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <button class="relative text-slate-400 hover:text-brand transition-colors">
+                    <i data-lucide="bell" class="w-6 h-6"></i>
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <div class="flex items-center gap-3 border-l pl-6">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&q=80" alt="Dr. Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-teal-500">
+                    <div class="hidden md:block">
+                        <p class="text-sm font-bold text-slate-800">Dra. Principal</p>
+                        <p class="text-xs text-brand-accent font-medium">Administrador</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-800 mb-1">Resumen General</h1>
+                    <p class="text-slate-500 font-medium">Monitorea la actividad de tu clínica en tiempo real.</p>
+                </div>
+                <button onclick="toggleModal()" class="bg-brand hover:bg-teal-800 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                    Nuevo Paciente
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Pacientes</p>
+                        <p class="text-3xl font-black text-slate-800">1,248</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Nuevos (Este mes)</p>
+                        <div class="flex items-baseline gap-2">
+                            <p class="text-3xl font-black text-brand">45</p>
+                            <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-brand-light text-brand flex items-center justify-center">
+                        <i data-lucide="trending-up" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+                    <div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Citas Programadas (Mes)</p>
+                        <p class="text-3xl font-black text-slate-800">312</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-orange-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-400"></div>
+                    <div>
+                        <p class="text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">Por Atender Hoy</p>
+                        <p class="text-3xl font-black text-orange-500">8</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-lg font-black text-slate-800">Pacientes Atendidos</h2>
+                            <p class="text-xs text-slate-400 font-medium">Volumen de atenciones concretadas</p>
+                        </div>
+                        <div class="flex bg-slate-50 p-1 rounded-lg border border-slate-200">
+                            <button class="px-3 py-1 text-xs font-bold rounded-md text-slate-500 hover:text-brand transition">Día</button>
+                            <button class="px-3 py-1 text-xs font-bold rounded-md bg-white text-brand shadow-sm border border-slate-200">Semana</button>
+                            <button class="px-3 py-1 text-xs font-bold rounded-md text-slate-500 hover:text-brand transition">Mes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="relative h-64 w-full">
+                        <canvas id="atencionesChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+                    <h2 class="text-lg font-black text-slate-800 mb-1">Próximas Citas (Hoy)</h2>
+                    <p class="text-xs text-slate-400 font-medium mb-6">Agenda inmediata</p>
+                    
+                    <div class="space-y-4 overflow-y-auto flex-1">
+                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+                            <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
+                                <p class="text-xs font-bold">10:30</p>
+                                <p class="text-[10px] uppercase font-bold">AM</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm">Carlos Mendoza</p>
+                                <p class="text-xs text-slate-500">Limpieza y Profilaxis</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+                            <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
+                                <p class="text-xs font-bold">11:15</p>
+                                <p class="text-[10px] uppercase font-bold">AM</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm">Lucía Fernández</p>
+                                <p class="text-xs text-slate-500">Evaluación Ortodoncia</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition opacity-60">
+                            <div class="bg-slate-100 text-slate-500 px-3 py-2 rounded-lg text-center shrink-0">
+                                <p class="text-xs font-bold">02:00</p>
+                                <p class="text-[10px] uppercase font-bold">PM</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm">Martín Suarez</p>
+                                <p class="text-xs text-slate-500">Extracción Muela del Juicio</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full mt-4 py-2 text-sm font-bold text-brand hover:text-teal-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+                        Ver agenda completa
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="modal-nuevo-paciente" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-slate-50 px-8 py-5 border-b border-slate-200 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-light text-brand flex items-center justify-center">
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-800">Registrar Nuevo Paciente</h2>
+                        <p class="text-xs text-slate-500 font-medium">Completa los datos iniciales para la historia clínica.</p>
+                    </div>
+                </div>
+                <button onclick="toggleModal()" class="text-slate-400 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto">
+                <form class="space-y-6">
+                    <h3 class="text-sm font-bold text-brand uppercase tracking-wider border-b border-slate-100 pb-2">Datos Personales</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">Nombres y Apellidos *</label>
+                            <input type="text" placeholder="Ej. Carlos Mendoza" class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">DNI *</label>
+                            <input type="text" placeholder="Número de documento" class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">Teléfono / Celular *</label>
+                            <input type="tel" placeholder="+51 987 654 321" class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">Correo Electrónico</label>
+                            <input type="email" placeholder="correo@ejemplo.com" class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+                        </div>
+                    </div>
+                    <h3 class="text-sm font-bold text-orange-600 uppercase tracking-wider border-b border-slate-100 pb-2 mt-8">Alertas Clínicas</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">Alergias Conocidas</label>
+                            <input type="text" placeholder="Ej. Penicilina (Opcional)" class="px-4 py-3 rounded-xl border border-orange-200 bg-orange-50 focus:bg-white focus:ring-2 focus:ring-orange-300 outline-none transition-all text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-slate-600">Enfermedades Crónicas</label>
+                            <input type="text" placeholder="Ej. Diabetes (Opcional)" class="px-4 py-3 rounded-xl border border-orange-200 bg-orange-50 focus:bg-white focus:ring-2 focus:ring-orange-300 outline-none transition-all text-sm">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-slate-50 px-8 py-5 border-t border-slate-200 flex justify-end gap-3 shrink-0">
+                <button onclick="toggleModal()" class="px-6 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-200 transition-colors">Cancelar</button>
+                <button class="bg-brand hover:bg-teal-800 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg shadow-teal-900/20 transition-all hover:scale-105 flex items-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i> Guardar Paciente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // 2. Función del Modal
+        function toggleModal() {
+            const modal = document.getElementById('modal-nuevo-paciente');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        // 3. Configuración del Gráfico (Chart.js)
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('atencionesChart').getContext('2d');
+            
+            // Colores corporativos (MahuDent)
+            const brandColor = '#14b8a6'; // Turquesa vibrante
+            const brandLight = '#ccfbf1'; // Turquesa claro
+            
+            new Chart(ctx, {
+                type: 'bar', // Puede ser 'line', 'bar', etc.
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                    datasets: [{
+                        label: 'Pacientes Atendidos',
+                        data: [12, 18, 15, 22, 14, 28], // Datos de ejemplo
+                        backgroundColor: brandColor,
+                        borderRadius: 6, // Bordes redondeados en las barras
+                        hoverBackgroundColor: '#0f766e', // Color más oscuro al pasar el mouse
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }, // Oculta la leyenda superior
+                        tooltip: {
+                            backgroundColor: '#05192d',
+                            padding: 12,
+                            titleFont: { family: 'Montserrat', size: 14 },
+                            bodyFont: { family: 'Montserrat', size: 13 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9', drawBorder: false }, // Líneas guía muy suaves
+                            ticks: { font: { family: 'Montserrat' }, color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { font: { family: 'Montserrat', weight: 'bold' }, color: '#64748b' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
