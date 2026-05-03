@@ -1,0 +1,11 @@
+Model Information:
+* title:	Mandibular First Molar
+* source:	https://sketchfab.com/3d-models/mandibular-first-molar-e1c919d6603846eca873154eeededdd6
+* author:	University of Dundee, School of Dentistry (https://sketchfab.com/DundeeDental)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Mandibular First Molar" (https://sketchfab.com/3d-models/mandibular-first-molar-e1c919d6603846eca873154eeededdd6) by University of Dundee, School of Dentistry (https://sketchfab.com/DundeeDental) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
