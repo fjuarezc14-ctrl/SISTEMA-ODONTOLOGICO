@@ -1,5 +1,5 @@
 <?php
-$host = "localhost";
+$host = "db";
 $user = "root";
 $password = "";
 $dbname = "mahudent_db"; // Asegúrate de que este sea el nombre de tu base de datos
