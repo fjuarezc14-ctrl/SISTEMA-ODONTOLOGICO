@@ -55,5 +55,5 @@ CREATE TABLE IF NOT EXISTS odontograma_estado (
 -- Inserción de Usuario Administrador por Defecto
 -- Usuario: admin | Contraseña: password123
 INSERT INTO usuarios (nombre, usuario, password, rol) 
-VALUES ('Administrador General', 'admin', '$2y$10$wN2a3aM2e0aQ9G0/H.g0G.Xw1c.O/U7o6h4z6B2n/J/E.z/O.n/P6', 'Admin')
+VALUES ('Administrador General', 'admin', '$2y$10$V6dsIjYumwaE.LKlMWwprOsNalEYq/RBGBZdMRO0v/U.DxQRQbr/i', 'Admin')
 ON DUPLICATE KEY UPDATE nombre=nombre;
