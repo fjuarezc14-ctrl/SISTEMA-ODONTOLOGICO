@@ -1,22 +1,24 @@
 <?php
 session_start();
+// Si no hay sesión, al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
 
 require_once 'controllers/PacienteController.php';
-
 $controller = new PacienteController();
+
 $mensaje = "";
 
+// 2. Si el doctor envió el formulario de "Nuevo Paciente", lo guardamos a través del Controlador
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
     if ($_POST['accion'] == 'nuevo_paciente') {
         $resultado = $controller->store($_POST);
         if($resultado === true) {
-            $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Paciente registrado con éxito!</div>";
+            $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Paciente guardado con éxito!</div>";
         } else {
-            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error: " . htmlspecialchars($resultado) . "</div>";
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
         }
     } else if ($_POST['accion'] == 'editar_paciente') {
         $resultado = $controller->update($_POST['paciente_id'], $_POST);
@@ -28,15 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
     } else if ($_POST['accion'] == 'eliminar_paciente') {
         $resultado = $controller->delete($_POST['paciente_id']);
         if($resultado === true) {
-            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Paciente eliminado correctamente del registro.</div>";
+            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Paciente oculto/eliminado del registro.</div>";
         } else {
             $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
         }
     }
 }
 
-$pacientes = $controller->index();
-?>
+// 3. Obtenemos la lista de pacientes usando el Controlador
+$resultado_pacientes = $controller->index();
 ?>
 
 <!DOCTYPE html>
@@ -114,6 +116,12 @@ $pacientes = $controller->index();
                                             <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia">
                                                 <i data-lucide="folder-open" class="w-4 h-4"></i>
                                             </a>
+                                            <button onclick='abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button onclick="confirmarEliminacion(<?php echo $paciente['id']; ?>)" class="p-2 bg-slate-100 hover:bg-red-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Eliminar Paciente">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -180,92 +188,6 @@ $pacientes = $controller->index();
 
     </main>
 
-    
-    <script>
-        function abrirModalEdicion(paciente) {
-            const modal = document.getElementById('modalEditarPaciente');
-            const inner = modal.querySelector('div');
-            
-            // Llenar campos
-            document.getElementById('edit_paciente_id').value = paciente.id;
-            document.getElementById('edit_dni').value = paciente.dni;
-            document.getElementById('edit_nombre').value = paciente.nombre;
-            document.getElementById('edit_telefono').value = paciente.telefono;
-            document.getElementById('edit_email').value = paciente.email;
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                inner.classList.remove('scale-95');
-            }, 10);
-        }
-
-        function cerrarModalEdicion() {
-            const modal = document.getElementById('modalEditarPaciente');
-            const inner = modal.querySelector('div');
-            
-            modal.classList.add('opacity-0');
-            inner.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-        function confirmarEliminacion(id) {
-            const modal = document.getElementById('modalEliminarPaciente');
-            const inner = modal.querySelector('div');
-            
-            document.getElementById('delete_paciente_id').value = id;
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                inner.classList.remove('scale-95');
-            }, 10);
-        }
-
-        function cerrarModalEliminacion() {
-            const modal = document.getElementById('modalEliminarPaciente');
-            const inner = modal.querySelector('div');
-            
-            modal.classList.add('opacity-0');
-            inner.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-    </script>
-    <script>
-        lucide.createIcons();
-
-
-        // Funciones para abrir y cerrar la ventana flotante (Modal)
-        const modal = document.getElementById('modalNuevoPaciente');
-        const modalContent = document.getElementById('modalContent');
-
-        function abrirModal() {
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function cerrarModal() {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-    </script>
-
     <!-- Modal Editar Paciente -->
     <div id="modalEditarPaciente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
@@ -330,5 +252,74 @@ $pacientes = $controller->index();
         </div>
     </div>
 
+    <script>
+        lucide.createIcons();
+
+        function abrirModal() {
+            const modal = document.getElementById('modalNuevoPaciente');
+            const inner = modal.querySelector('div');
+            modal.classList.remove('hidden');
+            // Simular apertura inicial previa
+            setTimeout(() => {
+                inner.classList.remove('scale-95', 'opacity-0');
+                inner.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('modalNuevoPaciente');
+            const inner = modal.querySelector('div');
+            inner.classList.remove('scale-100', 'opacity-100');
+            inner.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function abrirModalEdicion(paciente) {
+            const modal = document.getElementById('modalEditarPaciente');
+            
+            document.getElementById('edit_paciente_id').value = paciente.id;
+            document.getElementById('edit_dni').value = paciente.dni;
+            document.getElementById('edit_nombre').value = paciente.nombre;
+            document.getElementById('edit_telefono').value = paciente.telefono;
+            document.getElementById('edit_email').value = paciente.email;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cerrarModalEdicion() {
+            const modal = document.getElementById('modalEditarPaciente');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function confirmarEliminacion(id) {
+            const modal = document.getElementById('modalEliminarPaciente');
+            document.getElementById('delete_paciente_id').value = id;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cerrarModalEliminacion() {
+            const modal = document.getElementById('modalEliminarPaciente');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
 </body>
 </html>
