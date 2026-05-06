@@ -80,6 +80,12 @@ class CitaController {
         // Obtenemos el ID del doctor activo en la sesión
         $doctor_id = $_SESSION['usuario_id'];
         
+        // Validar que la cita no sea en el pasado
+        $fecha_hora_cita = strtotime($data['fecha'] . ' ' . $data['hora_inicio']);
+        if ($fecha_hora_cita < time()) {
+            return "No se pueden programar citas en el pasado.";
+        }
+
         // Validar que la hora de fin sea mayor a la de inicio
         if (strtotime($data['hora_fin']) <= strtotime($data['hora_inicio'])) {
             return "La hora de finalización debe ser mayor a la hora de inicio.";

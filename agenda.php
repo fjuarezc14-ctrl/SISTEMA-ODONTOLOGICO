@@ -44,9 +44,21 @@ for($i=0; $i<6; $i++) {
 
 // Mes en español
 $meses = ['January'=>'Enero', 'February'=>'Febrero', 'March'=>'Marzo', 'April'=>'Abril', 'May'=>'Mayo', 'June'=>'Junio', 'July'=>'Julio', 'August'=>'Agosto', 'September'=>'Septiembre', 'October'=>'Octubre', 'November'=>'Noviembre', 'December'=>'Diciembre'];
-$mes_nombre = $meses[date('F', strtotime($lunes_fecha))];
-$anio = date('Y', strtotime($lunes_fecha));
-$titulo_mes = $mes_nombre . ' ' . $anio;
+
+$mes_inicio = $meses[date('F', strtotime($lunes_fecha))];
+$anio_inicio = date('Y', strtotime($lunes_fecha));
+
+$sabado_fecha = date('Y-m-d', strtotime($lunes_fecha . ' + 5 days'));
+$mes_fin = $meses[date('F', strtotime($sabado_fecha))];
+$anio_fin = date('Y', strtotime($sabado_fecha));
+
+if ($mes_inicio == $mes_fin) {
+    $titulo_mes = $mes_inicio . ' ' . $anio_inicio;
+} else if ($anio_inicio == $anio_fin) {
+    $titulo_mes = $mes_inicio . ' - ' . $mes_fin . ' ' . $anio_inicio;
+} else {
+    $titulo_mes = $mes_inicio . ' ' . $anio_inicio . ' - ' . $mes_fin . ' ' . $anio_fin;
+}
 
 // Botones de navegación
 $semana_anterior = date('Y-m-d', strtotime($lunes_fecha . ' - 7 days'));
