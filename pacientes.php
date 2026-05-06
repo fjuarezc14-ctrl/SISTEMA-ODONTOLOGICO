@@ -1,29 +1,42 @@
 <?php
 session_start();
-// Si no hay sesión, al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
 
 require_once 'controllers/PacienteController.php';
-$controller = new PacienteController();
 
+$controller = new PacienteController();
 $mensaje = "";
 
-// 2. Si el doctor envió el formulario de "Nuevo Paciente", lo guardamos a través del Controlador
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'nuevo_paciente') {
-    $resultado = $controller->store($_POST);
-    
-    if($resultado === true) {
-        $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Paciente guardado con éxito!</div>";
-    } else {
-        $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
+    if ($_POST['accion'] == 'nuevo_paciente') {
+        $resultado = $controller->store($_POST);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Paciente registrado con éxito!</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error: " . htmlspecialchars($resultado) . "</div>";
+        }
+    } else if ($_POST['accion'] == 'editar_paciente') {
+        $resultado = $controller->update($_POST['paciente_id'], $_POST);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-blue-100 text-blue-700 p-3 rounded-xl mb-4 font-bold text-sm border border-blue-200'>¡Paciente actualizado con éxito!</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al actualizar: " . htmlspecialchars($resultado) . "</div>";
+        }
+    } else if ($_POST['accion'] == 'eliminar_paciente') {
+        $resultado = $controller->delete($_POST['paciente_id']);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Paciente eliminado correctamente del registro.</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+        }
     }
 }
 
-// 3. Obtenemos la lista de pacientes usando el Controlador
-$resultado_pacientes = $controller->index();
+$pacientes = $controller->index();
+?>
 ?>
 
 <!DOCTYPE html>
@@ -167,8 +180,70 @@ $resultado_pacientes = $controller->index();
 
     </main>
 
+    
+    <script>
+        function abrirModalEdicion(paciente) {
+            const modal = document.getElementById('modalEditarPaciente');
+            const inner = modal.querySelector('div');
+            
+            // Llenar campos
+            document.getElementById('edit_paciente_id').value = paciente.id;
+            document.getElementById('edit_dni').value = paciente.dni;
+            document.getElementById('edit_nombre').value = paciente.nombre;
+            document.getElementById('edit_telefono').value = paciente.telefono;
+            document.getElementById('edit_email').value = paciente.email;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                inner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cerrarModalEdicion() {
+            const modal = document.getElementById('modalEditarPaciente');
+            const inner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            inner.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function confirmarEliminacion(id) {
+            const modal = document.getElementById('modalEliminarPaciente');
+            const inner = modal.querySelector('div');
+            
+            document.getElementById('delete_paciente_id').value = id;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                inner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cerrarModalEliminacion() {
+            const modal = document.getElementById('modalEliminarPaciente');
+            const inner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            inner.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+    </script>
     <script>
         lucide.createIcons();
+
 
         // Funciones para abrir y cerrar la ventana flotante (Modal)
         const modal = document.getElementById('modalNuevoPaciente');
@@ -190,5 +265,70 @@ $resultado_pacientes = $controller->index();
             }, 300);
         }
     </script>
+
+    <!-- Modal Editar Paciente -->
+    <div id="modalEditarPaciente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <i data-lucide="edit" class="w-6 h-6 text-blue-600"></i> Editar Paciente
+                </h3>
+                <button onclick="cerrarModalEdicion()" class="text-slate-400 hover:text-red-500 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form method="POST" action="pacientes.php" class="p-6 flex flex-col gap-5">
+                <input type="hidden" name="accion" value="editar_paciente">
+                <input type="hidden" name="paciente_id" id="edit_paciente_id">
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">DNI *</label>
+                    <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombre Completo *</label>
+                    <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+                        <input type="text" name="telefono" id="edit_telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Email</label>
+                        <input type="email" name="email" id="edit_email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-3">
+                    <button type="button" onclick="cerrarModalEdicion()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Eliminar Paciente -->
+    <div id="modalEliminarPaciente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300 p-6 text-center">
+            <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="alert-triangle" class="w-10 h-10 text-red-600"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 mb-2">¿Eliminar Paciente?</h3>
+            <p class="text-slate-500 text-sm mb-6">Esta acción ocultará al paciente de la lista. Puedes revertirlo desde la base de datos si es necesario.</p>
+            
+            <form method="POST" action="pacientes.php" class="flex gap-3">
+                <input type="hidden" name="accion" value="eliminar_paciente">
+                <input type="hidden" name="paciente_id" id="delete_paciente_id">
+                
+                <button type="button" onclick="cerrarModalEliminacion()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition">Cancelar</button>
+                <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-red-600/30 transition">Sí, eliminar</button>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

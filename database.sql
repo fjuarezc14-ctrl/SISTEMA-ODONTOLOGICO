@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS pacientes (
     email VARCHAR(100),
     alergias TEXT, -- Alertas clínicas
     enfermedades_cronicas TEXT, -- Alertas clínicas
+    estado_activo BOOLEAN DEFAULT 1, -- Para Soft-Delete
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

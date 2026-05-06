@@ -35,5 +35,28 @@ class PacienteController {
             $data['email']
         );
     }
+
+    public function update($id, $data) {
+        if(empty(trim($data['dni'])) || empty(trim($data['nombre']))) {
+            return "El DNI y el Nombre son campos obligatorios.";
+        }
+        
+        $existente = $this->pacienteModel->getByDni($data['dni']);
+        if ($existente && $existente['id'] != $id) {
+            return "El DNI " . $data['dni'] . " ya pertenece a otro paciente.";
+        }
+
+        return $this->pacienteModel->update(
+            $id,
+            $data['dni'], 
+            $data['nombre'], 
+            $data['telefono'], 
+            $data['email']
+        );
+    }
+
+    public function delete($id) {
+        return $this->pacienteModel->softDelete($id);
+    }
 }
 ?>

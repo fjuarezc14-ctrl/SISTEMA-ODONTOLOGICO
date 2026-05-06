@@ -106,5 +106,10 @@ class CitaController {
             $data['motivo']
         );
     }
+
+    public function cambiarEstado($id, $estado) {
+        // Podríamos añadir validaciones aquí
+        return $this->citaModel->updateEstado($id, $estado);
+    }
 }
 ?>

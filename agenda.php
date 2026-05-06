@@ -12,14 +12,25 @@ $citaCtrl = new CitaController();
 $pacienteCtrl = new PacienteController();
 
 $mensaje = "";
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'nueva_cita') {
-    $resultado = $citaCtrl->store($_POST);
-    if($resultado === true) {
-        $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Cita guardada con éxito!</div>";
-    } else {
-        $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
+    if ($_POST['accion'] == 'nueva_cita') {
+        $resultado = $citaCtrl->store($_POST);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Cita guardada con éxito!</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
+        }
+    } else if ($_POST['accion'] == 'cambiar_estado') {
+        $resultado = $citaCtrl->cambiarEstado($_POST['cita_id'], $_POST['nuevo_estado']);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-blue-100 text-blue-700 p-3 rounded-xl mb-4 font-bold text-sm border border-blue-200'>Estado actualizado con éxito.</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al actualizar: " . htmlspecialchars($resultado) . "</div>";
+        }
     }
 }
+
 
 // Obtener fecha de referencia desde GET o usar HOY
 $fecha_ref = isset($_GET['fecha']) ? $_GET['fecha'] : date('Y-m-d');
@@ -122,7 +133,14 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                         <a href="?fecha=<?php echo $semana_anterior; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 transition">
                             <i data-lucide="chevron-left" class="w-5 h-5"></i>
                         </a>
-                        <span class="text-lg font-bold text-slate-700 w-40 text-center"><?php echo $titulo_mes; ?></span>
+                        
+                        <div class="relative group">
+                            <button type="button" class="flex items-center gap-2 text-lg font-bold text-slate-700 hover:text-brand transition cursor-pointer" onclick="document.getElementById('datePickerAgenda').showPicker()">
+                                <?php echo $titulo_mes; ?> <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                            <input type="date" id="datePickerAgenda" class="absolute opacity-0 pointer-events-none -top-10" value="<?php echo $fecha_ref; ?>" onchange="window.location.href='?fecha='+this.value">
+                        </div>
+
                         <a href="?fecha=<?php echo $semana_siguiente; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 transition">
                             <i data-lucide="chevron-right" class="w-5 h-5"></i>
                         </a>
@@ -131,249 +149,6 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                         </a>
                     </div>
                 </div>
-
-                <div class="flex items-center gap-4">
-
-                    <button onclick="toggleModalCita()" class="bg-brand hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
-                        <i data-lucide="plus" class="w-5 h-5"></i>
-                        Nueva Cita
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                
-                <div class="calendar-grid border-b border-slate-200 bg-slate-50 shrink-0">
-                    <div class="p-3 border-r border-slate-200">
-                        <span class="text-xs text-slate-400 font-bold">HORA</span>
-                    </div>
-                    <?php for($i=1; $i<=6; $i++): ?>
-                    <div class="p-3 border-r border-slate-200 text-center <?php echo $dias_semana[$i]['es_hoy'] ? 'relative overflow-hidden' : ''; ?>">
-                        <?php if($dias_semana[$i]['es_hoy']): ?>
-                            <div class="absolute top-0 left-0 w-full h-1 bg-brand"></div>
-                            <p class="text-xs font-bold text-brand uppercase mt-1"><?php echo $dias_semana[$i]['nombre']; ?></p>
-                            <p class="text-xl font-black text-brand bg-brand-light w-10 h-10 mx-auto flex items-center justify-center rounded-full mt-1"><?php echo $dias_semana[$i]['numero']; ?></p>
-                        <?php else: ?>
-                            <p class="text-xs font-bold text-slate-500 uppercase"><?php echo $dias_semana[$i]['nombre']; ?></p>
-                            <p class="text-xl font-black text-slate-700"><?php echo $dias_semana[$i]['numero']; ?></p>
-                        <?php endif; ?>
-                    </div>
-                    <?php endfor; ?>
-                </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar relative">
-                    
-                    <div class="absolute w-full flex items-center z-10" style="top: 150px;">
-                        <div class="w-14 text-right pr-2">
-                            <span class="text-[10px] font-bold text-red-500">10:30</span>
-                        </div>
-                        <div class="flex-1 border-t-2 border-red-500 border-dashed relative">
-                            <div class="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
-                        </div>
-                    </div>
-
-                    <div class="calendar-grid">
-                        
-                        <div class="border-r border-slate-200 flex flex-col bg-white">
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">08:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">09:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">10:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">11:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">12:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">13:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">14:00</span></div>
-                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">15:00</span></div>
-                        </div>
-
-                        <div class="border-r border-slate-200 relative bg-white">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[1] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-<div class="border-r border-slate-200 relative bg-slate-50/50">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[2] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-<div class="border-r border-slate-200 relative bg-white">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[3] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-<div class="border-r border-slate-200 relative bg-white">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[4] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-<div class="border-r border-slate-200 relative bg-white">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[5] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-<div class="border-r border-slate-200 relative bg-slate-50">
-                            <!-- Líneas de horas -->
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            
-                            <!-- Citas dinámicas -->
-                            <?php foreach($agenda[6] as $cita): ?>
-                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
-                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    
-    <!-- Modal Nueva Cita -->
-    <div id="modal-nueva-cita" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center shrink-0">
-                <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
-                    <i data-lucide="calendar-plus" class="text-brand w-5 h-5"></i> Agendar Cita
-                </h2>
-                <button onclick="toggleModalCita()" class="text-slate-400 hover:text-red-500 p-2 rounded-xl transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto">
-                <form method="POST" action="" class="space-y-4">
-                    <input type="hidden" name="accion" value="nueva_cita">
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Paciente</label>
-                        <select name="paciente_id" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white">
-                            <option value="">Seleccione un paciente...</option>
-                            <?php if($pacientes && $pacientes->num_rows > 0): ?>
-                                <?php while($p = $pacientes->fetch_assoc()): ?>
-                                    <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['nombre'] . ' - ' . $p['dni']); ?></option>
-                                <?php endwhile; ?>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha</label>
-                        <input type="date" name="fecha" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                            <input type="time" name="hora_inicio" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Fin</label>
-                            <input type="time" name="hora_fin" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Motivo / Tratamiento</label>
-                        <input type="text" name="motivo" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
-                    </div>
-
-                    <div class="pt-4 flex gap-3">
-                        <button type="button" onclick="toggleModalCita()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
-                        <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Cita</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     </main>
 
@@ -388,5 +163,96 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
         }
 
     </script>
+
+    <!-- Modal Detalle/Edición de Cita -->
+    <div id="modalDetalleCita" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand/5 rounded-full blur-2xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="detalle_estado_badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800" id="detalle_paciente_nombre">Nombre del Paciente</h3>
+                    <p class="text-sm font-medium text-slate-500 flex items-center gap-1 mt-1">
+                        <i data-lucide="clock" class="w-4 h-4"></i> <span id="detalle_horario">00:00 - 00:00</span>
+                    </p>
+                </div>
+                
+                <button onclick="cerrarDetalleCita()" class="text-slate-400 hover:text-red-500 transition-colors relative z-10">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 flex flex-col gap-5">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Motivo de Consulta</p>
+                    <p class="text-slate-700 font-medium" id="detalle_motivo"></p>
+                </div>
+
+                <div class="h-px bg-slate-100 w-full my-1"></div>
+
+                <form method="POST" action="agenda.php" class="flex flex-col gap-3">
+                    <input type="hidden" name="accion" value="cambiar_estado">
+                    <input type="hidden" name="cita_id" id="detalle_cita_id">
+                    
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Cambiar Estado Rápido</p>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Completada
+                        </button>
+                        <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition">
+                            <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelada
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function abrirDetalleCita(cita) {
+            const modal = document.getElementById('modalDetalleCita');
+            const inner = modal.querySelector('div');
+            
+            document.getElementById('detalle_cita_id').value = cita.id;
+            document.getElementById('detalle_paciente_nombre').innerText = cita.paciente_nombre;
+            document.getElementById('detalle_horario').innerText = cita.hora_inicio.substring(0,5) + ' - ' + cita.hora_fin.substring(0,5);
+            document.getElementById('detalle_motivo').innerText = cita.motivo || 'Sin motivo especificado';
+            
+            const badge = document.getElementById('detalle_estado_badge');
+            badge.innerText = cita.estado;
+            
+            // Colores del badge
+            badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ";
+            if(cita.estado === 'Completada') badge.className += "bg-emerald-100 text-emerald-700";
+            else if(cita.estado === 'Cancelada') badge.className += "bg-red-100 text-red-700";
+            else badge.className += "bg-blue-100 text-blue-700";
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                inner.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function cerrarDetalleCita() {
+            const modal = document.getElementById('modalDetalleCita');
+            const inner = modal.querySelector('div');
+            
+            modal.classList.add('opacity-0');
+            inner.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+    </script>
+
 </body>
 </html>

@@ -50,5 +50,31 @@ class Cita {
         $result = $stmt->get_result();
         return $result->num_rows > 0;
     }
+
+    public function getById($id) {
+        $sql = "SELECT c.*, p.nombre as paciente_nombre 
+                FROM citas c 
+                JOIN pacientes p ON c.paciente_id = p.id 
+                WHERE c.id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->num_rows > 0 ? $result->fetch_assoc() : null;
+    }
+
+    public function updateEstado($id, $estado) {
+        $sql = "UPDATE citas SET estado = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("si", $estado, $id);
+        return $stmt->execute() ? true : $this->conn->error;
+    }
+
+    public function updateFechas($id, $fecha, $hora_inicio, $hora_fin) {
+        $sql = "UPDATE citas SET fecha = ?, hora_inicio = ?, hora_fin = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssi", $fecha, $hora_inicio, $hora_fin, $id);
+        return $stmt->execute() ? true : $this->conn->error;
+    }
 }
 ?>
