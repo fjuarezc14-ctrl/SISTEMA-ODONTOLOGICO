@@ -6,32 +6,24 @@ if(!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-// 1. Conectamos a la base de datos
-include 'config/conexion.php';
+require_once 'controllers/PacienteController.php';
+$controller = new PacienteController();
 
 $mensaje = "";
 
-// 2. Si el doctor envió el formulario de "Nuevo Paciente", lo guardamos
+// 2. Si el doctor envió el formulario de "Nuevo Paciente", lo guardamos a través del Controlador
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'nuevo_paciente') {
-    $dni = $_POST['dni'];
-    $nombre = $_POST['nombre'];
-    $telefono = $_POST['telefono'];
-    $email = $_POST['email'];
-
-    $sql_insert = "INSERT INTO pacientes (dni, nombre, telefono, email) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql_insert);
-    $stmt->bind_param("ssss", $dni, $nombre, $telefono, $email);
+    $resultado = $controller->store($_POST);
     
-    if($stmt->execute()) {
+    if($resultado === true) {
         $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Paciente guardado con éxito!</div>";
     } else {
-        $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . $conn->error . "</div>";
+        $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
     }
 }
 
-// 3. Obtenemos la lista de todos los pacientes para mostrarlos en la tabla
-$sql_select = "SELECT * FROM pacientes ORDER BY fecha_registro DESC";
-$resultado_pacientes = $conn->query($sql_select);
+// 3. Obtenemos la lista de pacientes usando el Controlador
+$resultado_pacientes = $controller->index();
 ?>
 
 <!DOCTYPE html>
