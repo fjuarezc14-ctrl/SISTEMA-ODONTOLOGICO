@@ -32,5 +32,23 @@ class Cita {
         $stmt->bind_param("iissss", $paciente_id, $doctor_id, $fecha, $hora_inicio, $hora_fin, $motivo);
         return $stmt->execute() ? true : $this->conn->error;
     }
+
+    // Verificar si existe cruce de horarios para un doctor en una fecha
+    public function verificarCruce($doctor_id, $fecha, $hora_inicio, $hora_fin) {
+        $sql = "SELECT id FROM citas 
+                WHERE doctor_id = ? 
+                AND fecha = ? 
+                AND estado != 'Cancelada'
+                AND (
+                    (hora_inicio < ? AND hora_fin > ?) OR
+                    (hora_inicio < ? AND hora_fin > ?) OR
+                    (hora_inicio >= ? AND hora_fin <= ?)
+                )";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("isssssss", $doctor_id, $fecha, $hora_fin, $hora_inicio, $hora_inicio, $hora_inicio, $hora_inicio, $hora_fin);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->num_rows > 0;
+    }
 }
 ?>

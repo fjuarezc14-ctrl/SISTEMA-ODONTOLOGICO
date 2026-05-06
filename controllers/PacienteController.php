@@ -19,6 +19,15 @@ class PacienteController {
     }
     
     public function store($data) {
+        if(empty(trim($data['dni'])) || empty(trim($data['nombre']))) {
+            return "El DNI y el Nombre son campos obligatorios.";
+        }
+        
+        $existente = $this->pacienteModel->getByDni($data['dni']);
+        if ($existente) {
+            return "El paciente con DNI " . $data['dni'] . " ya está registrado en el sistema.";
+        }
+
         return $this->pacienteModel->create(
             $data['dni'], 
             $data['nombre'], 

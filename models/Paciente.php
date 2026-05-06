@@ -26,5 +26,14 @@ class Paciente {
         $result = $stmt->get_result();
         return $result->num_rows > 0 ? $result->fetch_assoc() : null;
     }
+
+    public function getByDni($dni) {
+        $sql = "SELECT id FROM pacientes WHERE dni = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $dni);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->num_rows > 0 ? $result->fetch_assoc() : null;
+    }
 }
 ?>

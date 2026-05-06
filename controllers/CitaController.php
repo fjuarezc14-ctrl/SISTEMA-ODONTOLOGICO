@@ -80,6 +80,17 @@ class CitaController {
         // Obtenemos el ID del doctor activo en la sesión
         $doctor_id = $_SESSION['usuario_id'];
         
+        // Validar que la hora de fin sea mayor a la de inicio
+        if (strtotime($data['hora_fin']) <= strtotime($data['hora_inicio'])) {
+            return "La hora de finalización debe ser mayor a la hora de inicio.";
+        }
+
+        // Verificar si hay cruce de horarios
+        $cruce = $this->citaModel->verificarCruce($doctor_id, $data['fecha'], $data['hora_inicio'], $data['hora_fin']);
+        if ($cruce) {
+            return "El doctor ya tiene otra cita programada que se cruza con este horario.";
+        }
+        
         return $this->citaModel->create(
             $data['paciente_id'],
             $doctor_id,

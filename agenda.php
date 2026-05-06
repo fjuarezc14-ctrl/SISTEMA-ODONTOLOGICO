@@ -52,7 +52,6 @@ $titulo_mes = $mes_nombre . ' ' . $anio;
 $semana_anterior = date('Y-m-d', strtotime($lunes_fecha . ' - 7 days'));
 $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 ?>
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -122,9 +121,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200">
-                        <button class="px-4 py-1.5 text-sm font-bold rounded-md bg-white text-brand shadow-sm border border-slate-200 cursor-default">Semana</button>
-                    </div>
+
                     <button onclick="toggleModalCita()" class="bg-brand hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
                         <i data-lucide="plus" class="w-5 h-5"></i>
                         Nueva Cita
