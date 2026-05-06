@@ -74,8 +74,12 @@ class CitaController {
     }
 
     public function store($data) {
+        // Obtenemos el ID del doctor activo en la sesión
+        $doctor_id = $_SESSION['usuario_id'];
+        
         return $this->citaModel->create(
             $data['paciente_id'],
+            $doctor_id,
             $data['fecha'],
             $data['hora_inicio'],
             $data['hora_fin'],

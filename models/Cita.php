@@ -26,10 +26,10 @@ class Cita {
     }
 
     // Crear una nueva cita
-    public function create($paciente_id, $fecha, $hora_inicio, $hora_fin, $motivo) {
-        $sql = "INSERT INTO citas (paciente_id, fecha, hora_inicio, hora_fin, motivo, estado) VALUES (?, ?, ?, ?, ?, 'Pendiente')";
+    public function create($paciente_id, $doctor_id, $fecha, $hora_inicio, $hora_fin, $motivo) {
+        $sql = "INSERT INTO citas (paciente_id, doctor_id, fecha, hora_inicio, hora_fin, motivo, estado) VALUES (?, ?, ?, ?, ?, ?, 'Pendiente')";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("issss", $paciente_id, $fecha, $hora_inicio, $hora_fin, $motivo);
+        $stmt->bind_param("iissss", $paciente_id, $doctor_id, $fecha, $hora_inicio, $hora_fin, $motivo);
         return $stmt->execute() ? true : $this->conn->error;
     }
 }
