@@ -1,5 +1,10 @@
 <?php
 session_start();
+require_once 'controllers/DashboardController.php';
+$dashboardCtrl = new DashboardController();
+$stats = $dashboardCtrl->getStats();
+$citas_hoy = $dashboardCtrl->getProximasCitas();
+
 // Si no hay sesión iniciada, redirige al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
@@ -61,7 +66,7 @@ if(!isset($_SESSION['usuario_id'])) {
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
                     <div>
                         <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Total Pacientes</p>
-                        <p class="text-3xl font-black text-slate-800">1,248</p>
+                        <p class="text-3xl font-black text-slate-800"><?php echo number_format(["total_pacientes"]); ?></p>
                     </div>
                     <div class="w-12 h-12 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center">
                         <i data-lucide="users" class="w-6 h-6"></i>
@@ -72,7 +77,7 @@ if(!isset($_SESSION['usuario_id'])) {
                     <div>
                         <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Nuevos (Este mes)</p>
                         <div class="flex items-baseline gap-2">
-                            <p class="text-3xl font-black text-brand">45</p>
+                            <p class="text-3xl font-black text-brand"><?php echo ["nuevos_mes"]; ?></p>
                             <span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-0.5 rounded-full">+12%</span>
                         </div>
                     </div>
@@ -84,7 +89,7 @@ if(!isset($_SESSION['usuario_id'])) {
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
                     <div>
                         <p class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Citas Programadas (Mes)</p>
-                        <p class="text-3xl font-black text-slate-800">312</p>
+                        <p class="text-3xl font-black text-slate-800"><?php echo ["citas_mes"]; ?></p>
                     </div>
                     <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
                         <i data-lucide="calendar" class="w-6 h-6"></i>
@@ -95,7 +100,7 @@ if(!isset($_SESSION['usuario_id'])) {
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-400"></div>
                     <div>
                         <p class="text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">Por Atender Hoy</p>
-                        <p class="text-3xl font-black text-orange-500">8</p>
+                        <p class="text-3xl font-black text-orange-500"><?php echo ["citas_hoy"]; ?></p>
                     </div>
                     <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
                         <i data-lucide="clock" class="w-6 h-6"></i>
@@ -127,40 +132,23 @@ if(!isset($_SESSION['usuario_id'])) {
                     <p class="text-xs text-slate-400 font-medium mb-6">Agenda inmediata</p>
                     
                     <div class="space-y-4 overflow-y-auto flex-1">
-                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
-                            <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
-                                <p class="text-xs font-bold">10:30</p>
-                                <p class="text-[10px] uppercase font-bold">AM</p>
+                        <?php if(->num_rows > 0): ?>
+                            <?php while( = ->fetch_assoc()): ?>
+                            <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+                                <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
+                                    <p class="text-xs font-bold"><?php echo date("h:i", strtotime(['hora_inicio'])); ?></p>
+                                    <p class="text-[10px] uppercase font-bold"><?php echo date("A", strtotime(['hora_inicio'])); ?></p>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm"><?php echo htmlspecialchars(['paciente_nombre']); ?></p>
+                                    <p class="text-xs text-slate-500"><?php echo htmlspecialchars(['motivo']); ?></p>
+                                </div>
                             </div>
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">Carlos Mendoza</p>
-                                <p class="text-xs text-slate-500">Limpieza y Profilaxis</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
-                            <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
-                                <p class="text-xs font-bold">11:15</p>
-                                <p class="text-[10px] uppercase font-bold">AM</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">Lucía Fernández</p>
-                                <p class="text-xs text-slate-500">Evaluación Ortodoncia</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition opacity-60">
-                            <div class="bg-slate-100 text-slate-500 px-3 py-2 rounded-lg text-center shrink-0">
-                                <p class="text-xs font-bold">02:00</p>
-                                <p class="text-[10px] uppercase font-bold">PM</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">Martín Suarez</p>
-                                <p class="text-xs text-slate-500">Extracción Muela del Juicio</p>
-                            </div>
-                        </div>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <p class="text-sm text-slate-500 text-center py-4">No hay más citas pendientes hoy.</p>
+                        <?php endif; ?>
                     </div>
-                    
                     <button class="w-full mt-4 py-2 text-sm font-bold text-brand hover:text-teal-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
                         Ver agenda completa
                     </button>
