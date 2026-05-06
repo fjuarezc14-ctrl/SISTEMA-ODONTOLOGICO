@@ -57,65 +57,11 @@ if(!isset($_SESSION['usuario_id'])) {
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <aside class="w-64 bg-brand text-white flex flex-col shadow-2xl z-20 hidden md:flex shrink-0">
-        <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand shadow-md">
-                    <i data-lucide="smile" class="w-6 h-6"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
-                    <span class="text-[9px] text-brand-secondary tracking-widest uppercase">Clínica Odontológica</span>
-                </div>
-            </div>
-        </div>
-
-        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                Panel Principal
-            </a>
-            <a href="pacientes.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105">
-                <i data-lucide="users" class="w-5 h-5"></i>
-                Pacientes
-            </a>
-            <a href="agenda.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="calendar-days" class="w-5 h-5"></i>
-                Agenda
-            </a>
-            <a href="presupuestos.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="file-text" class="w-5 h-5"></i>
-                Presupuestos
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-white/10 shrink-0">
-            <a href="logout.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-red-500 hover:text-white transition-colors font-bold">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside>
+    <?php include 'includes/sidebar.php'; ?>
 
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm shrink-0">
-            <div class="flex items-center gap-2 text-sm font-bold text-slate-500">
-                <a href="#" class="hover:text-brand transition">Pacientes</a>
-                <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                <span class="text-brand">Historia Clínica: Ana María Robles</span>
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <div class="flex items-center gap-3 border-l pl-6">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&q=80" alt="Dr. Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-teal-500">
-                    <div class="hidden md:block">
-                        <p class="text-sm font-bold text-slate-800"><?php echo $_SESSION['usuario_nombre']; ?></p>
-                        <p class="text-xs text-brand-accent font-medium"><?php echo $_SESSION['usuario_rol']; ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <?php $page_title = 'Detalles'; include 'includes/header.php'; ?>
 
         <div class="flex-1 overflow-y-auto p-8">
             

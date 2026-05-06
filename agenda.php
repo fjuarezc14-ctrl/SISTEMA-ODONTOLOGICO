@@ -47,72 +47,11 @@ if(!isset($_SESSION['usuario_id'])) {
 </head>
 <body class="flex h-screen overflow-hidden">
 
-    <aside class="w-64 bg-brand text-white flex flex-col shadow-2xl z-20 hidden md:flex shrink-0">
-        <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand shadow-md">
-                    <i data-lucide="smile" class="w-6 h-6"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
-                    <span class="text-[9px] text-brand-secondary tracking-widest uppercase">Clínica Odontológica</span>
-                </div>
-            </div>
-        </div>
-
-        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
-            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                Panel Principal
-            </a>
-            <a href="pacientes.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="users" class="w-5 h-5"></i>
-                Pacientes
-            </a>
-            <a href="agenda.php" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105">
-                <i data-lucide="calendar-days" class="w-5 h-5"></i>
-                Agenda
-            </a>
-            <a href="presupuestos.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="file-text" class="w-5 h-5"></i>
-                Presupuestos
-            </a>
-            <a href="radiografias.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
-                <i data-lucide="image" class="w-5 h-5"></i>
-                Radiografías
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-white/10 shrink-0">
-            <a href="logout.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-red-500 hover:text-white transition-colors font-bold">
-                <i data-lucide="log-out" class="w-5 h-5"></i>
-                Cerrar Sesión
-            </a>
-        </div>
-    </aside>
+    <?php include 'includes/sidebar.php'; ?>
 
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm shrink-0">
-            <div class="flex items-center gap-4 w-1/2">
-                <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
-                <input type="text" placeholder="Buscar paciente o cita..." class="w-full bg-transparent outline-none text-slate-600 placeholder-slate-400 font-medium">
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <button class="relative text-slate-400 hover:text-brand transition-colors">
-                    <i data-lucide="bell" class="w-6 h-6"></i>
-                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-                <div class="flex items-center gap-3 border-l pl-6">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&q=80" alt="Dr. Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-teal-500">
-                    <div class="hidden md:block">
-                        <p class="text-sm font-bold text-slate-800"><?php echo $_SESSION['usuario_nombre']; ?></p>
-                        <p class="text-xs text-brand-accent font-medium"><?php echo $_SESSION['usuario_rol']; ?></p>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <?php $page_title = 'Agenda'; include 'includes/header.php'; ?>
 
         <div class="flex-1 flex flex-col p-8 overflow-hidden">
             
