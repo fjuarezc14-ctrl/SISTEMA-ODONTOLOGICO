@@ -1,5 +1,10 @@
 <?php
 session_start();
+require_once 'controllers/CitaController.php';
+$citaCtrl = new CitaController();
+$datos_agenda = $citaCtrl->getAgendaSemanal();
+$agenda = $datos_agenda['dias'];
+
 // Si no hay sesión iniciada, redirige al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
@@ -144,93 +149,132 @@ if(!isset($_SESSION['usuario_id'])) {
                         </div>
 
                         <div class="border-r border-slate-200 relative bg-white">
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="absolute w-[95%] left-[2.5%] top-[125px] h-[55px] bg-emerald-50 border-l-4 border-emerald-500 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0">
-                                <p class="text-xs font-bold text-emerald-800 leading-tight">Juan Pérez</p>
-                                <p class="text-[10px] text-emerald-600">Revisión General</p>
-                            </div>
+                            <!-- Líneas de horas -->
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
-                        </div>
-
-                        <div class="border-r border-slate-200 relative bg-slate-50/50">
-                            <div class="absolute w-[95%] left-[2.5%] top-[10px] h-[80px] bg-brand-light border-l-4 border-brand rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0">
-                                <p class="text-[10px] font-bold text-brand uppercase mb-0.5">08:15 - 09:30</p>
-                                <p class="text-xs font-bold text-teal-900 leading-tight">Ana María Robles</p>
-                                <p class="text-[10px] text-brand">Profilaxis profunda</p>
-                            </div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
                             
-                            <div class="absolute w-[95%] left-[2.5%] top-[190px] h-[55px] bg-orange-50 border-l-4 border-orange-400 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0">
-                                <p class="text-xs font-bold text-orange-900 leading-tight">Carlos Mendoza</p>
-                                <p class="text-[10px] text-orange-700">Sin confirmar</p>
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[1] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
                             </div>
-
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <?php endforeach; ?>
                         </div>
-
-                        <div class="border-r border-slate-200 relative bg-white">
-                            <div class="absolute w-[95%] left-[2.5%] top-[245px] h-[115px] bg-slate-100 border-l-4 border-slate-400 rounded p-2 flex items-center justify-center cursor-not-allowed z-0 opacity-70">
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Hora de Almuerzo</p>
-                            </div>
+<div class="border-r border-slate-200 relative bg-slate-50/50">
+                            <!-- Líneas de horas -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
                             
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                        </div>
-
-                        <div class="border-r border-slate-200 relative bg-white">
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                        </div>
-
-                        <div class="border-r border-slate-200 relative bg-white">
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="absolute w-[95%] left-[2.5%] top-[65px] h-[115px] bg-blue-50 border-l-4 border-blue-500 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0">
-                                <p class="text-[10px] font-bold text-blue-600 uppercase mb-0.5">09:00 - 11:00</p>
-                                <p class="text-xs font-bold text-blue-900 leading-tight">Luis Álvarez</p>
-                                <p class="text-[10px] text-blue-700">Endodoncia 1ra fase</p>
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[2] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
                             </div>
+                            <?php endforeach; ?>
+                        </div>
+<div class="border-r border-slate-200 relative bg-white">
+                            <!-- Líneas de horas -->
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[3] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+<div class="border-r border-slate-200 relative bg-white">
+                            <!-- Líneas de horas -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[4] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+<div class="border-r border-slate-200 relative bg-white">
+                            <!-- Líneas de horas -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[5] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+<div class="border-r border-slate-200 relative bg-slate-50">
+                            <!-- Líneas de horas -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            
+                            <!-- Citas dinámicas -->
+                            <?php foreach($agenda[6] as $cita): ?>
+                            <div class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-0 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
 
-                        <div class="relative bg-slate-50">
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                            <div class="h-[60px] border-b border-slate-100"></div>
-                        </div>
 
                     </div>
                 </div>
