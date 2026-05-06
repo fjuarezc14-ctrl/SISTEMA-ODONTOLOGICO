@@ -10,14 +10,17 @@ class CitaController {
         $this->citaModel = new Cita($conn);
     }
     
-    // Obtiene las citas de la semana actual (Lunes a Sábado)
-    public function getAgendaSemanal() {
-        // En un entorno real, la fecha de inicio vendría por GET, pero por ahora usaremos la semana actual
-        $hoy = date('N'); // 1 (Lunes) a 7 (Domingo)
+    // Obtiene las citas de la semana (Lunes a Sábado) basada en una fecha
+    public function getAgendaSemanal($fecha_referencia = null) {
+        if(!$fecha_referencia) {
+            $fecha_referencia = date('Y-m-d');
+        }
+        
+        $dia_semana_ref = date('N', strtotime($fecha_referencia)); // 1 (Lunes) a 7 (Domingo)
         
         // Calcular fecha del Lunes de esta semana
-        $dias_para_lunes = $hoy - 1;
-        $lunes = date('Y-m-d', strtotime("-$dias_para_lunes days"));
+        $dias_para_lunes = $dia_semana_ref - 1;
+        $lunes = date('Y-m-d', strtotime("$fecha_referencia -$dias_para_lunes days"));
         
         // Calcular fecha del Sábado de esta semana
         $sabado = date('Y-m-d', strtotime($lunes . ' + 5 days'));
