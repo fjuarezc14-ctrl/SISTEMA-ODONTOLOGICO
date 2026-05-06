@@ -7,7 +7,7 @@ if(!isset($_SESSION['usuario_id'])) {
 }
 
 // 1. Conectamos a la base de datos (Usamos la ruta relativa correcta)
-include 'config/conexion.php';
+require_once 'controllers/PacienteController.php';
 
 // Verificamos si vino un ID de paciente por la URL
 if(!isset($_GET['id'])) {
@@ -17,20 +17,15 @@ if(!isset($_GET['id'])) {
 
 $paciente_id = $_GET['id'];
 
-// Obtenemos los datos del paciente actual
-$sql_paciente = "SELECT * FROM pacientes WHERE id = ?";
-$stmt_p = $conn->prepare($sql_paciente);
-$stmt_p->bind_param("i", $paciente_id);
-$stmt_p->execute();
-$resultado_p = $stmt_p->get_result();
+// Usamos el Controlador para obtener los datos
+$pacienteCtrl = new PacienteController();
+$paciente = $pacienteCtrl->show($paciente_id);
 
-if($resultado_p->num_rows == 0) {
+if(!$paciente) {
     // Paciente no encontrado
     header("Location: pacientes.php");
     exit;
 }
-
-$paciente = $resultado_p->fetch_assoc();
 ?>
 
 <!DOCTYPE html>

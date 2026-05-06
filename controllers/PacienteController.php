@@ -14,6 +14,10 @@ class PacienteController {
         return $this->pacienteModel->getAll();
     }
     
+    public function show($id) {
+        return $this->pacienteModel->getById($id);
+    }
+    
     public function store($data) {
         return $this->pacienteModel->create(
             $data['dni'], 
