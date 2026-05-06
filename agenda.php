@@ -1,15 +1,29 @@
 <?php
 session_start();
-require_once 'controllers/CitaController.php';
-$citaCtrl = new CitaController();
-$datos_agenda = $citaCtrl->getAgendaSemanal();
-$agenda = $datos_agenda['dias'];
-
-// Si no hay sesión iniciada, redirige al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
+
+require_once 'controllers/CitaController.php';
+require_once 'controllers/PacienteController.php';
+
+$citaCtrl = new CitaController();
+$pacienteCtrl = new PacienteController();
+
+$mensaje = "";
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion']) && $_POST['accion'] == 'nueva_cita') {
+    $resultado = $citaCtrl->store($_POST);
+    if($resultado === true) {
+        $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Cita guardada con éxito!</div>";
+    } else {
+        $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
+    }
+}
+
+$datos_agenda = $citaCtrl->getAgendaSemanal();
+$agenda = $datos_agenda['dias'];
+$pacientes = $pacienteCtrl->index();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -59,6 +73,7 @@ if(!isset($_SESSION['usuario_id'])) {
         <?php $page_title = 'Agenda'; include 'includes/header.php'; ?>
 
         <div class="flex-1 flex flex-col p-8 overflow-hidden">
+            <?php echo $mensaje; ?>
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 shrink-0">
                 <div class="flex items-center gap-4">
@@ -84,7 +99,7 @@ if(!isset($_SESSION['usuario_id'])) {
                         <button class="px-4 py-1.5 text-sm font-bold rounded-md bg-white text-brand shadow-sm border border-slate-200">Semana</button>
                         <button class="px-4 py-1.5 text-sm font-bold rounded-md text-slate-500 hover:text-brand transition">Mes</button>
                     </div>
-                    <button class="bg-brand hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
+                    <button onclick="toggleModalCita()" class="bg-brand hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
                         <i data-lucide="plus" class="w-5 h-5"></i>
                         Nueva Cita
                     </button>
@@ -281,11 +296,76 @@ if(!isset($_SESSION['usuario_id'])) {
             </div>
 
         </div>
+    
+    <!-- Modal Nueva Cita -->
+    <div id="modal-nueva-cita" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center shrink-0">
+                <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <i data-lucide="calendar-plus" class="text-brand w-5 h-5"></i> Agendar Cita
+                </h2>
+                <button onclick="toggleModalCita()" class="text-slate-400 hover:text-red-500 p-2 rounded-xl transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <form method="POST" action="" class="space-y-4">
+                    <input type="hidden" name="accion" value="nueva_cita">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Paciente</label>
+                        <select name="paciente_id" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white">
+                            <option value="">Seleccione un paciente...</option>
+                            <?php if($pacientes && $pacientes->num_rows > 0): ?>
+                                <?php while($p = $pacientes->fetch_assoc()): ?>
+                                    <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['nombre'] . ' - ' . $p['dni']); ?></option>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha</label>
+                        <input type="date" name="fecha" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
+                            <input type="time" name="hora_inicio" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Fin</label>
+                            <input type="time" name="hora_fin" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Motivo / Tratamiento</label>
+                        <input type="text" name="motivo" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                    </div>
+
+                    <div class="pt-4 flex gap-3">
+                        <button type="button" onclick="toggleModalCita()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
+                        <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Cita</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     </main>
 
     <script>
         // Inicializar iconos
         lucide.createIcons();
+
+        function toggleModalCita() {
+            const modal = document.getElementById('modal-nueva-cita');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
     </script>
 </body>
 </html>

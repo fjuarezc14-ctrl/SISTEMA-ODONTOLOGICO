@@ -72,5 +72,15 @@ class CitaController {
             'dias' => $agenda
         ];
     }
+
+    public function store($data) {
+        return $this->citaModel->create(
+            $data['paciente_id'],
+            $data['fecha'],
+            $data['hora_inicio'],
+            $data['hora_fin'],
+            $data['motivo']
+        );
+    }
 }
 ?>
