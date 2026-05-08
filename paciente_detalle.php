@@ -358,10 +358,12 @@ if (!$paciente) {
                         <div class="flex justify-center relative scale-110">
                             <svg viewBox="0 0 100 120" id="svg-diente-2d"
                                 style="width: 140px; height: 160px; cursor: pointer; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
-                                <path d="M 35 65 C 25 105, 45 115, 45 65" fill="#f8fafc" stroke="#94a3b8"
-                                    stroke-width="2" />
-                                <path d="M 65 65 C 75 105, 55 115, 55 65" fill="#f8fafc" stroke="#94a3b8"
-                                    stroke-width="2" />
+                                <path data-cara="Raiz_Izquierda"
+                                    d="M 35 65 C 25 105, 45 115, 45 65" 
+                                    class="cara-diente-2d" onclick="pintarCara2D(this)" />
+                                <path data-cara="Raiz_Derecha"
+                                    d="M 65 65 C 75 105, 55 115, 55 65" 
+                                    class="cara-diente-2d" onclick="pintarCara2D(this)" />
 
                                 <path data-cara="Oclusal"
                                     d="M 25 25 C 40 10, 60 10, 75 25 L 65 35 C 55 25, 45 25, 35 35 Z"
