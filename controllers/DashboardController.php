@@ -11,16 +11,21 @@ class DashboardController {
     }
     
     public function getStats() {
+        $hoy = date('Y-m-d');
+        $mes = date('m');
+        $anio = date('Y');
+
         return [
             'total_pacientes' => $this->dashboardModel->getTotalPacientes(),
-            'nuevos_mes' => $this->dashboardModel->getPacientesNuevosMes(),
-            'citas_mes' => $this->dashboardModel->getCitasMes(),
-            'citas_hoy' => $this->dashboardModel->getCitasHoy()
+            'nuevos_mes' => $this->dashboardModel->getPacientesNuevosMes($mes, $anio),
+            'citas_mes' => $this->dashboardModel->getCitasMes($mes, $anio),
+            'citas_hoy' => $this->dashboardModel->getCitasHoy($hoy)
         ];
     }
 
     public function getProximasCitas() {
-        return $this->dashboardModel->getProximasCitasHoy();
+        $hoy = date('Y-m-d');
+        return $this->dashboardModel->getProximasCitasHoy($hoy);
     }
 }
 ?>

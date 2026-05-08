@@ -76,5 +76,12 @@ class Cita {
         $stmt->bind_param("sssi", $fecha, $hora_inicio, $hora_fin, $id);
         return $stmt->execute() ? true : $this->conn->error;
     }
+
+    public function delete($id) {
+        $sql = "DELETE FROM citas WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        return $stmt->execute() ? true : $this->conn->error;
+    }
 }
 ?>

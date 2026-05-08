@@ -27,6 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
         } else {
             $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al actualizar: " . htmlspecialchars($resultado) . "</div>";
         }
+    } else if ($_POST['accion'] == 'reprogramar_cita') {
+        $resultado = $citaCtrl->reprogramar($_POST['cita_id'], $_POST['fecha'], $_POST['hora_inicio'], $_POST['hora_fin']);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-blue-100 text-blue-700 p-3 rounded-xl mb-4 font-bold text-sm border border-blue-200'>Cita reprogramada con éxito.</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al reprogramar: " . htmlspecialchars($resultado) . "</div>";
+        }
+    } else if ($_POST['accion'] == 'eliminar_cita') {
+        $resultado = $citaCtrl->delete($_POST['cita_id']);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Cita eliminada físicamente.</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+        }
     }
 }
 
@@ -427,37 +441,73 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
             <div class="p-6 flex flex-col gap-5">
                 <div>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Motivo de Consulta</p>
-                    <p class="text-slate-700 font-medium" id="detalle_motivo"></p>
+                    <p class="text-slate-700 font-medium" id="detalle_motivo"></p>                <div class="h-px bg-slate-100 w-full my-1"></div>
+
+                <div id="acciones_cita_container" class="flex flex-col gap-4">
+                    <!-- Form Cambiar Estado -->
+                    <form method="POST" action="agenda.php" class="flex flex-col gap-2">
+                        <input type="hidden" name="accion" value="cambiar_estado">
+                        <input type="hidden" name="cita_id" id="detalle_cita_id">
+                        
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cambiar Estado Rápido</p>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition text-sm">
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i> Completada
+                            </button>
+                            <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition text-sm">
+                                <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelada
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Form Reprogramar -->
+                    <form method="POST" action="agenda.php" class="flex flex-col gap-2">
+                        <input type="hidden" name="accion" value="reprogramar_cita">
+                        <input type="hidden" name="cita_id" id="reprogramar_cita_id">
+                        
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Reprogramar</p>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="date" name="fecha" id="rep_fecha" required class="col-span-1 px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                            <input type="time" name="hora_inicio" id="rep_inicio" required class="col-span-1 px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                            <input type="time" name="hora_fin" id="rep_fin" required class="col-span-1 px-3 py-2 rounded-lg border border-slate-200 text-sm">
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition">Actualizar Fecha/Hora</button>
+                    </form>
+                    
+                    <!-- Form Eliminar -->
+                    <form method="POST" action="agenda.php" class="mt-2" onsubmit="return confirm('¿Estás seguro de ELIMINAR esta cita físicamente? Esto no se puede deshacer.');">
+                        <input type="hidden" name="accion" value="eliminar_cita">
+                        <input type="hidden" name="cita_id" id="eliminar_cita_id">
+                        <button type="submit" class="w-full py-2 flex items-center justify-center gap-2 text-red-500 hover:text-red-700 font-bold text-xs uppercase tracking-wider transition">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i> Eliminar cita (Error)
+                        </button>
+                    </form>
                 </div>
-
-                <div class="h-px bg-slate-100 w-full my-1"></div>
-
-                <form method="POST" action="agenda.php" class="flex flex-col gap-3">
-                    <input type="hidden" name="accion" value="cambiar_estado">
-                    <input type="hidden" name="cita_id" id="detalle_cita_id">
-                    
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Cambiar Estado Rápido</p>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition">
-                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> Completada
-                        </button>
-                        <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition">
-                            <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelada
-                        </button>
-                    </div>
-                </form>
+                
+                <div id="cita_bloqueada_msg" class="hidden bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-200 flex items-center gap-3">
+                    <i data-lucide="lock" class="w-5 h-5 shrink-0"></i>
+                    <p class="text-xs font-medium">Esta cita está <strong>Completada</strong> y ha pasado a formar parte del historial clínico. No se puede modificar ni eliminar.</p>
+                </div>
             </div>
         </div>
     </div>
-
 
     <script>
         function abrirDetalleCita(cita) {
             const modal = document.getElementById('modalDetalleCita');
             const inner = modal.querySelector('div');
             
+            // Llenar IDs
             document.getElementById('detalle_cita_id').value = cita.id;
+            document.getElementById('reprogramar_cita_id').value = cita.id;
+            document.getElementById('eliminar_cita_id').value = cita.id;
+            
+            // Llenar inputs de reprogramar
+            document.getElementById('rep_fecha').value = cita.fecha;
+            document.getElementById('rep_inicio').value = cita.hora_inicio.substring(0,5);
+            document.getElementById('rep_fin').value = cita.hora_fin.substring(0,5);
+            
+            // Llenar UI visual
             document.getElementById('detalle_paciente_nombre').innerText = cita.paciente_nombre;
             document.getElementById('detalle_horario').innerText = cita.hora_inicio.substring(0,5) + ' - ' + cita.hora_fin.substring(0,5);
             document.getElementById('detalle_motivo').innerText = cita.motivo || 'Sin motivo especificado';
@@ -470,6 +520,18 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
             if(cita.estado === 'Completada') badge.className += "bg-emerald-100 text-emerald-700";
             else if(cita.estado === 'Cancelada') badge.className += "bg-red-100 text-red-700";
             else badge.className += "bg-blue-100 text-blue-700";
+
+            // Lógica de Bloqueo Clínico
+            const accionesContainer = document.getElementById('acciones_cita_container');
+            const bloqueadaMsg = document.getElementById('cita_bloqueada_msg');
+            
+            if (cita.estado === 'Completada') {
+                accionesContainer.classList.add('hidden');
+                bloqueadaMsg.classList.remove('hidden');
+            } else {
+                accionesContainer.classList.remove('hidden');
+                bloqueadaMsg.classList.add('hidden');
+            }
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
