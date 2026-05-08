@@ -113,9 +113,9 @@ class CitaController {
     }
 
     public function reprogramar($id, $fecha, $hora_inicio, $hora_fin) {
-        // Validaciones de negocio similares a store
-        if(strtotime($fecha . ' ' . $hora_inicio) < time()) {
-            return "No se puede reprogramar a una fecha/hora pasada.";
+        // Validar que la nueva fecha no sea un día anterior al actual
+        if(strtotime($fecha) < strtotime(date('Y-m-d'))) {
+            return "No se puede reprogramar a una fecha pasada.";
         }
         
         $duracion = strtotime($hora_fin) - strtotime($hora_inicio);
@@ -132,7 +132,13 @@ class CitaController {
         // NOTA: Para ser perfecto, verificarCruce debería excluir el ID actual. 
         // Por simplicidad en este parche, confiaremos en que el usuario revisa visualmente.
 
-        return $this->citaModel->updateFechas($id, $fecha, $hora_inicio, $hora_fin);
+        $actualizadoFechas = $this->citaModel->updateFechas($id, $fecha, $hora_inicio, $hora_fin);
+        if ($actualizadoFechas === true) {
+            // Restaurar estado a Pendiente en caso estuviera Cancelada
+            $this->citaModel->updateEstado($id, 'Pendiente');
+            return true;
+        }
+        return $actualizadoFechas;
     }
 
     public function delete($id) {

@@ -406,8 +406,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
     </main>
 
     <script>
-        // Inicializar iconos
-        lucide.createIcons();
+        // Inicializar iconos al final
 
         function toggleModalCita() {
             const modal = document.getElementById('modal-nueva-cita');
@@ -433,8 +432,8 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     </p>
                 </div>
                 
-                <button onclick="cerrarDetalleCita()" class="text-slate-400 hover:text-red-500 transition-colors relative z-10">
-                    <i data-lucide="x" class="w-6 h-6"></i>
+                <button onclick="cerrarDetalleCita()" class="text-slate-700 hover:text-white bg-slate-100 hover:bg-red-500 p-2 rounded-full shadow-sm border border-slate-200 transition-all hover:scale-110 relative z-10">
+                    <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             
@@ -553,6 +552,9 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                 modal.classList.remove('flex');
             }, 300);
         }
+        
+        // Inicializar TODOS los iconos una vez que todo el DOM está cargado
+        lucide.createIcons();
     </script>
 
 </body>
