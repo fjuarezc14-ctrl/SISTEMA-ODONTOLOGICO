@@ -578,21 +578,43 @@ if (!$paciente) {
             }
         }
 
-        function marcarCaraDesde3D(nombreCara, mesh3D) {
-            const estado = document.getElementById('estadoDiente').value;
+        window.pintarDiente3D = function(estado, nombreCara = null) {
+            if (!toothModel) return;
             const colorHex = coloresTratamiento[estado] || coloresTratamiento['normal'];
+            
+            let pintoCaraEspecifica = false;
 
-            if (mesh3D.material) {
-                jQuery(mesh3D.material.color).animate({
-                    r: ((colorHex >> 16) & 0xFF) / 255,
-                    g: ((colorHex >> 8) & 0xFF) / 255,
-                    b: (colorHex & 0xFF) / 255
-                }, 200);
+            // 1. Intentar pintar solo la malla específica (Si el modelo GLTF está dividido)
+            if (nombreCara) {
+                const nombreMeshBuscado = 'Cara_' + nombreCara;
+                toothModel.traverse(function (child) {
+                    if (child.isMesh && child.name === nombreMeshBuscado && child.material) {
+                        child.material = child.material.clone();
+                        jQuery(child.material.color).animate({
+                            r: ((colorHex >> 16) & 0xFF) / 255,
+                            g: ((colorHex >> 8) & 0xFF) / 255,
+                            b: (colorHex & 0xFF) / 255
+                        }, 200);
+                        pintoCaraEspecifica = true;
+                    }
+                });
             }
 
-            const path2D = document.querySelector(`#svg-diente-2d path[data-cara="${nombreCara}"], #svg-diente-2d circle[data-cara="${nombreCara}"]`);
-            if (path2D) pintarCara2D(path2D, true);
-        }
+            // 2. Si el modelo NO está dividido (es un bloque sólido), lo pintamos todo como respaldo visual
+            // O si simplemente no especificaron una cara
+            if (!pintoCaraEspecifica) {
+                toothModel.traverse(function (child) {
+                    if (child.isMesh && child.material) {
+                        child.material = child.material.clone();
+                        jQuery(child.material.color).animate({
+                            r: ((colorHex >> 16) & 0xFF) / 255,
+                            g: ((colorHex >> 8) & 0xFF) / 255,
+                            b: (colorHex & 0xFF) / 255
+                        }, 200);
+                    }
+                });
+            }
+        };
 
         window.reinit3D = function () { if (renderer) onWindowResize(); }
     </script>
@@ -649,12 +671,33 @@ if (!$paciente) {
 
             // Pre-llenar el mapa 2D con los hallazgos de ESTE diente
             const hallazgosDiente = hallazgosOdontograma.filter(h => h.diente_numero == num);
+            
+            // Determinar el "peor" estado para pintar el 3D
+            let estado3D = 'normal';
+            const estados = hallazgosDiente.map(h => h.estado);
+            if (estados.includes('caries')) estado3D = 'caries';
+            else if (estados.includes('corona')) estado3D = 'corona';
+            else if (estados.includes('resina')) estado3D = 'resina';
+            else if (estados.includes('ausente')) estado3D = 'ausente';
+
             hallazgosDiente.forEach(h => {
                 if(h.estado) {
                     const el = document.querySelector(`.cara-diente-2d[data-cara="${h.cara_afectada}"]`);
                     if(el) el.classList.add(`estado-${h.estado}`);
                 }
             });
+
+            // Pintar el modelo 3D según el estado guardado
+            if(window.pintarDiente3D) {
+                // Si el modelo 3D no está dividido, esto pintará todo. 
+                // Si sí lo está, no pintará nada porque no le pasamos nombreCara. 
+                // Así que, de manera inteligente, repintamos las caras específicas si las hay.
+                window.pintarDiente3D(estado3D); // Pinta bloque entero por defecto
+                
+                hallazgosDiente.forEach(h => {
+                    if (h.estado) window.pintarDiente3D(h.estado, h.cara_afectada);
+                });
+            }
 
             // Mostramos modal con animación
             modal.classList.remove('hidden');
@@ -683,6 +726,15 @@ if (!$paciente) {
             elemento.classList.remove('estado-caries', 'estado-resina', 'estado-ausente', 'estado-corona');
             if (estado !== "") {
                 elemento.classList.add('estado-' + estado);
+            }
+            
+            // Sincronizar el modelo 3D cuando el usuario interactúa con el 2D
+            if (!isFrom3D && window.pintarDiente3D) {
+                window.pintarDiente3D(estado || 'normal', nombreCara);
+                if (!estado) {
+                    // Si limpiamos una cara, podríamos necesitar forzar un repintado general si es un bloque sólido
+                    window.pintarDiente3D('normal');
+                }
             }
         }
 
