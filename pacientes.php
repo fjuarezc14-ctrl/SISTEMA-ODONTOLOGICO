@@ -177,6 +177,11 @@ $resultado_pacientes = $controller->index();
                             </div>
                         </div>
 
+                        <div>
+                            <label class="block text-xs font-bold text-red-500 uppercase mb-1 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Alergias / Condiciones Médicas</label>
+                            <input type="text" name="alergias" placeholder="Ej: Penicilina, Hipertensión..." class="w-full px-4 py-2 rounded-xl border border-red-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 placeholder:text-red-200 text-sm">
+                        </div>
+
                         <div class="pt-4 flex gap-3">
                             <button type="button" onclick="cerrarModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
                             <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Paciente</button>
@@ -223,6 +228,11 @@ $resultado_pacientes = $controller->index();
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Email</label>
                         <input type="email" name="email" id="edit_email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-red-500 uppercase mb-2 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Alergias / Condiciones Médicas</label>
+                    <input type="text" name="alergias" id="edit_alergias" placeholder="Ej: Penicilina, Hipertensión..." class="w-full bg-red-50 border border-red-200 rounded-xl p-3 font-medium text-red-700 outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition placeholder:text-red-300 text-sm">
                 </div>
 
                 <div class="mt-4 flex gap-3">
@@ -284,8 +294,10 @@ $resultado_pacientes = $controller->index();
             document.getElementById('edit_nombre').value = paciente.nombre;
             document.getElementById('edit_telefono').value = paciente.telefono;
             document.getElementById('edit_email').value = paciente.email;
+            document.getElementById('edit_alergias').value = paciente.alergias || '';
 
             modal.classList.remove('hidden');
+            modal.classList.add('flex');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.querySelector('div').classList.remove('scale-95');
@@ -298,6 +310,7 @@ $resultado_pacientes = $controller->index();
             modal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }, 300);
         }
 
@@ -306,6 +319,7 @@ $resultado_pacientes = $controller->index();
             document.getElementById('delete_paciente_id').value = id;
 
             modal.classList.remove('hidden');
+            modal.classList.add('flex');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.querySelector('div').classList.remove('scale-95');
@@ -318,6 +332,7 @@ $resultado_pacientes = $controller->index();
             modal.querySelector('div').classList.add('scale-95');
             setTimeout(() => {
                 modal.classList.add('hidden');
+                modal.classList.remove('flex');
             }, 300);
         }
     </script>

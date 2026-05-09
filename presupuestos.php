@@ -5,6 +5,41 @@ if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
+
+require_once 'controllers/PresupuestoController.php';
+$controller = new PresupuestoController();
+$presupuestos = $controller->getTodosPresupuestos();
+
+// Calcular estadísticas
+$totalPendientes = 0;
+$docsPendientes = 0;
+$totalAprobadosMes = 0;
+$mesActual = date('m');
+$anioActual = date('Y');
+
+$totalAprobados = 0;
+$totalRechazados = 0;
+
+foreach ($presupuestos as $p) {
+    if ($p['estado'] == 'Enviado' || $p['estado'] == 'Borrador') {
+        $totalPendientes += $p['total'];
+        $docsPendientes++;
+    }
+    
+    $fechaP = strtotime($p['fecha_creacion']);
+    if ($p['estado'] == 'Aprobado') {
+        if (date('m', $fechaP) == $mesActual && date('Y', $fechaP) == $anioActual) {
+            $totalAprobadosMes += $p['total'];
+        }
+        $totalAprobados++;
+    }
+
+    if ($p['estado'] == 'Rechazado') {
+        $totalRechazados++;
+    }
+}
+
+$tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($totalAprobados + $totalRechazados)) * 100 : 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,27 +83,24 @@ if(!isset($_SESSION['usuario_id'])) {
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pendientes</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-slate-800">S/ 12,450</span>
+                        <span class="text-3xl font-black text-slate-800">S/ <?php echo number_format($totalPendientes, 2); ?></span>
                         <span class="text-xs font-bold text-orange-500 mb-1.5 flex items-center gap-1">
-                            <i data-lucide="clock" class="w-3 h-3"></i> 14 Docs
+                            <i data-lucide="clock" class="w-3 h-3"></i> <?php echo $docsPendientes; ?> Docs
                         </span>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Aprobados (Mes)</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-brand">S/ 45,800</span>
-                        <span class="text-xs font-bold text-emerald-500 mb-1.5 flex items-center gap-1">
-                            <i data-lucide="trending-up" class="w-3 h-3"></i> +12%
-                        </span>
+                        <span class="text-3xl font-black text-brand">S/ <?php echo number_format($totalAprobadosMes, 2); ?></span>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tasa de Cierre</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-slate-800">68%</span>
+                        <span class="text-3xl font-black text-slate-800"><?php echo round($tasaCierre); ?>%</span>
                         <div class="w-24 h-2 bg-slate-100 rounded-full mb-3 overflow-hidden">
-                            <div class="bg-brand h-full w-[68%]"></div>
+                            <div class="bg-brand h-full" style="width: <?php echo $tasaCierre; ?>%"></div>
                         </div>
                     </div>
                 </div>
@@ -78,20 +110,17 @@ if(!isset($_SESSION['usuario_id'])) {
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
                     <div class="relative w-full md:w-96">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" placeholder="Buscar por paciente o N° presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
+                        <input type="text" id="busquedaGlobal" placeholder="Buscar por paciente o N° presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
                     </div>
                     <div class="flex gap-2 w-full md:w-auto">
-                        <button class="flex-1 md:flex-none px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-2">
-                            <i data-lucide="filter" class="w-4 h-4"></i> Filtros
-                        </button>
-                        <button class="flex-1 md:flex-none px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2">
+                        <button class="flex-1 md:flex-none px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2" onclick="location.href='pacientes.php'">
                             <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Presupuesto
                         </button>
                     </div>
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse" id="tablaPresupuestos">
                         <thead>
                             <tr class="text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
                                 <th class="px-6 py-4">N° Doc</th>
@@ -103,56 +132,52 @@ if(!isset($_SESSION['usuario_id'])) {
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            <tr class="hover:bg-slate-50/80 transition-colors group">
-                                <td class="px-6 py-4 text-sm font-bold text-brand">#PR-2026-045</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">AR</div>
-                                        <span class="text-sm font-bold text-slate-700">Ana María Robles</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-slate-500">12 Abr 2026</td>
-                                <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ 1,200.00</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex justify-center">
-                                        <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">Aprobado</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50/80 transition-colors group">
-                                <td class="px-6 py-4 text-sm font-bold text-brand">#PR-2026-044</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">CP</div>
-                                        <span class="text-sm font-bold text-slate-700">Carlos Pantoja</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-sm text-slate-500">10 Abr 2026</td>
-                                <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ 4,500.00</td>
-                                <td class="px-6 py-4">
-                                    <div class="flex justify-center">
-                                        <span class="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase tracking-wider">Pendiente</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
-                                </td>
-                            </tr>
+                            <?php if (empty($presupuestos)): ?>
+                                <tr>
+                                    <td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">No se encontraron presupuestos registrados.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($presupuestos as $p): 
+                                    $badgeClass = 'bg-slate-100 text-slate-500';
+                                    switch($p['estado']) {
+                                        case 'Aprobado': $badgeClass = 'bg-emerald-100 text-emerald-700'; break;
+                                        case 'Enviado': $badgeClass = 'bg-blue-100 text-blue-700'; break;
+                                        case 'Borrador': $badgeClass = 'bg-amber-100 text-amber-700'; break;
+                                        case 'Rechazado': $badgeClass = 'bg-red-100 text-red-700'; break;
+                                    }
+                                ?>
+                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="location.href='paciente_detalle.php?id=<?php echo $p['paciente_id']; ?>#presupuestos'">
+                                    <td class="px-6 py-4 text-sm font-bold text-brand">#PR-<?php echo str_pad($p['id'], 5, '0', STR_PAD_LEFT); ?></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                                <?php 
+                                                    $parts = explode(' ', $p['paciente_nombre']);
+                                                    echo strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
+                                                ?>
+                                            </div>
+                                            <span class="text-sm font-bold text-slate-700"><?php echo htmlspecialchars($p['paciente_nombre']); ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-500"><?php echo date('d M Y', strtotime($p['fecha_emision'])); ?></td>
+                                    <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ <?php echo number_format($p['total'], 2); ?></td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex justify-center">
+                                            <span class="px-3 py-1 rounded-full <?php echo $badgeClass; ?> text-[10px] font-bold uppercase tracking-wider"><?php echo $p['estado']; ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="p-6 border-t border-slate-100 flex items-center justify-between bg-slate-50/30 text-xs font-bold text-slate-500 uppercase">
-                    <span>Mostrando 2 de 154 presupuestos</span>
-                    <div class="flex gap-2">
-                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
-                        <button class="w-8 h-8 bg-brand text-white rounded flex items-center justify-center">1</button>
-                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition">2</button>
-                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-                    </div>
+                    <span>Mostrando <?php echo count($presupuestos); ?> presupuestos</span>
                 </div>
             </div>
         </div>
@@ -160,6 +185,17 @@ if(!isset($_SESSION['usuario_id'])) {
 
     <script>
         lucide.createIcons();
+
+        // Filtro de búsqueda simple
+        document.getElementById('busquedaGlobal').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#tablaPresupuestos tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
     </script>
 </body>
 </html>

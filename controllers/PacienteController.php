@@ -32,7 +32,8 @@ class PacienteController {
             $data['dni'], 
             $data['nombre'], 
             $data['telefono'], 
-            $data['email']
+            $data['email'],
+            $data['alergias'] ?? null
         );
     }
 
@@ -51,7 +52,8 @@ class PacienteController {
             $data['dni'], 
             $data['nombre'], 
             $data['telefono'], 
-            $data['email']
+            $data['email'],
+            $data['alergias'] ?? null
         );
     }
 

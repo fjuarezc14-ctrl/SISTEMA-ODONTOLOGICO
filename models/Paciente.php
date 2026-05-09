@@ -6,10 +6,10 @@ class Paciente {
         $this->conn = $db;
     }
 
-    public function create($dni, $nombre, $telefono, $email) {
-        $sql = "INSERT INTO pacientes (dni, nombre, telefono, email, estado_activo) VALUES (?, ?, ?, ?, 1)";
+    public function create($dni, $nombre, $telefono, $email, $alergias = null) {
+        $sql = "INSERT INTO pacientes (dni, nombre, telefono, email, alergias, estado_activo) VALUES (?, ?, ?, ?, ?, 1)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssss", $dni, $nombre, $telefono, $email);
+        $stmt->bind_param("sssss", $dni, $nombre, $telefono, $email, $alergias);
         return $stmt->execute() ? true : $this->conn->error;
     }
 
@@ -35,10 +35,10 @@ class Paciente {
         $result = $stmt->get_result();
         return $result->num_rows > 0 ? $result->fetch_assoc() : null;
     }
-    public function update($id, $dni, $nombre, $telefono, $email) {
-        $sql = "UPDATE pacientes SET dni = ?, nombre = ?, telefono = ?, email = ? WHERE id = ?";
+    public function update($id, $dni, $nombre, $telefono, $email, $alergias = null) {
+        $sql = "UPDATE pacientes SET dni = ?, nombre = ?, telefono = ?, email = ?, alergias = ? WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssssi", $dni, $nombre, $telefono, $email, $id);
+        $stmt->bind_param("sssssi", $dni, $nombre, $telefono, $email, $alergias, $id);
         return $stmt->execute() ? true : $this->conn->error;
     }
 
