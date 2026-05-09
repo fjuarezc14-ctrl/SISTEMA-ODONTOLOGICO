@@ -58,3 +58,16 @@ CREATE TABLE IF NOT EXISTS odontograma_estado (
 INSERT INTO usuarios (nombre, usuario, password, rol) 
 VALUES ('Administrador General', 'admin', '$2y$10$V6dsIjYumwaE.LKlMWwprOsNalEYq/RBGBZdMRO0v/U.DxQRQbr/i', 'Admin')
 ON DUPLICATE KEY UPDATE nombre=nombre;
+
+-- 5. Tabla de Historial Evolutivo (Notas Clínicas)
+CREATE TABLE IF NOT EXISTS historial_evolutivo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    paciente_id INT NOT NULL,
+    cita_id INT NULL,
+    descripcion TEXT NOT NULL,
+    doctor_id INT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (paciente_id) REFERENCES pacientes(id) ON DELETE CASCADE,
+    FOREIGN KEY (cita_id) REFERENCES citas(id) ON DELETE SET NULL,
+    FOREIGN KEY (doctor_id) REFERENCES usuarios(id) ON DELETE SET NULL
+);

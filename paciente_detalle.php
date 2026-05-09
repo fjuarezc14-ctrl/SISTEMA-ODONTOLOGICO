@@ -25,6 +25,12 @@ require_once 'controllers/OdontogramaController.php';
 $odontogramaCtrl = new OdontogramaController();
 $hallazgos = $odontogramaCtrl->getByPaciente($paciente_id);
 
+require_once 'controllers/EvolucionController.php';
+$evolucionCtrl = new EvolucionController();
+$historial_evolutivo = $evolucionCtrl->getByPaciente($paciente_id);
+
+$cita_id_activa = $_GET['cita_id'] ?? null;
+
 if (!$paciente) {
     // Paciente no encontrado
     header("Location: pacientes.php");
@@ -176,6 +182,21 @@ if (!$paciente) {
         include 'includes/header.php'; ?>
 
         <div class="flex-1 overflow-y-auto p-8 relative">
+            <?php if ($cita_id_activa): ?>
+            <div class="bg-brand text-white p-4 rounded-2xl mb-6 shadow-md flex justify-between items-center border border-teal-600 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-xl"><i data-lucide="stethoscope" class="w-6 h-6"></i></div>
+                    <div>
+                        <h4 class="font-black text-lg uppercase tracking-wider">Cita en curso</h4>
+                        <p class="text-sm text-teal-100 font-medium">Registra los hallazgos en el Odontograma y guarda una nota en el Historial Evolutivo para finalizar.</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('historial_evolutivo').scrollIntoView({behavior: 'smooth'})" class="relative z-10 bg-white text-brand px-5 py-2.5 rounded-xl font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition active:scale-95 text-sm uppercase tracking-wider">
+                    Ir al Historial
+                </button>
+            </div>
+            <?php endif; ?>
             <div class="flex flex-col lg:flex-row gap-8">
 
                 <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6">
@@ -286,6 +307,66 @@ if (!$paciente) {
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- HISTORIAL EVOLUTIVO -->
+                    <div id="historial_evolutivo" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                                    <i data-lucide="clipboard-list" class="w-5 h-5 text-brand"></i> Historial Evolutivo
+                                </h3>
+                                <p class="text-sm text-slate-500 font-medium mt-1">Bitácora cronológica de tratamientos realizados.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <?php if ($cita_id_activa): ?>
+                            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
+                                <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="pen-line" class="w-4 h-4"></i> Añadir Nota Clínica (Sesión Actual)
+                                </h4>
+                                <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
+                                <button onclick="guardarEvolucion(<?php echo $cita_id_activa; ?>)" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Evolución y Finalizar Cita
+                                </button>
+                            </div>
+                            <?php else: ?>
+                            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8">
+                                <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Nota Rápida (Sin cita)
+                                </h4>
+                                <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
+                                <button onclick="guardarEvolucion(null)" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                    Guardar Nota Rápida
+                                </button>
+                            </div>
+                            <?php endif; ?>
+
+                            <div class="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+                                <?php if(empty($historial_evolutivo)): ?>
+                                    <div class="text-center py-8 text-slate-400 font-medium text-sm">
+                                        No hay registros evolutivos previos para este paciente.
+                                    </div>
+                                <?php else: ?>
+                                    <?php foreach($historial_evolutivo as $nota): ?>
+                                    <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                        <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-100 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                                            <i data-lucide="<?php echo $nota['cita_id'] ? 'calendar-check' : 'sticky-note'; ?>" class="w-4 h-4"></i>
+                                        </div>
+                                        <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition">
+                                            <div class="flex items-center justify-between space-x-2 mb-1">
+                                                <div class="font-bold text-slate-800 text-sm"><?php echo htmlspecialchars($nota['doctor_nombre'] ?? 'Dr. General'); ?></div>
+                                                <time class="font-medium text-brand text-xs"><?php echo date('d M, Y', strtotime($nota['fecha'])); ?></time>
+                                            </div>
+                                            <div class="text-slate-600 text-sm leading-relaxed mt-2"><?php echo nl2br(htmlspecialchars($nota['descripcion'])); ?></div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -584,29 +665,11 @@ if (!$paciente) {
             if (!toothModel) return;
             const colorHex = coloresTratamiento[estado] || coloresTratamiento['normal'];
             
-            let pintoCaraEspecifica = false;
-
             // 1. Intentar pintar solo la malla específica (Si el modelo GLTF está dividido)
             if (nombreCara) {
                 const nombreMeshBuscado = 'Cara_' + nombreCara;
                 toothModel.traverse(function (child) {
                     if (child.isMesh && child.name === nombreMeshBuscado && child.material) {
-                        child.material = child.material.clone();
-                        jQuery(child.material.color).animate({
-                            r: ((colorHex >> 16) & 0xFF) / 255,
-                            g: ((colorHex >> 8) & 0xFF) / 255,
-                            b: (colorHex & 0xFF) / 255
-                        }, 200);
-                        pintoCaraEspecifica = true;
-                    }
-                });
-            }
-
-            // 2. Si el modelo NO está dividido (es un bloque sólido), lo pintamos todo como respaldo visual
-            // O si simplemente no especificaron una cara
-            if (!pintoCaraEspecifica) {
-                toothModel.traverse(function (child) {
-                    if (child.isMesh && child.material) {
                         child.material = child.material.clone();
                         jQuery(child.material.color).animate({
                             r: ((colorHex >> 16) & 0xFF) / 255,
@@ -806,6 +869,52 @@ if (!$paciente) {
             } catch (error) {
                 console.error("Error al guardar:", error);
                 alert("Ocurrió un error al guardar los hallazgos.");
+            }
+        }
+
+        async function guardarEvolucion(cita_id) {
+            const nota = document.getElementById('nota_evolucion').value.trim();
+            if (!nota) {
+                alert('Por favor, escriba una nota evolutiva antes de guardar.');
+                return;
+            }
+            
+            const btn = event.currentTarget;
+            const textOriginal = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('ajax_evolucion.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paciente_id: <?php echo $paciente_id; ?>,
+                        cita_id: cita_id,
+                        descripcion: nota
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    if (cita_id) {
+                        alert('Evolución guardada y cita completada con éxito.');
+                        window.location.href = `paciente_detalle.php?id=<?php echo $paciente_id; ?>`;
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    alert('Error: ' + result.error);
+                    btn.innerHTML = textOriginal;
+                    btn.disabled = false;
+                    lucide.createIcons();
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error de conexión.');
+                btn.innerHTML = textOriginal;
+                btn.disabled = false;
+                lucide.createIcons();
             }
         }
     </script>

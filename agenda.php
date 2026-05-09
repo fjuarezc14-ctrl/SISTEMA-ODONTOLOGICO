@@ -443,6 +443,13 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <p class="text-slate-700 font-medium" id="detalle_motivo"></p>                <div class="h-px bg-slate-100 w-full my-1"></div>
 
                 <div id="acciones_cita_container" class="flex flex-col gap-4">
+                    <!-- Botón Principal Clínico -->
+                    <a id="btn_atender_paciente" href="#" class="w-full bg-brand hover:bg-teal-800 text-white font-black py-3 px-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center gap-3 uppercase tracking-wider text-sm">
+                        <i data-lucide="stethoscope" class="w-5 h-5"></i> Atender Paciente
+                    </a>
+                    
+                    <div class="h-px bg-slate-100 w-full my-1"></div>
+
                     <!-- Form Cambiar Estado -->
                     <form method="POST" action="agenda.php" class="flex flex-col gap-2">
                         <input type="hidden" name="accion" value="cambiar_estado">
@@ -500,6 +507,9 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
             document.getElementById('detalle_cita_id').value = cita.id;
             document.getElementById('reprogramar_cita_id').value = cita.id;
             document.getElementById('eliminar_cita_id').value = cita.id;
+            
+            // Link de Atención Clínica
+            document.getElementById('btn_atender_paciente').href = `paciente_detalle.php?id=${cita.paciente_id}&cita_id=${cita.id}`;
             
             // Llenar inputs de reprogramar
             document.getElementById('rep_fecha').value = cita.fecha;
