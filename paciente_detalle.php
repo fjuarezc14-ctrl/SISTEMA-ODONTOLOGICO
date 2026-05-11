@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 session_start();
-// Si no hay sesiÃ³n iniciada, redirige al login
+// Si no hay sesión iniciada, redirige al login
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
@@ -44,7 +44,7 @@ if (!$paciente) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial ClÃ­nico - <?php echo htmlspecialchars($paciente['nombre']); ?> - MahuDent</title>
+    <title>Historial Clínico - <?php echo htmlspecialchars($paciente['nombre']); ?> - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -96,7 +96,7 @@ if (!$paciente) {
             filter: drop-shadow(0 6px 8px rgba(15, 118, 110, 0.2));
         }
 
-        /* Estilos Diagrama AnatÃ³mico 2D (Modal Derecha) */
+        /* Estilos Diagrama Anatómico 2D (Modal Derecha) */
         .cara-diente-2d {
             fill: #f8fafc;
             stroke: #cbd5e1;
@@ -110,7 +110,7 @@ if (!$paciente) {
             filter: brightness(0.95);
         }
 
-        /* Colores dinÃ¡micos para tratamientos (Se aplican tanto al 2D como al 3D) */
+        /* Colores dinámicos para tratamientos (Se aplican tanto al 2D como al 3D) */
         .estado-caries {
             fill: #ef4444 !important;
             stroke: #b91c1c !important;
@@ -231,7 +231,7 @@ if (!$paciente) {
                                 <div class="flex items-start gap-3">
                                     <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mt-0.5 shrink-0"></i>
                                     <div>
-                                        <h5 class="text-xs font-black text-red-700 uppercase tracking-wider mb-1">Alerta MÃ©dica / Alergias</h5>
+                                        <h5 class="text-xs font-black text-red-700 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
                                         <p class="text-sm font-bold text-red-600"><?php echo nl2br(htmlspecialchars($paciente['alergias'])); ?></p>
                                     </div>
                                 </div>
@@ -326,7 +326,7 @@ if (!$paciente) {
                                 <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                     <i data-lucide="clipboard-list" class="w-5 h-5 text-brand"></i> Historial Evolutivo
                                 </h3>
-                                <p class="text-sm text-slate-500 font-medium mt-1">BitÃ¡cora cronolÃ³gica de tratamientos realizados.</p>
+                                <p class="text-sm text-slate-500 font-medium mt-1">Bitácora cronológica de tratamientos realizados.</p>
                             </div>
                         </div>
 
@@ -334,21 +334,21 @@ if (!$paciente) {
                             <?php if ($cita_id_activa): ?>
                             <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
                                 <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="pen-line" class="w-4 h-4"></i> AÃ±adir Nota ClÃ­nica (SesiÃ³n Actual)
+                                    <i data-lucide="pen-line" class="w-4 h-4"></i> Añadir Nota Clínica (Sesión Actual)
                                 </h4>
-                                <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectÃ³ caries superficial en pieza 14, se procede con curaciÃ³n de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
+                                <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
                                 <button onclick="guardarEvolucion(<?php echo $cita_id_activa; ?>)" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
-                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar EvoluciÃ³n y Finalizar Cita
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Evolución y Finalizar Cita
                                 </button>
                             </div>
                             <?php else: ?>
                             <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8">
                                 <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> AÃ±adir Nota RÃ¡pida (Sin cita)
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Nota Rápida (Sin cita)
                                 </h4>
-                                <textarea id="nota_evolucion" rows="2" placeholder="AÃ±adir una observaciÃ³n general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
+                                <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
                                 <button onclick="guardarEvolucion(null)" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                                    Guardar Nota RÃ¡pida
+                                    Guardar Nota Rápida
                                 </button>
                             </div>
                             <?php endif; ?>
@@ -408,7 +408,7 @@ if (!$paciente) {
                                     </h4>
                                     <div class="flex gap-2">
                                         <button onclick="agregarItemManual()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold py-2 px-4 rounded-lg transition text-xs flex items-center gap-1">
-                                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> AÃ±adir Ãtem
+                                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Añadir Ítem
                                         </button>
                                         <button onclick="cerrarEditorPresupuesto()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 font-bold py-2 px-4 rounded-lg transition text-xs flex items-center gap-1">
                                             <i data-lucide="x" class="w-3.5 h-3.5"></i> Cerrar
@@ -416,7 +416,7 @@ if (!$paciente) {
                                     </div>
                                 </div>
 
-                                <!-- Tabla de Ãtems -->
+                                <!-- Tabla de Ítems -->
                                 <div class="overflow-x-auto rounded-xl border border-slate-200">
                                     <table class="w-full text-sm">
                                         <thead>
@@ -427,11 +427,11 @@ if (!$paciente) {
                                                 <th class="text-right p-3 font-bold w-28">Precio Base</th>
                                                 <th class="text-right p-3 font-bold w-28">Precio Ajustado</th>
                                                 <th class="text-right p-3 font-bold w-28">Subtotal</th>
-                                                <th class="text-center p-3 font-bold w-16">AcciÃ³n</th>
+                                                <th class="text-center p-3 font-bold w-16">Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody id="presupuestoItemsBody" class="divide-y divide-slate-100">
-                                            <!-- Se llena dinÃ¡micamente -->
+                                            <!-- Se llena dinámicamente -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -459,13 +459,57 @@ if (!$paciente) {
                                             <span class="font-black text-emerald-800 uppercase text-sm">Total:</span>
                                             <span id="presupuestoTotal" class="font-black text-emerald-800 text-lg">S/ 0.00</span>
                                         </div>
+                                        <!-- Sección Pagos y Saldo -->
+                                        <div class="border-t border-emerald-200 pt-1 flex justify-between mt-1 text-sm">
+                                            <span class="font-medium text-emerald-700">A cuenta:</span>
+                                            <span id="presupuestoPagado" class="font-bold text-emerald-700">S/ 0.00</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span class="font-black text-red-600 uppercase">Saldo:</span>
+                                            <span id="presupuestoSaldo" class="font-black text-red-600 text-lg">S/ 0.00</span>
+                                        </div>
+                                        <div id="presupuestoAdelantoSugerido" class="text-[10px] text-slate-400 text-center mt-1 font-medium border-t border-emerald-100 pt-1">
+                                            Adelanto Sugerido (50%): S/ 0.00
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Historial de Pagos -->
+                                <div class="mt-6 border-t border-slate-100 pt-4 hidden" id="seccionPagos">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h5 class="font-bold text-slate-700 text-sm flex items-center gap-2"><i data-lucide="receipt" class="w-4 h-4"></i> Historial de Pagos</h5>
+                                    </div>
+                                    <div class="overflow-x-auto rounded-lg border border-slate-200">
+                                        <table class="w-full text-xs text-left">
+                                            <thead class="bg-slate-50 text-slate-500 uppercase">
+                                                <tr>
+                                                    <th class="p-2 font-bold">Fecha</th>
+                                                    <th class="p-2 font-bold">Tipo</th>
+                                                    <th class="p-2 font-bold">Método</th>
+                                                    <th class="p-2 font-bold">Comprobante</th>
+                                                    <th class="text-right p-2 font-bold">Monto</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pagosBody" class="divide-y divide-slate-100">
+                                                <!-- Se llena por JS -->
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
 
                                 <!-- Acciones del Presupuesto -->
                                 <div class="mt-4 flex flex-wrap gap-2 justify-end">
+                                    <button onclick="abrirModalPago()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="banknote" class="w-4 h-4"></i> Registrar Pago
+                                    </button>
+                                    <button onclick="enviarWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+                                    </button>
+                                    <button onclick="imprimirPresupuesto()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
+                                    </button>
                                     <button onclick="cambiarEstadoPresupuesto('Enviado')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
-                                        <i data-lucide="send" class="w-4 h-4"></i> Marcar como Enviado
+                                        <i data-lucide="send" class="w-4 h-4"></i> Enviar a Paciente
                                     </button>
                                     <button onclick="cambiarEstadoPresupuesto('Aprobado')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="check-circle" class="w-4 h-4"></i> Aprobar
@@ -484,7 +528,7 @@ if (!$paciente) {
                                     <p class="text-xs mt-1">Genera uno desde el Odontograma o crea uno manual.</p>
                                 </div>
                                 <div id="listaPresupuestosItems" class="space-y-3 hidden">
-                                    <!-- Se llena dinÃ¡micamente -->
+                                    <!-- Se llena dinámicamente -->
                                 </div>
                             </div>
                         </div>
@@ -495,7 +539,64 @@ if (!$paciente) {
         </div>
     </main>
 
-    <!-- Modal Agregar Ãtem al Presupuesto -->
+    <!-- Modal Registrar Pago -->
+    <div id="modalRegistrarPago" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform scale-95 transition-transform duration-300 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 flex items-center gap-2"><i data-lucide="banknote" class="w-5 h-5 text-teal-600"></i> Registrar Pago</h3>
+                <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="flex justify-between text-sm bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <span class="font-bold text-slate-600">Saldo Pendiente:</span>
+                    <span id="pagoSaldoPendiente" class="font-black text-red-600">S/ 0.00</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Monto a Pagar (S/)</label>
+                    <input type="number" id="pagoMonto" step="0.01" min="0.01" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-lg font-bold text-slate-800 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Pago</label>
+                        <select id="pagoTipo" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500">
+                            <option value="Adelanto">Adelanto</option>
+                            <option value="Parcial" selected>Pago Parcial</option>
+                            <option value="Saldo Final">Saldo Final</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Método</label>
+                        <select id="pagoMetodo" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500">
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                            <option value="Transferencia">Transferencia</option>
+                            <option value="Yape/Plin">Yape/Plin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Comprobante</label>
+                        <select id="pagoComprobante" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500">
+                            <option value="Boleta">Boleta</option>
+                            <option value="Factura">Factura</option>
+                            <option value="Ninguno">Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Notas Adicionales</label>
+                    <input type="text" id="pagoNotas" placeholder="Ej: Pago adelantado para inicio de brackets..." class="w-full border-2 border-slate-200 rounded-xl p-2 text-sm text-slate-700 outline-none focus:border-teal-500">
+                </div>
+            </div>
+            <div class="p-5 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end">
+                <button onclick="cerrarModalPago()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
+                <button onclick="confirmarRegistrarPago()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-700 shadow-md transition text-sm">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Ítem al Presupuesto -->
     <div id="modalAgregarItem" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden">
             <div class="bg-slate-50 border-b border-slate-100 p-5 flex justify-between items-center">
@@ -508,13 +609,13 @@ if (!$paciente) {
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Seleccionar del CatÃ¡logo</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Seleccionar del Catálogo</label>
                     <select id="itemCatalogoSelect" onchange="seleccionarCatalogo()" class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                         <option value="">-- Seleccionar tratamiento --</option>
                     </select>
                 </div>
                 <div class="border-t border-slate-100 pt-4">
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">DescripciÃ³n</label>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Descripción</label>
                     <input type="text" id="itemDescripcion" placeholder="Nombre del tratamiento" class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
                 </div>
                 <div class="grid grid-cols-3 gap-3">
@@ -551,7 +652,7 @@ if (!$paciente) {
                     <div
                         class="bg-brand-light text-brand w-12 h-12 rounded-2xl flex items-center justify-center shadow-md border-2 border-white">
                         <span id="numDienteTitulo" class="text-2xl">0</span></div>
-                    Registro ClÃ­nico Detallado
+                    Registro Clínico Detallado
                 </h3>
                 <button onclick="cerrarModalDiente()"
                     class="w-10 h-10 bg-slate-50 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-full flex items-center justify-center transition shadow-inner"><i
@@ -568,13 +669,13 @@ if (!$paciente) {
                         <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Cargando Modelo 3D...</p>
                     </div>
 
-                    <div id="three-container" title="Arrastra para girar 360Â°, haz clic para marcar cara"></div>
+                    <div id="three-container" title="Arrastra para girar 360°, haz clic para marcar cara"></div>
 
                     <div
                         class="absolute bottom-4 left-4 right-4 bg-white/70 backdrop-blur-sm p-3 rounded-xl border border-white/50 text-center shadow-sm pointer-events-none z-10">
                         <p
                             class="text-[11px] font-black text-teal-900 uppercase tracking-widest flex items-center justify-center gap-2">
-                            <i data-lucide="rotate-3d" class="w-4 h-4"></i> Vista 3D Interactiva 360Â°
+                            <i data-lucide="rotate-3d" class="w-4 h-4"></i> Vista 3D Interactiva 360°
                         </p>
                         <p class="text-[10px] text-teal-700 mt-1">Gira el diente y haz clic directamente en la cara
                             afectada.</p>
@@ -591,7 +692,7 @@ if (!$paciente) {
                                 class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-brand focus:border-brand shadow-sm transition">
                                 <option value="caries">Caries (Pendiente - Rojo)</option>
                                 <option value="resina">Resina (Realizado - Azul)</option>
-                                <option value="corona">Corona / IncrustaciÃ³n (Naranja)</option>
+                                <option value="corona">Corona / Incrustación (Naranja)</option>
                                 <option value="ausente">Pieza Ausente (Gris)</option>
                                 <option value="">Limpiar / Normal</option>
                             </select>
@@ -603,7 +704,7 @@ if (!$paciente) {
                     <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center">
                         <label
                             class="block text-xs font-black text-slate-500 uppercase mb-5 tracking-widest text-center">2.
-                            VisualizaciÃ³n AnatÃ³mica (Clic para marcar manualmente)</label>
+                            Visualización Anatómica (Clic para marcar manualmente)</label>
 
                         <div class="flex justify-center relative scale-110">
                             <svg viewBox="0 0 100 120" id="svg-diente-2d"
@@ -703,7 +804,7 @@ if (!$paciente) {
             loader.load('assets/models/molar.gltf', function (gltf) {
                 toothModel = gltf.scene;
 
-                // --- MAGIA PARA CENTRAR Y ENFOCAR EL MODELO AUTOMÃTICAMENTE ---
+                // --- MAGIA PARA CENTRAR Y ENFOCAR EL MODELO AUTOMÁTICAMENTE ---
 
                 // 1. Calculamos la "caja invisible" que envuelve a tu modelo y su centro real
                 const box = new THREE.Box3().setFromObject(toothModel);
@@ -713,23 +814,23 @@ if (!$paciente) {
                 // 2. Forzamos al diente a moverse al centro absoluto (0,0,0) de tu pantalla
                 toothModel.position.sub(center);
 
-                // 3. Calculamos la dimensiÃ³n mÃ¡s grande del diente para ajustar la cÃ¡mara
+                // 3. Calculamos la dimensión más grande del diente para ajustar la cámara
                 const maxDim = Math.max(size.x, size.y, size.z);
 
-                // 4. Ubicamos la cÃ¡mara a la distancia perfecta (ni muy cerca ni muy lejos)
+                // 4. Ubicamos la cámara a la distancia perfecta (ni muy cerca ni muy lejos)
                 camera.position.set(0, maxDim * 0.5, maxDim * 2.5);
 
-                // 5. Le decimos a los controles que el eje de rotaciÃ³n sea el centro absoluto
+                // 5. Le decimos a los controles que el eje de rotación sea el centro absoluto
                 controls.target.set(0, 0, 0);
 
-                // 6. Ponemos lÃ­mites al zoom para que el doctor no se "meta" dentro del diente ni lo pierda de vista
-                controls.minDistance = maxDim * 1.2; // LÃ­mite para acercarse
-                controls.maxDistance = maxDim * 4;   // LÃ­mite para alejarse
+                // 6. Ponemos límites al zoom para que el doctor no se "meta" dentro del diente ni lo pierda de vista
+                controls.minDistance = maxDim * 1.2; // Límite para acercarse
+                controls.maxDistance = maxDim * 4;   // Límite para alejarse
 
                 controls.update();
                 // -------------------------------------------------------------
 
-                // Agregamos luces adicionales para que se vean bien los detalles anatÃ³micos
+                // Agregamos luces adicionales para que se vean bien los detalles anatómicos
                 toothModel.traverse(function (child) {
                     if (child.isMesh) {
                         child.castShadow = true;
@@ -757,7 +858,7 @@ if (!$paciente) {
             toothModel = new THREE.Group();
             const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
 
-            // FunciÃ³n para crear cada "cara" del diente como un bloque independiente
+            // Función para crear cada "cara" del diente como un bloque independiente
             const crearCara = (w, h, d, x, y, z, nombre) => {
                 const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat.clone());
                 mesh.position.set(x, y, z);
@@ -806,12 +907,12 @@ if (!$paciente) {
             if (intersects.length > 0) {
                 const clickedMesh = intersects[0].object;
 
-                // Obtenemos el color seleccionado en el menÃº desplegable
+                // Obtenemos el color seleccionado en el menú desplegable
                 const estado = document.getElementById('estadoDiente').value;
                 const colorHex = coloresTratamiento[estado] || coloresTratamiento['normal'];
 
                 // MAGIA PARA PINTAR EL MODELO IMPORTADO:
-                // Temporalmente desactivado a peticiÃ³n del usuario hasta tener el modelo correcto
+                // Temporalmente desactivado a petición del usuario hasta tener el modelo correcto
                 /*
                 if (clickedMesh.material) {
                     clickedMesh.material = clickedMesh.material.clone();
@@ -834,7 +935,7 @@ if (!$paciente) {
             if (!toothModel) return;
             const colorHex = coloresTratamiento[estado] || coloresTratamiento['normal'];
             
-            // 1. Intentar pintar solo la malla especÃ­fica (Si el modelo GLTF estÃ¡ dividido)
+            // 1. Intentar pintar solo la malla específica (Si el modelo GLTF está dividido)
             if (nombreCara) {
                 const nombreMeshBuscado = 'Cara_' + nombreCara;
                 toothModel.traverse(function (child) {
@@ -896,7 +997,7 @@ if (!$paciente) {
                     const notas = notasPorDiente[diente];
                     if (notas && notas.length > 0) {
                         pathEl.parentElement.parentElement.setAttribute('title', notas.join('\n'));
-                        // AÃ±adir indicador visual (un borde o clase especial opcional)
+                        // Añadir indicador visual (un borde o clase especial opcional)
                         pathEl.parentElement.parentElement.classList.add('cursor-help');
                     } else {
                         pathEl.parentElement.parentElement.removeAttribute('title');
@@ -906,13 +1007,13 @@ if (!$paciente) {
             }
         }
 
-        // Ejecutar al cargar la pÃ¡gina
+        // Ejecutar al cargar la página
         renderizarGrilla();
 
         function abrirModalDiente(num) {
             numDienteTitulo.innerText = num;
 
-            // Limpiar el mapa anatÃ³mico 2D y resetear formulario
+            // Limpiar el mapa anatómico 2D y resetear formulario
             document.querySelectorAll('.cara-diente-2d').forEach(el => {
                 el.classList.remove('estado-caries', 'estado-resina', 'estado-ausente', 'estado-corona');
             });
@@ -943,11 +1044,11 @@ if (!$paciente) {
                 }
             });
 
-            // Pintar el modelo 3D segÃºn el estado guardado
+            // Pintar el modelo 3D según el estado guardado
             if(window.pintarDiente3D) {
-                // Si el modelo 3D no estÃ¡ dividido, esto pintarÃ¡ todo. 
-                // Si sÃ­ lo estÃ¡, no pintarÃ¡ nada porque no le pasamos nombreCara. 
-                // AsÃ­ que, de manera inteligente, repintamos las caras especÃ­ficas si las hay.
+                // Si el modelo 3D no está dividido, esto pintará todo. 
+                // Si sí lo está, no pintará nada porque no le pasamos nombreCara. 
+                // Así que, de manera inteligente, repintamos las caras específicas si las hay.
                 window.pintarDiente3D(estado3D); // Pinta bloque entero por defecto
                 
                 hallazgosDiente.forEach(h => {
@@ -955,7 +1056,7 @@ if (!$paciente) {
                 });
             }
 
-            // Mostramos modal con animaciÃ³n
+            // Mostramos modal con animación
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -984,11 +1085,11 @@ if (!$paciente) {
                 elemento.classList.add('estado-' + estado);
             }
             
-            // Sincronizar el modelo 3D cuando el usuario interactÃºa con el 2D
+            // Sincronizar el modelo 3D cuando el usuario interactúa con el 2D
             if (!isFrom3D && window.pintarDiente3D) {
                 window.pintarDiente3D(estado || 'normal', nombreCara);
                 if (!estado) {
-                    // Si limpiamos una cara, podrÃ­amos necesitar forzar un repintado general si es un bloque sÃ³lido
+                    // Si limpiamos una cara, podríamos necesitar forzar un repintado general si es un bloque sólido
                     window.pintarDiente3D('normal');
                 }
             }
@@ -1010,7 +1111,7 @@ if (!$paciente) {
                 else if (cara.classList.contains('estado-corona')) estadoCara = 'corona';
                 else if (cara.classList.contains('estado-ausente')) estadoCara = 'ausente';
                 
-                // Vamos a enviar un UPDATE para cada cara (incluso vacÃ­as para limpiar)
+                // Vamos a enviar un UPDATE para cada cara (incluso vacías para limpiar)
                 const payload = {
                     paciente_id: pacienteId,
                     diente_numero: parseInt(diente),
@@ -1043,7 +1144,7 @@ if (!$paciente) {
                     // Eliminar hallazgos antiguos de esta cara
                     hallazgosOdontograma = hallazgosOdontograma.filter(h => !(h.diente_numero == diente && h.cara_afectada == nombreCara));
                     
-                    // AÃ±adir si hay nuevo
+                    // Añadir si hay nuevo
                     if (estadoCara) {
                         hallazgosOdontograma.push({
                             diente_numero: parseInt(diente),
@@ -1060,7 +1161,7 @@ if (!$paciente) {
                 
             } catch (error) {
                 console.error("Error al guardar:", error);
-                alert("OcurriÃ³ un error al guardar los hallazgos.");
+                alert("Ocurrió un error al guardar los hallazgos.");
             }
         }
 
@@ -1090,7 +1191,7 @@ if (!$paciente) {
                 const result = await response.json();
                 if (result.success) {
                     if (cita_id) {
-                        alert('EvoluciÃ³n guardada y cita completada con Ã©xito.');
+                        alert('Evolución guardada y cita completada con éxito.');
                         window.location.href = `paciente_detalle.php?id=<?php echo $paciente_id; ?>`;
                     } else {
                         window.location.reload();
@@ -1103,7 +1204,7 @@ if (!$paciente) {
                 }
             } catch (error) {
                 console.error(error);
-                alert('Error de conexiÃ³n.');
+                alert('Error de conexión.');
                 btn.innerHTML = textOriginal;
                 btn.disabled = false;
                 lucide.createIcons();
@@ -1114,7 +1215,7 @@ if (!$paciente) {
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <script>
-        // --- MÃ“DULO DE PRESUPUESTOS ---
+        // --- M�"DULO DE PRESUPUESTOS ---
         let presupuestoActivo = null;
         let catalogoTratamientos = [];
 
@@ -1130,7 +1231,7 @@ if (!$paciente) {
                     catalogoTratamientos = data.catalogo;
                     poblarSelectCatalogo();
                 }
-            } catch(e) { console.error('Error cargando catÃ¡logo:', e); }
+            } catch(e) { console.error('Error cargando catálogo:', e); }
         }
 
         function poblarSelectCatalogo() {
@@ -1146,7 +1247,7 @@ if (!$paciente) {
                     categoriaActual = t.categoria;
                 }
                 select.innerHTML += `<option value="${t.id}" data-precio="${t.precio_base}" data-nombre="${t.nombre}">
-                    ${t.nombre} â€” S/ ${parseFloat(t.precio_base).toFixed(2)}
+                    ${t.nombre} �?" S/ ${parseFloat(t.precio_base).toFixed(2)}
                 </option>`;
             });
             if (categoriaActual !== '') select.innerHTML += '</optgroup>';
@@ -1200,7 +1301,7 @@ if (!$paciente) {
                         </div>
                         <div>
                             <h5 class="font-bold text-slate-800 text-sm">Presupuesto #${p.id}</h5>
-                            <p class="text-xs text-slate-500">${formatearFecha(p.fecha_emision)} Â· ${p.doctor_nombre || 'Sin doctor'}</p>
+                            <p class="text-xs text-slate-500">${formatearFecha(p.fecha_emision)} · ${p.doctor_nombre || 'Sin doctor'}</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
@@ -1213,7 +1314,7 @@ if (!$paciente) {
             lucide.createIcons();
         }
 
-        // --- GeneraciÃ³n automÃ¡tica ---
+        // --- Generación automática ---
         async function generarPresupuestoDesdeOdontograma() {
             if (!hallazgosOdontograma || hallazgosOdontograma.length === 0) {
                 alert('No hay hallazgos en el odontograma. Marque al menos un diente antes de generar.');
@@ -1224,9 +1325,9 @@ if (!$paciente) {
                 alert('No hay hallazgos activos en el odontograma.');
                 return;
             }
-            // Contar dientes Ãºnicos
+            // Contar dientes únicos
             const dentesUnicos = [...new Set(hallazgosConEstado.map(h => h.diente_numero + '_' + h.estado))];
-            if (!confirm(`Se generarÃ¡ un presupuesto basado en ${dentesUnicos.length} hallazgo(s) del odontograma. Â¿Continuar?`)) return;
+            if (!confirm(`Se generará un presupuesto basado en ${dentesUnicos.length} hallazgo(s) del odontograma. ¿Continuar?`)) return;
 
             try {
                 const res = await fetch('ajax_presupuesto.php', {
@@ -1248,7 +1349,7 @@ if (!$paciente) {
                 }
             } catch(e) {
                 console.error(e);
-                alert('Error de conexiÃ³n al generar presupuesto.');
+                alert('Error de conexión al generar presupuesto.');
             }
         }
 
@@ -1268,7 +1369,7 @@ if (!$paciente) {
                 } else {
                     alert('Error: ' + (data.error || 'No se pudo crear'));
                 }
-            } catch(e) { console.error(e); alert('Error de conexiÃ³n.'); }
+            } catch(e) { console.error(e); alert('Error de conexión.'); }
         }
 
         // --- Abrir existente ---
@@ -1309,6 +1410,7 @@ if (!$paciente) {
 
             renderizarItemsPresupuesto(presupuesto.items || []);
             actualizarTotalesUI(presupuesto);
+            cargarPagos(presupuesto.id);
             document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'});
             lucide.createIcons();
         }
@@ -1316,7 +1418,7 @@ if (!$paciente) {
         function renderizarItemsPresupuesto(items) {
             const tbody = document.getElementById('presupuestoItemsBody');
             if (!items || items.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-slate-400 text-sm">No hay Ã­tems. Use el botÃ³n <b>AÃ±adir Ãtem</b> para agregar tratamientos.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-slate-400 text-sm">No hay ítems. Use el botón <b>Añadir Ítem</b> para agregar tratamientos.</td></tr>';
                 return;
             }
             tbody.innerHTML = items.map(item => {
@@ -1344,12 +1446,28 @@ if (!$paciente) {
         }
 
         function actualizarTotalesUI(p) {
+            const total = parseFloat(p.total);
             document.getElementById('presupuestoSubtotal').innerText = `S/ ${parseFloat(p.subtotal).toFixed(2)}`;
             document.getElementById('presupuestoDescuento').innerText = `- S/ ${parseFloat(p.descuento_monto).toFixed(2)}`;
-            document.getElementById('presupuestoTotal').innerText = `S/ ${parseFloat(p.total).toFixed(2)}`;
+            document.getElementById('presupuestoTotal').innerText = `S/ ${total.toFixed(2)}`;
+            
+            const pagado = parseFloat(p.monto_pagado || 0);
+            const saldo = parseFloat(p.saldo_pendiente || p.total);
+            
+            document.getElementById('presupuestoPagado').innerText = `S/ ${pagado.toFixed(2)}`;
+            document.getElementById('presupuestoSaldo').innerText = `S/ ${saldo.toFixed(2)}`;
+            
+            const adelantoElem = document.getElementById('presupuestoAdelantoSugerido');
+            if (adelantoElem) {
+                adelantoElem.innerText = `Adelanto Sugerido (50%): S/ ${(total * 0.50).toFixed(2)}`;
+            }
+
+            // Actualizar modal de pago si está abierto
+            const modalSaldo = document.getElementById('pagoSaldoPendiente');
+            if(modalSaldo) modalSaldo.innerText = `S/ ${saldo.toFixed(2)}`;
         }
 
-        // --- Modal Agregar Ãtem ---
+        // --- Modal Agregar Ítem ---
         function agregarItemManual() {
             if (!presupuestoActivo) return;
             const modal = document.getElementById('modalAgregarItem');
@@ -1379,7 +1497,7 @@ if (!$paciente) {
             const pieza = document.getElementById('itemPieza').value || null;
             const catalogoId = document.getElementById('itemCatalogoSelect').value || null;
 
-            if (!descripcion) { alert('Ingrese una descripciÃ³n del tratamiento.'); return; }
+            if (!descripcion) { alert('Ingrese una descripción del tratamiento.'); return; }
             if (precio <= 0) { alert('El precio debe ser mayor a 0.'); return; }
 
             try {
@@ -1405,13 +1523,13 @@ if (!$paciente) {
                 } else {
                     alert('Error: ' + (data.error || 'No se pudo agregar'));
                 }
-            } catch(e) { console.error(e); alert('Error de conexiÃ³n.'); }
+            } catch(e) { console.error(e); alert('Error de conexión.'); }
         }
 
-        // --- Operaciones sobre Ã­tems ---
+        // --- Operaciones sobre ítems ---
         async function actualizarPrecioItem(itemId, nuevoPrecio) {
             if (!presupuestoActivo) return;
-            // Encontrar item actual para mantener descripciÃ³n
+            // Encontrar item actual para mantener descripción
             const item = (presupuestoActivo.items || []).find(i => i.id == itemId);
             try {
                 const res = await fetch('ajax_presupuesto.php', {
@@ -1438,7 +1556,7 @@ if (!$paciente) {
         }
 
         async function eliminarItem(itemId) {
-            if (!presupuestoActivo || !confirm('Â¿Eliminar este Ã­tem?')) return;
+            if (!presupuestoActivo || !confirm('¿Eliminar este ítem?')) return;
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -1471,9 +1589,9 @@ if (!$paciente) {
             } catch(e) { console.error(e); }
         }
 
-        // --- Estado y eliminaciÃ³n ---
+        // --- Estado y eliminación ---
         async function cambiarEstadoPresupuesto(nuevoEstado) {
-            if (!presupuestoActivo || !confirm(`Â¿Cambiar estado a "${nuevoEstado}"?`)) return;
+            if (!presupuestoActivo || !confirm(`¿Cambiar estado a "${nuevoEstado}"?`)) return;
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -1490,7 +1608,7 @@ if (!$paciente) {
         }
 
         async function eliminarPresupuestoActivo() {
-            if (!presupuestoActivo || !confirm('Â¿Eliminar este presupuesto permanentemente?')) return;
+            if (!presupuestoActivo || !confirm('¿Eliminar este presupuesto permanentemente?')) return;
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -1506,10 +1624,140 @@ if (!$paciente) {
             } catch(e) { console.error(e); }
         }
 
+        function imprimirPresupuesto() {
+            if (!presupuestoActivo) return;
+            window.open('imprimir_presupuesto.php?id=' + presupuestoActivo.id + '&print=1', '_blank');
+        }
+
+        function enviarWhatsApp() {
+            if (!presupuestoActivo) return;
+            // Usamos un teléfono genérico si no se guardó la variable PHP de teléfono explícitamente en el JS. 
+            // Tratamos de buscar si hay alguna parte donde se imprima, si no, alertamos.
+            const telefonoElem = document.getElementById('pacienteTelefonoTxt');
+            const telefono = telefonoElem ? telefonoElem.innerText.replace(/\D/g, '') : "<?php echo preg_replace('/[^0-9]/', '', $paciente['telefono']); ?>";
+            
+            if (!telefono || telefono.length < 5) {
+                alert("El paciente no tiene un número de teléfono válido registrado.");
+                return;
+            }
+            const total = parseFloat(presupuestoActivo.total).toFixed(2);
+            const numPR = presupuestoActivo.id.toString().padStart(5, '0');
+            const msj = `Hola <?php echo htmlspecialchars($paciente['nombre']); ?>, te adjuntamos el detalle de tu presupuesto odontológico N° PR-${numPR} por un total de S/ ${total}. Quedamos atentos a cualquier duda. Atte: MahuDent.`;
+            
+            // Si el teléfono no empieza con un código de país (ej. no tiene 51), lo prefijamos asumiendo Perú por defecto.
+            const prefijo = telefono.startsWith('51') ? '' : '51';
+            const url = `https://wa.me/${prefijo}${telefono}?text=${encodeURIComponent(msj)}`;
+            window.open(url, '_blank');
+        }
+
         function cerrarEditorPresupuesto() {
             document.getElementById('editorPresupuesto').classList.add('hidden');
             document.getElementById('listaPresupuestos').classList.remove('hidden');
             presupuestoActivo = null;
+        }
+
+        // --- PAGOS ---
+        async function cargarPagos(presupuesto_id) {
+            try {
+                const res = await fetch('ajax_presupuesto.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({accion: 'listar_pagos', presupuesto_id: presupuesto_id})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    renderizarPagos(data.pagos);
+                }
+            } catch(e) { console.error('Error cargando pagos:', e); }
+        }
+
+        function renderizarPagos(pagos) {
+            const seccion = document.getElementById('seccionPagos');
+            const tbody = document.getElementById('pagosBody');
+            
+            if (!pagos || pagos.length === 0) {
+                seccion.classList.add('hidden');
+                return;
+            }
+            
+            seccion.classList.remove('hidden');
+            tbody.innerHTML = pagos.map(p => {
+                const fecha = new Date(p.fecha_pago).toLocaleDateString('es-ES', {day: '2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                return `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-2 font-medium text-slate-600">${fecha}</td>
+                    <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${p.tipo === 'Adelanto' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${p.tipo}</span></td>
+                    <td class="p-2 text-slate-600">${p.metodo_pago}</td>
+                    <td class="p-2 text-slate-500 font-mono text-xs">${p.comprobante_numero || '-'}</td>
+                    <td class="p-2 text-right font-black text-emerald-600">S/ ${parseFloat(p.monto).toFixed(2)}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function abrirModalPago() {
+            if (!presupuestoActivo) return;
+            const saldo = parseFloat(presupuestoActivo.saldo_pendiente || presupuestoActivo.total);
+            if (saldo <= 0) {
+                alert('Este presupuesto ya está totalmente pagado.');
+                return;
+            }
+            
+            const modal = document.getElementById('modalRegistrarPago');
+            document.getElementById('pagoMonto').value = saldo.toFixed(2);
+            document.getElementById('pagoMonto').max = saldo.toFixed(2);
+            document.getElementById('pagoNotas').value = '';
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+        }
+
+        function cerrarModalPago() {
+            const modal = document.getElementById('modalRegistrarPago');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        async function confirmarRegistrarPago() {
+            if (!presupuestoActivo) return;
+            const monto = parseFloat(document.getElementById('pagoMonto').value);
+            const saldo = parseFloat(presupuestoActivo.saldo_pendiente || presupuestoActivo.total);
+            
+            if (!monto || monto <= 0) { alert('Ingrese un monto válido.'); return; }
+            if (monto > saldo + 0.01) { alert('El monto no puede ser mayor al saldo pendiente.'); return; }
+            
+            const data = {
+                accion: 'registrar_pago',
+                presupuesto_id: presupuestoActivo.id,
+                monto: monto,
+                tipo: document.getElementById('pagoTipo').value,
+                metodo_pago: document.getElementById('pagoMetodo').value,
+                comprobante_tipo: document.getElementById('pagoComprobante').value,
+                notas: document.getElementById('pagoNotas').value
+            };
+
+            try {
+                const res = await fetch('ajax_presupuesto.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const response = await res.json();
+                if (response.success) {
+                    // Actualizar presupuestoActivo con los nuevos saldos
+                    presupuestoActivo = response.resumen.presupuesto;
+                    actualizarTotalesUI(presupuestoActivo);
+                    renderizarPagos(response.resumen.pagos);
+                    cerrarModalPago();
+                    cargarListaPresupuestos(); // Actualiza la lista principal si muestra saldos
+                    alert('Pago registrado exitosamente.');
+                } else {
+                    alert('Error: ' + response.error);
+                }
+            } catch(e) { console.error(e); alert('Error de conexión.'); }
         }
 
         function formatearFecha(fecha) {
@@ -1519,7 +1767,7 @@ if (!$paciente) {
             return `${d.getDate()} ${meses[d.getMonth()]}, ${d.getFullYear()}`;
         }
 
-        // Inicializar mÃ³dulo
+        // Inicializar módulo
         cargarCatalogo();
         cargarListaPresupuestos();
     </script>

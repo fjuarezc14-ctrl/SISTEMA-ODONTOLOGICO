@@ -2,15 +2,18 @@
 require_once 'config/conexion.php';
 require_once 'models/CatalogoTratamiento.php';
 require_once 'models/Presupuesto.php';
+require_once 'models/Pago.php';
 
 class PresupuestoController {
     private $catalogoModel;
     private $presupuestoModel;
+    private $pagoModel;
 
     public function __construct() {
         global $conn;
         $this->catalogoModel = new CatalogoTratamiento($conn);
         $this->presupuestoModel = new Presupuesto($conn);
+        $this->pagoModel = new Pago($conn);
     }
 
     // --- Catálogo ---
@@ -192,6 +195,92 @@ class PresupuestoController {
 
     public function eliminar($id) {
         return $this->presupuestoModel->delete($id);
+    }
+
+    // --- PAGOS ---
+
+    /**
+     * Registra un pago y actualiza saldos del presupuesto.
+     * Retorna el pago registrado o false.
+     */
+    public function registrarPago($presupuesto_id, $data) {
+        $presupuesto = $this->presupuestoModel->getById($presupuesto_id);
+        if (!$presupuesto) return false;
+
+        $monto = floatval($data['monto'] ?? 0);
+        if ($monto <= 0) return false;
+
+        $saldo_actual = floatval($presupuesto['total']) - floatval($presupuesto['monto_pagado']);
+        if ($monto > $saldo_actual + 0.01) return false; // No permitir sobrepago
+
+        $metodo = $data['metodo_pago'] ?? 'Efectivo';
+        $tipo = $data['tipo'] ?? 'Parcial';
+        $comprobante_tipo = $data['comprobante_tipo'] ?? 'Boleta';
+        $comprobante_numero = null;
+        if ($comprobante_tipo !== 'Ninguno') {
+            $comprobante_numero = $this->pagoModel->getSiguienteComprobante($comprobante_tipo);
+        }
+        $notas = $data['notas'] ?? '';
+        $registrado_por = $data['registrado_por'] ?? null;
+
+        $pago_id = $this->pagoModel->registrar(
+            $presupuesto_id, $presupuesto['paciente_id'], $monto,
+            $metodo, $tipo, $comprobante_tipo, $comprobante_numero,
+            $notas, $registrado_por
+        );
+
+        if ($pago_id) {
+            // Actualizar saldos en el presupuesto
+            $this->actualizarSaldos($presupuesto_id);
+            return $this->pagoModel->getById($pago_id);
+        }
+        return false;
+    }
+
+    /**
+     * Recalcula monto_pagado y saldo_pendiente del presupuesto.
+     */
+    public function actualizarSaldos($presupuesto_id) {
+        $total_pagado = $this->pagoModel->getTotalPagado($presupuesto_id);
+        $presupuesto = $this->presupuestoModel->getById($presupuesto_id);
+        $saldo = floatval($presupuesto['total']) - $total_pagado;
+
+        global $conn;
+        $sql = "UPDATE presupuestos SET monto_pagado = ?, saldo_pendiente = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ddi", $total_pagado, $saldo, $presupuesto_id);
+        return $stmt->execute();
+    }
+
+    public function getPagosPresupuesto($presupuesto_id) {
+        return $this->pagoModel->getByPresupuesto($presupuesto_id);
+    }
+
+    public function getPagosPaciente($paciente_id) {
+        return $this->pagoModel->getByPaciente($paciente_id);
+    }
+
+    /**
+     * Info financiera completa de un presupuesto.
+     */
+    public function getResumenFinanciero($presupuesto_id) {
+        $presupuesto = $this->getPresupuesto($presupuesto_id);
+        if (!$presupuesto) return null;
+
+        $pagos = $this->pagoModel->getByPresupuesto($presupuesto_id);
+        $total_pagado = $this->pagoModel->getTotalPagado($presupuesto_id);
+        $saldo = floatval($presupuesto['total']) - $total_pagado;
+        $porcentaje_pagado = floatval($presupuesto['total']) > 0 ? ($total_pagado / floatval($presupuesto['total'])) * 100 : 0;
+
+        return [
+            'presupuesto' => $presupuesto,
+            'pagos' => $pagos,
+            'total_presupuesto' => floatval($presupuesto['total']),
+            'total_pagado' => $total_pagado,
+            'saldo_pendiente' => $saldo,
+            'porcentaje_pagado' => round($porcentaje_pagado, 1),
+            'esta_pagado' => $saldo <= 0.01
+        ];
     }
 }
 ?>

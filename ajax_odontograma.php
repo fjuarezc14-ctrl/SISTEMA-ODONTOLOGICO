@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Leer JSON payload
+// Lee el JSON
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 

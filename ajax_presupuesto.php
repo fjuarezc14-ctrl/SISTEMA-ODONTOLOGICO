@@ -188,6 +188,46 @@ switch ($accion) {
         echo json_encode(['success' => true, 'presupuestos' => $presupuestos]);
         break;
 
+    case 'registrar_pago':
+        $presupuesto_id = $data['presupuesto_id'] ?? null;
+        if (!$presupuesto_id) {
+            echo json_encode(['success' => false, 'error' => 'ID de presupuesto requerido']);
+            break;
+        }
+        $data['registrado_por'] = $_SESSION['usuario_id'];
+        $pago = $controller->registrarPago($presupuesto_id, $data);
+        if ($pago) {
+            $resumen = $controller->getResumenFinanciero($presupuesto_id);
+            echo json_encode(['success' => true, 'pago' => $pago, 'resumen' => $resumen]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'No se pudo registrar el pago. Verifique que el monto no exceda el saldo.']);
+        }
+        break;
+
+    case 'listar_pagos':
+        $presupuesto_id = $data['presupuesto_id'] ?? null;
+        if (!$presupuesto_id) {
+            echo json_encode(['success' => false, 'error' => 'ID de presupuesto requerido']);
+            break;
+        }
+        $pagos = $controller->getPagosPresupuesto($presupuesto_id);
+        echo json_encode(['success' => true, 'pagos' => $pagos]);
+        break;
+
+    case 'resumen_financiero':
+        $presupuesto_id = $data['presupuesto_id'] ?? null;
+        if (!$presupuesto_id) {
+            echo json_encode(['success' => false, 'error' => 'ID de presupuesto requerido']);
+            break;
+        }
+        $resumen = $controller->getResumenFinanciero($presupuesto_id);
+        if ($resumen) {
+            echo json_encode(['success' => true, 'resumen' => $resumen]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Presupuesto no encontrado']);
+        }
+        break;
+
     default:
         echo json_encode(['success' => false, 'error' => 'Acción no reconocida: ' . $accion]);
 }

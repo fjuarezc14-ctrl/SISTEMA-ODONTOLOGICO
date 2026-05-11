@@ -127,6 +127,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                                 <th class="px-6 py-4">Paciente</th>
                                 <th class="px-6 py-4">Fecha</th>
                                 <th class="px-6 py-4 text-right">Total</th>
+                                <th class="px-6 py-4 text-right">Saldo</th>
                                 <th class="px-6 py-4 text-center">Estado</th>
                                 <th class="px-6 py-4"></th>
                             </tr>
@@ -161,6 +162,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-500"><?php echo date('d M Y', strtotime($p['fecha_emision'])); ?></td>
                                     <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ <?php echo number_format($p['total'], 2); ?></td>
+                                    <td class="px-6 py-4 text-sm font-black text-red-600 text-right">S/ <?php echo number_format($p['saldo_pendiente'] ?? $p['total'], 2); ?></td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center">
                                             <span class="px-3 py-1 rounded-full <?php echo $badgeClass; ?> text-[10px] font-bold uppercase tracking-wider"><?php echo $p['estado']; ?></span>
