@@ -45,11 +45,7 @@ class Pago {
         $sql = "INSERT INTO pagos (presupuesto_id, paciente_id, monto, metodo_pago, tipo, comprobante_tipo, comprobante_numero, notas, registrado_por)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("iidssssi", $presupuesto_id, $paciente_id, $monto, $metodo_pago, $tipo, $comprobante_tipo, $comprobante_numero, $notas, $registrado_por);
-        
-        // Fix: necesitamos 9 params pero string "iidssssi" = 8 chars
         // presupuesto_id(i), paciente_id(i), monto(d), metodo_pago(s), tipo(s), comprobante_tipo(s), comprobante_numero(s), notas(s), registrado_por(i)
-        $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("iidsssssi", $presupuesto_id, $paciente_id, $monto, $metodo_pago, $tipo, $comprobante_tipo, $comprobante_numero, $notas, $registrado_por);
         
         if ($stmt->execute()) {

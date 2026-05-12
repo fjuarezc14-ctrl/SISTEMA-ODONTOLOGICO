@@ -7,8 +7,12 @@ if(!isset($_SESSION['usuario_id'])) {
 }
 
 require_once 'controllers/PresupuestoController.php';
+require_once 'controllers/PacienteController.php';
 $controller = new PresupuestoController();
 $presupuestos = $controller->getTodosPresupuestos();
+
+$pacienteCtrl = new PacienteController();
+$pacientes = $pacienteCtrl->index();
 
 // Calcular estadísticas
 $totalPendientes = 0;
@@ -20,18 +24,27 @@ $anioActual = date('Y');
 $totalAprobados = 0;
 $totalRechazados = 0;
 
+$cuentasPorCobrar = 0;
+
 foreach ($presupuestos as $p) {
+    $total = floatval($p['total']);
+    $pagado = floatval($p['monto_pagado'] ?? 0);
+    $saldo = $total - $pagado;
+
     if ($p['estado'] == 'Enviado' || $p['estado'] == 'Borrador') {
-        $totalPendientes += $p['total'];
+        $totalPendientes += $total;
         $docsPendientes++;
     }
     
-    $fechaP = strtotime($p['fecha_creacion']);
+    $fechaP = strtotime($p['fecha_creacion'] ?? $p['fecha_emision']);
     if ($p['estado'] == 'Aprobado') {
         if (date('m', $fechaP) == $mesActual && date('Y', $fechaP) == $anioActual) {
-            $totalAprobadosMes += $p['total'];
+            $totalAprobadosMes += $total;
         }
         $totalAprobados++;
+        if ($saldo > 0) {
+            $cuentasPorCobrar += $saldo;
+        }
     }
 
     if ($p['estado'] == 'Rechazado') {
@@ -79,27 +92,33 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
 
         <div class="flex-1 overflow-y-auto p-8">
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pendientes</p>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Cotizaciones Pend.</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-slate-800">S/ <?php echo number_format($totalPendientes, 2); ?></span>
-                        <span class="text-xs font-bold text-orange-500 mb-1.5 flex items-center gap-1">
+                        <span class="text-2xl font-black text-slate-800">S/ <?php echo number_format($totalPendientes, 2); ?></span>
+                        <span class="text-xs font-bold text-orange-500 mb-1 flex items-center gap-1">
                             <i data-lucide="clock" class="w-3 h-3"></i> <?php echo $docsPendientes; ?> Docs
                         </span>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Aprobados (Mes)</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-red-500">
+                    <p class="text-xs font-bold text-red-400 uppercase tracking-widest mb-1">Cuentas por Cobrar</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-brand">S/ <?php echo number_format($totalAprobadosMes, 2); ?></span>
+                        <span class="text-2xl font-black text-red-600">S/ <?php echo number_format($cuentasPorCobrar, 2); ?></span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ventas (Mes)</p>
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-black text-brand">S/ <?php echo number_format($totalAprobadosMes, 2); ?></span>
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tasa de Cierre</p>
                     <div class="flex items-end gap-2">
-                        <span class="text-3xl font-black text-slate-800"><?php echo round($tasaCierre); ?>%</span>
-                        <div class="w-24 h-2 bg-slate-100 rounded-full mb-3 overflow-hidden">
+                        <span class="text-2xl font-black text-slate-800"><?php echo round($tasaCierre); ?>%</span>
+                        <div class="w-16 h-2 bg-slate-100 rounded-full mb-2 overflow-hidden">
                             <div class="bg-brand h-full" style="width: <?php echo $tasaCierre; ?>%"></div>
                         </div>
                     </div>
@@ -113,8 +132,8 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                         <input type="text" id="busquedaGlobal" placeholder="Buscar por paciente o N° presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
                     </div>
                     <div class="flex gap-2 w-full md:w-auto">
-                        <button class="flex-1 md:flex-none px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2" onclick="location.href='pacientes.php'">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Presupuesto
+                        <button onclick="document.getElementById('modalSeleccionarPaciente').classList.remove('hidden'); document.getElementById('modalSeleccionarPaciente').classList.add('flex');" class="flex-1 md:flex-none px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Nueva Venta / Presupuesto
                         </button>
                     </div>
                 </div>
@@ -146,8 +165,12 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                                         case 'Borrador': $badgeClass = 'bg-amber-100 text-amber-700'; break;
                                         case 'Rechazado': $badgeClass = 'bg-red-100 text-red-700'; break;
                                     }
+                                    
+                                    $total = floatval($p['total']);
+                                    $pagado = floatval($p['monto_pagado'] ?? 0);
+                                    $saldo = $total - $pagado;
                                 ?>
-                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="location.href='paciente_detalle.php?id=<?php echo $p['paciente_id']; ?>#presupuestos'">
+                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="location.href='paciente_detalle.php?id=<?php echo $p['paciente_id']; ?>&open_presupuesto=<?php echo $p['id']; ?>#presupuestos'">
                                     <td class="px-6 py-4 text-sm font-bold text-brand">#PR-<?php echo str_pad($p['id'], 5, '0', STR_PAD_LEFT); ?></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
@@ -161,14 +184,22 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-500"><?php echo date('d M Y', strtotime($p['fecha_emision'])); ?></td>
-                                    <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ <?php echo number_format($p['total'], 2); ?></td>
-                                    <td class="px-6 py-4 text-sm font-black text-red-600 text-right">S/ <?php echo number_format($p['saldo_pendiente'] ?? $p['total'], 2); ?></td>
+                                    <td class="px-6 py-4 text-sm font-black text-slate-800 text-right">S/ <?php echo number_format($total, 2); ?></td>
+                                    <td class="px-6 py-4 text-sm font-black text-right <?php echo $saldo > 0 ? 'text-red-600' : 'text-teal-600'; ?>">
+                                        <?php echo $saldo > 0 ? 'S/ ' . number_format($saldo, 2) : 'Pagado'; ?>
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center">
                                             <span class="px-3 py-1 rounded-full <?php echo $badgeClass; ?> text-[10px] font-bold uppercase tracking-wider"><?php echo $p['estado']; ?></span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-right">
+                                    <td class="px-6 py-4 text-right flex justify-end gap-2">
+                                        <?php if ($saldo > 0): ?>
+                                            <button onclick="event.stopPropagation(); location.href='paciente_detalle.php?id=<?php echo $p['paciente_id']; ?>&open_presupuesto=<?php echo $p['id']; ?>&action=pay#presupuestos'" 
+                                                class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition font-bold text-xs flex items-center gap-1 shadow-sm">
+                                                <i data-lucide="banknote" class="w-3.5 h-3.5"></i> Pagar
+                                            </button>
+                                        <?php endif; ?>
                                         <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="eye" class="w-4 h-4"></i></button>
                                     </td>
                                 </tr>
@@ -185,8 +216,58 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
         </div>
     </main>
 
+    <!-- Modal Seleccionar Paciente para Nuevo Presupuesto -->
+    <div id="modalSeleccionarPaciente" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-brand"></i> Buscar Paciente
+                </h3>
+                <button onclick="document.getElementById('modalSeleccionarPaciente').classList.add('hidden'); document.getElementById('modalSeleccionarPaciente').classList.remove('flex');" class="text-slate-400 hover:text-red-500 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-slate-500 mb-4">Para crear un presupuesto o realizar una venta directa, primero debe seleccionar al paciente correspondiente:</p>
+                
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Seleccione el paciente</label>
+                    <select id="selectNuevoPacientePresupuesto" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white font-medium text-slate-700 text-sm">
+                        <option value="">Buscar paciente...</option>
+                        <?php if($pacientes && $pacientes->num_rows > 0): ?>
+                            <?php while($p = $pacientes->fetch_assoc()): ?>
+                                <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['nombre'] . ' (' . $p['dni'] . ')'); ?></option>
+                            <?php endwhile; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="document.getElementById('modalSeleccionarPaciente').classList.add('hidden'); document.getElementById('modalSeleccionarPaciente').classList.remove('flex');" class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition">Cancelar</button>
+                    <button onclick="irANuevoPresupuesto()" class="flex-1 px-4 py-2.5 bg-brand text-white rounded-xl font-bold text-sm hover:bg-teal-800 transition shadow-lg flex items-center justify-center gap-2">
+                        Continuar <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                    <p class="text-xs text-slate-500">¿El paciente es nuevo?</p>
+                    <a href="pacientes.php" class="text-brand font-bold text-sm hover:underline mt-1 inline-block">Ir a crear paciente</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         lucide.createIcons();
+
+        function irANuevoPresupuesto() {
+            const pacienteId = document.getElementById('selectNuevoPacientePresupuesto').value;
+            if (!pacienteId) {
+                alert('Por favor, seleccione un paciente de la lista.');
+                return;
+            }
+            window.location.href = 'paciente_detalle.php?id=' + pacienteId + '&open_new_presupuesto=1#presupuestos';
+        }
 
         // Filtro de búsqueda simple
         document.getElementById('busquedaGlobal').addEventListener('keyup', function() {

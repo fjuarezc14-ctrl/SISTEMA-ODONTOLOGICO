@@ -391,8 +391,8 @@ if (!$paciente) {
                                 <button onclick="generarPresupuestoDesdeOdontograma()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="zap" class="w-4 h-4"></i> Generar desde Odontograma
                                 </button>
-                                <button onclick="abrirModalNuevoPresupuesto()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl transition flex items-center gap-2 text-xs uppercase tracking-wider">
-                                    <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Manual
+                                <button onclick="abrirModalNuevoPresupuesto()" class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold py-2.5 px-4 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                                    <i data-lucide="plus" class="w-4 h-4"></i> Venta Directa
                                 </button>
                             </div>
                         </div>
@@ -1247,7 +1247,7 @@ if (!$paciente) {
                     categoriaActual = t.categoria;
                 }
                 select.innerHTML += `<option value="${t.id}" data-precio="${t.precio_base}" data-nombre="${t.nombre}">
-                    ${t.nombre} �?" S/ ${parseFloat(t.precio_base).toFixed(2)}
+                    ${t.nombre} - S/ ${parseFloat(t.precio_base).toFixed(2)}
                 </option>`;
             });
             if (categoriaActual !== '') select.innerHTML += '</optgroup>';
@@ -1293,10 +1293,15 @@ if (!$paciente) {
                 'Vencido': 'bg-slate-100 text-slate-500'
             };
 
-            lista.innerHTML = presupuestos.map(p => `
-                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-4 hover:bg-slate-100 transition cursor-pointer group" onclick="abrirPresupuesto(${p.id})">
+            lista.innerHTML = presupuestos.map(p => {
+                const total = parseFloat(p.total);
+                const pagado = parseFloat(p.monto_pagado || 0);
+                const saldo = total - pagado;
+                
+                return `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50 rounded-xl p-4 hover:bg-slate-100 transition cursor-pointer group gap-4" onclick="abrirPresupuesto(${p.id})">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                        <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center shrink-0">
                             <i data-lucide="file-text" class="w-5 h-5 text-emerald-600"></i>
                         </div>
                         <div>
@@ -1304,13 +1309,25 @@ if (!$paciente) {
                             <p class="text-xs text-slate-500">${formatearFecha(p.fecha_emision)} · ${p.doctor_nombre || 'Sin doctor'}</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto justify-end">
                         <span class="text-xs font-bold px-3 py-1 rounded-full ${badgeColors[p.estado] || 'bg-slate-100 text-slate-500'}">${p.estado}</span>
-                        <span class="font-black text-emerald-700 text-sm">S/ ${parseFloat(p.total).toFixed(2)}</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition"></i>
+                        
+                        <div class="text-right ml-2 mr-2">
+                            <div class="font-black text-emerald-700 text-sm leading-tight">Total: S/ ${total.toFixed(2)}</div>
+                            ${saldo > 0 ? `<div class="font-black text-red-500 text-xs leading-tight">Saldo: S/ ${saldo.toFixed(2)}</div>` : `<div class="font-bold text-teal-600 text-[10px] uppercase">Pagado</div>`}
+                        </div>
+
+                        ${saldo > 0 ? `
+                        <button onclick="event.stopPropagation(); abrirPresupuesto(${p.id}).then(() => setTimeout(abrirModalPago, 300))" 
+                            class="bg-teal-600 hover:bg-teal-700 text-white font-bold p-2 rounded-lg shadow transition flex items-center gap-1 text-xs">
+                            <i data-lucide="banknote" class="w-4 h-4"></i> Pagar
+                        </button>
+                        ` : ''}
+                        
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition hidden sm:block"></i>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
             lucide.createIcons();
         }
 
@@ -1384,10 +1401,12 @@ if (!$paciente) {
                 if (data.success) {
                     presupuestoActivo = data.presupuesto;
                     mostrarEditorPresupuesto(data.presupuesto);
+                    return true;
                 } else {
                     alert('Error: ' + (data.error || 'No encontrado'));
+                    return false;
                 }
-            } catch(e) { console.error(e); alert('Error al cargar presupuesto.'); }
+            } catch(e) { console.error(e); alert('Error al cargar presupuesto.'); return false; }
         }
 
         // --- Editor ---
@@ -1406,16 +1425,33 @@ if (!$paciente) {
             };
             badgeEl.className = `text-xs px-3 py-1 rounded-full font-bold ml-2 ${badgeColors[presupuesto.estado] || 'bg-slate-100 text-slate-500'}`;
             badgeEl.innerText = presupuesto.estado;
+            
+            const bloqueado = (presupuesto.estado === 'Aprobado' || parseFloat(presupuesto.monto_pagado || 0) > 0);
+            
+            // Habilitar/Deshabilitar inputs y botones clave
             document.getElementById('descuentoPorcentaje').value = presupuesto.descuento_porcentaje || 0;
+            document.getElementById('descuentoPorcentaje').disabled = bloqueado;
+            
+            const btnAdd = document.getElementById('btnAnadirItemManual');
+            if (btnAdd) {
+                if (bloqueado) btnAdd.classList.add('hidden');
+                else btnAdd.classList.remove('hidden');
+            }
+            
+            const btnAprobar = document.getElementById('btnAprobarPresupuesto');
+            if (btnAprobar) {
+                if (presupuesto.estado === 'Aprobado') btnAprobar.classList.add('hidden');
+                else btnAprobar.classList.remove('hidden');
+            }
 
-            renderizarItemsPresupuesto(presupuesto.items || []);
+            renderizarItemsPresupuesto(presupuesto.items || [], bloqueado);
             actualizarTotalesUI(presupuesto);
             cargarPagos(presupuesto.id);
             document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'});
             lucide.createIcons();
         }
 
-        function renderizarItemsPresupuesto(items) {
+        function renderizarItemsPresupuesto(items, bloqueado = false) {
             const tbody = document.getElementById('presupuestoItemsBody');
             if (!items || items.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-slate-400 text-sm">No hay ítems. Use el botón <b>Añadir Ítem</b> para agregar tratamientos.</td></tr>';
@@ -1430,15 +1466,16 @@ if (!$paciente) {
                     <td class="p-3 text-center text-slate-700 font-bold">${item.cantidad}</td>
                     <td class="p-3 text-right text-slate-500">S/ ${parseFloat(item.precio_unitario).toFixed(2)}</td>
                     <td class="p-3 text-right">
-                        <input type="number" value="${parseFloat(precioMostrado).toFixed(2)}" step="0.01" min="0"
+                        <input type="number" value="${parseFloat(precioMostrado).toFixed(2)}" step="0.01" min="0" ${bloqueado ? 'disabled' : ''}
                             class="w-24 text-right bg-blue-50 border border-blue-200 rounded-lg p-1.5 font-bold text-blue-800 outline-none focus:ring-2 focus:ring-blue-400 text-sm"
                             onchange="actualizarPrecioItem(${item.id}, this.value)">
                     </td>
                     <td class="p-3 text-right font-bold text-slate-800">S/ ${parseFloat(item.subtotal).toFixed(2)}</td>
                     <td class="p-3 text-center">
+                        ${!bloqueado ? `
                         <button onclick="eliminarItem(${item.id})" class="text-slate-400 hover:text-red-500 transition p-1 rounded-lg hover:bg-red-50">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
+                        </button>` : ''}
                     </td>
                 </tr>`;
             }).join('');
@@ -1452,7 +1489,7 @@ if (!$paciente) {
             document.getElementById('presupuestoTotal').innerText = `S/ ${total.toFixed(2)}`;
             
             const pagado = parseFloat(p.monto_pagado || 0);
-            const saldo = parseFloat(p.saldo_pendiente || p.total);
+            const saldo = total - pagado; // Fix: usar la diferencia real entre total y pagado
             
             document.getElementById('presupuestoPagado').innerText = `S/ ${pagado.toFixed(2)}`;
             document.getElementById('presupuestoSaldo').innerText = `S/ ${saldo.toFixed(2)}`;
@@ -1696,9 +1733,12 @@ if (!$paciente) {
 
         function abrirModalPago() {
             if (!presupuestoActivo) return;
-            const saldo = parseFloat(presupuestoActivo.saldo_pendiente || presupuestoActivo.total);
+            const total = parseFloat(presupuestoActivo.total || 0);
+            const pagado = parseFloat(presupuestoActivo.monto_pagado || 0);
+            const saldo = total - pagado;
+            
             if (saldo <= 0) {
-                alert('Este presupuesto ya está totalmente pagado.');
+                alert('Este presupuesto ya está totalmente pagado o su total es 0 (añada tratamientos primero).');
                 return;
             }
             
@@ -1724,7 +1764,9 @@ if (!$paciente) {
         async function confirmarRegistrarPago() {
             if (!presupuestoActivo) return;
             const monto = parseFloat(document.getElementById('pagoMonto').value);
-            const saldo = parseFloat(presupuestoActivo.saldo_pendiente || presupuestoActivo.total);
+            const total = parseFloat(presupuestoActivo.total || 0);
+            const pagado = parseFloat(presupuestoActivo.monto_pagado || 0);
+            const saldo = total - pagado;
             
             if (!monto || monto <= 0) { alert('Ingrese un monto válido.'); return; }
             if (monto > saldo + 0.01) { alert('El monto no puede ser mayor al saldo pendiente.'); return; }
@@ -1769,7 +1811,31 @@ if (!$paciente) {
 
         // Inicializar módulo
         cargarCatalogo();
-        cargarListaPresupuestos();
+        
+        // Auto-abrir presupuesto si viene en URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const openPresupuestoId = urlParams.get('open_presupuesto');
+        const openNewPresupuesto = urlParams.get('open_new_presupuesto');
+        
+        if (openPresupuestoId) {
+            const seccionPresupuestos = document.getElementById('seccion_presupuestos');
+            if (seccionPresupuestos) seccionPresupuestos.scrollIntoView({behavior: 'smooth'});
+            
+            abrirPresupuesto(openPresupuestoId).then(abierto => {
+                if (abierto && urlParams.get('action') === 'pay') {
+                    // Dar un pequeño timeout para asegurar que renderizó
+                    setTimeout(abrirModalPago, 300);
+                }
+            });
+        } else if (openNewPresupuesto) {
+            const seccionPresupuestos = document.getElementById('seccion_presupuestos');
+            if (seccionPresupuestos) seccionPresupuestos.scrollIntoView({behavior: 'smooth'});
+            cargarListaPresupuestos().then(() => {
+                setTimeout(abrirModalNuevoPresupuesto, 500);
+            });
+        } else {
+            cargarListaPresupuestos();
+        }
     </script>
 
 </body>
