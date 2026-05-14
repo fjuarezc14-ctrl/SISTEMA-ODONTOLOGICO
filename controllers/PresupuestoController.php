@@ -232,6 +232,12 @@ class PresupuestoController {
         if ($pago_id) {
             // Actualizar saldos en el presupuesto
             $this->actualizarSaldos($presupuesto_id);
+            
+            // Auto-aprobar presupuesto si se realiza un pago
+            if ($presupuesto['estado'] !== 'Aprobado') {
+                $this->presupuestoModel->cambiarEstado($presupuesto_id, 'Aprobado');
+            }
+            
             return $this->pagoModel->getById($pago_id);
         }
         return false;

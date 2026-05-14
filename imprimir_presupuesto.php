@@ -107,8 +107,34 @@ $p = $resumen['presupuesto'];
             </tbody>
         </table>
 
-        <!-- Totales -->
-        <div class="flex justify-end mb-12">
+        <!-- Totales y Pagos -->
+        <div class="flex justify-between items-start mb-8">
+            <div class="w-1/2">
+                <?php if (!empty($resumen['pagos'])): ?>
+                <h3 class="font-bold text-slate-800 uppercase text-xs tracking-widest mb-2 border-b border-slate-200 pb-1">Historial de Pagos Realizados</h3>
+                <table class="w-full text-xs text-left text-slate-600 border border-slate-200 rounded-lg overflow-hidden">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="p-2 border-b border-slate-200">Fecha</th>
+                            <th class="p-2 border-b border-slate-200">Tipo</th>
+                            <th class="p-2 border-b border-slate-200">Método</th>
+                            <th class="p-2 border-b border-slate-200 text-right">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <?php foreach ($resumen['pagos'] as $pago): ?>
+                        <tr>
+                            <td class="p-2"><?php echo date('d/m/Y H:i', strtotime($pago['fecha_pago'])); ?></td>
+                            <td class="p-2"><?php echo htmlspecialchars($pago['tipo']); ?></td>
+                            <td class="p-2"><?php echo htmlspecialchars($pago['metodo_pago']); ?></td>
+                            <td class="p-2 text-right font-bold text-emerald-600">S/ <?php echo number_format($pago['monto'], 2); ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <?php endif; ?>
+            </div>
+
             <div class="w-72 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div class="flex justify-between text-sm mb-2 text-slate-600">
                     <span>Subtotal:</span>
@@ -118,10 +144,21 @@ $p = $resumen['presupuesto'];
                     <span>Descuento (<?php echo floatval($p['descuento_porcentaje']); ?>%):</span>
                     <span class="font-bold">- S/ <?php echo number_format($p['descuento_monto'], 2); ?></span>
                 </div>
-                <div class="flex justify-between text-lg border-t border-slate-200 pt-3 text-teal-800">
+                <div class="flex justify-between text-lg border-t border-slate-200 pt-3 text-teal-800 mb-2">
                     <span class="font-black uppercase">TOTAL:</span>
                     <span class="font-black">S/ <?php echo number_format($p['total'], 2); ?></span>
                 </div>
+                
+                <?php if ($resumen['total_pagado'] > 0): ?>
+                <div class="flex justify-between text-sm text-emerald-600 mb-1 border-t border-slate-200 pt-2">
+                    <span>A Cuenta (Pagado):</span>
+                    <span class="font-bold">S/ <?php echo number_format($resumen['total_pagado'], 2); ?></span>
+                </div>
+                <div class="flex justify-between text-sm text-red-600">
+                    <span class="font-bold">SALDO DEUDOR:</span>
+                    <span class="font-black">S/ <?php echo number_format($resumen['saldo_pendiente'], 2); ?></span>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 

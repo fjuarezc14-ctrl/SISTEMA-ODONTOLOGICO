@@ -259,19 +259,24 @@ if (!$paciente) {
                                 </div>
                             </div>
 
-                            <div class="mt-4 <?php echo !empty(trim($paciente['alergias'] ?? '')) ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'; ?> border rounded-xl p-4">
+                            <?php
+                                $alergias_texto = trim($paciente['alergias'] ?? '');
+                                $alergias_lower = strtolower($alergias_texto);
+                                $tiene_alergias = !empty($alergias_texto) && !in_array($alergias_lower, ['ninguna', 'no', 'no tiene', 'sin alergias', 'ninguno']);
+                            ?>
+                            <div class="mt-4 <?php echo $tiene_alergias ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'; ?> border rounded-xl p-4">
                                 <div class="flex items-start gap-3">
-                                    <?php if (!empty(trim($paciente['alergias'] ?? ''))): ?>
+                                    <?php if ($tiene_alergias): ?>
                                         <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mt-0.5 shrink-0"></i>
                                         <div>
                                             <h5 class="text-xs font-black text-red-700 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
-                                            <p class="text-sm font-bold text-red-600"><?php echo nl2br(htmlspecialchars($paciente['alergias'])); ?></p>
+                                            <p class="text-sm font-bold text-red-600"><?php echo nl2br(htmlspecialchars($alergias_texto)); ?></p>
                                         </div>
                                     <?php else: ?>
                                         <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 mt-0.5 shrink-0"></i>
                                         <div>
                                             <h5 class="text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
-                                            <p class="text-sm font-bold text-slate-400">Ninguna registrada</p>
+                                            <p class="text-sm font-bold text-slate-400"><?php echo $alergias_texto ?: 'Ninguna registrada'; ?></p>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -543,16 +548,13 @@ if (!$paciente) {
                                     <button onclick="abrirModalPago()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="banknote" class="w-4 h-4"></i> Registrar Pago
                                     </button>
-                                    <button onclick="enviarWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
-                                        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
-                                    </button>
                                     <button onclick="imprimirPresupuesto()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
                                     </button>
-                                    <button onclick="cambiarEstadoPresupuesto('Enviado')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
-                                        <i data-lucide="send" class="w-4 h-4"></i> Enviar a Paciente
+                                    <button id="btnEnviarPresupuesto" onclick="enviarWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="send" class="w-4 h-4"></i> WhatsApp / Enviar
                                     </button>
-                                    <button onclick="cambiarEstadoPresupuesto('Aprobado')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                    <button id="btnAprobarPresupuesto" onclick="cambiarEstadoPresupuesto('Aprobado')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="check-circle" class="w-4 h-4"></i> Aprobar
                                     </button>
                                     <button onclick="eliminarPresupuestoActivo()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 px-5 rounded-xl transition text-xs uppercase tracking-wider flex items-center gap-2">
@@ -1515,9 +1517,21 @@ if (!$paciente) {
             }
             
             const btnAprobar = document.getElementById('btnAprobarPresupuesto');
+            const btnEnviar = document.getElementById('btnEnviarPresupuesto');
+            
             if (btnAprobar) {
-                if (presupuesto.estado === 'Aprobado') btnAprobar.classList.add('hidden');
-                else btnAprobar.classList.remove('hidden');
+                if (presupuesto.estado === 'Aprobado') {
+                    btnAprobar.classList.add('hidden');
+                } else {
+                    btnAprobar.classList.remove('hidden');
+                }
+            }
+            if (btnEnviar) {
+                if (presupuesto.estado === 'Aprobado') {
+                    btnEnviar.classList.add('hidden');
+                } else {
+                    btnEnviar.classList.remove('hidden');
+                }
             }
 
             renderizarItemsPresupuesto(presupuesto.items || [], bloqueado);
@@ -1803,8 +1817,15 @@ if (!$paciente) {
                     <td class="p-2 text-slate-600">${p.metodo_pago}</td>
                     <td class="p-2 text-slate-500 font-mono text-xs">${p.comprobante_numero || '-'}</td>
                     <td class="p-2 text-right font-black text-emerald-600">S/ ${parseFloat(p.monto).toFixed(2)}</td>
+                    <td class="p-2 text-center">
+                        <a href="imprimir_pago.php?id=${p.id}" target="_blank" class="text-slate-400 hover:text-brand transition" title="Imprimir Boleta">
+                            <i data-lucide="printer" class="w-4 h-4 inline"></i>
+                        </a>
+                    </td>
                 </tr>`;
             }).join('');
+            // Se debe recrear los íconos de lucide ya que insertamos HTML dinámico
+            lucide.createIcons();
         }
 
         function abrirModalPago() {
