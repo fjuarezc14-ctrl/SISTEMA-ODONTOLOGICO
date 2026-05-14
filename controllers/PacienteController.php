@@ -33,7 +33,15 @@ class PacienteController {
             $data['nombre'], 
             $data['telefono'], 
             $data['email'],
-            $data['alergias'] ?? null
+            $data['alergias'] ?? null,
+            $data['fecha_nacimiento'] ?? null,
+            $data['lugar_nacimiento'] ?? null,
+            $data['sexo'] ?? null,
+            $data['direccion'] ?? null,
+            $data['procedencia'] ?? null,
+            $data['ocupacion'] ?? null,
+            $data['contacto_emergencia'] ?? null,
+            $data['telefono_emergencia'] ?? null
         );
     }
 
@@ -53,7 +61,15 @@ class PacienteController {
             $data['nombre'], 
             $data['telefono'], 
             $data['email'],
-            $data['alergias'] ?? null
+            $data['alergias'] ?? null,
+            $data['fecha_nacimiento'] ?? null,
+            $data['lugar_nacimiento'] ?? null,
+            $data['sexo'] ?? null,
+            $data['direccion'] ?? null,
+            $data['procedencia'] ?? null,
+            $data['ocupacion'] ?? null,
+            $data['contacto_emergencia'] ?? null,
+            $data['telefono_emergencia'] ?? null
         );
     }
 

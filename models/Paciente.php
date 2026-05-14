@@ -6,10 +6,10 @@ class Paciente {
         $this->conn = $db;
     }
 
-    public function create($dni, $nombre, $telefono, $email, $alergias = null) {
-        $sql = "INSERT INTO pacientes (dni, nombre, telefono, email, alergias, estado_activo) VALUES (?, ?, ?, ?, ?, 1)";
+    public function create($dni, $nombre, $telefono, $email, $alergias = null, $fecha_nacimiento = null, $lugar_nacimiento = null, $sexo = null, $direccion = null, $procedencia = null, $ocupacion = null, $contacto_emergencia = null, $telefono_emergencia = null) {
+        $sql = "INSERT INTO pacientes (dni, nombre, telefono, email, alergias, fecha_nacimiento, lugar_nacimiento, sexo, direccion, procedencia, ocupacion, contacto_emergencia, telefono_emergencia, estado_activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sssss", $dni, $nombre, $telefono, $email, $alergias);
+        $stmt->bind_param("sssssssssssss", $dni, $nombre, $telefono, $email, $alergias, $fecha_nacimiento, $lugar_nacimiento, $sexo, $direccion, $procedencia, $ocupacion, $contacto_emergencia, $telefono_emergencia);
         return $stmt->execute() ? true : $this->conn->error;
     }
 
@@ -35,10 +35,10 @@ class Paciente {
         $result = $stmt->get_result();
         return $result->num_rows > 0 ? $result->fetch_assoc() : null;
     }
-    public function update($id, $dni, $nombre, $telefono, $email, $alergias = null) {
-        $sql = "UPDATE pacientes SET dni = ?, nombre = ?, telefono = ?, email = ?, alergias = ? WHERE id = ?";
+    public function update($id, $dni, $nombre, $telefono, $email, $alergias = null, $fecha_nacimiento = null, $lugar_nacimiento = null, $sexo = null, $direccion = null, $procedencia = null, $ocupacion = null, $contacto_emergencia = null, $telefono_emergencia = null) {
+        $sql = "UPDATE pacientes SET dni = ?, nombre = ?, telefono = ?, email = ?, alergias = ?, fecha_nacimiento = ?, lugar_nacimiento = ?, sexo = ?, direccion = ?, procedencia = ?, ocupacion = ?, contacto_emergencia = ?, telefono_emergencia = ? WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("sssssi", $dni, $nombre, $telefono, $email, $alergias, $id);
+        $stmt->bind_param("sssssssssssssi", $dni, $nombre, $telefono, $email, $alergias, $fecha_nacimiento, $lugar_nacimiento, $sexo, $direccion, $procedencia, $ocupacion, $contacto_emergencia, $telefono_emergencia, $id);
         return $stmt->execute() ? true : $this->conn->error;
     }
 

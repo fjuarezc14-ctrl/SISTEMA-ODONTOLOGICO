@@ -31,10 +31,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i data-lucide="file-text" class="w-5 h-5"></i>
             Presupuestos
         </a>
-        <a href="radiografias.php" class="flex items-center gap-3 px-4 py-3 rounded-xl <?php echo ($current_page == 'radiografias.php') ? 'bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105' : 'text-brand-secondary hover:bg-white/10 hover:text-white transition-colors'; ?>">
-            <i data-lucide="image" class="w-5 h-5"></i>
-            Radiografías
+        <a href="caja.php" class="flex items-center gap-3 px-4 py-3 rounded-xl <?php echo ($current_page == 'caja.php') ? 'bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105' : 'text-brand-secondary hover:bg-white/10 hover:text-white transition-colors'; ?>">
+            <i data-lucide="calculator" class="w-5 h-5"></i>
+            Caja / Reportes
         </a>
+
     </nav>
     
     <div class="p-4 border-t border-white/10 shrink-0">

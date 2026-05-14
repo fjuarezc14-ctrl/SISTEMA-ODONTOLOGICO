@@ -532,10 +532,6 @@ if (!$paciente) {
                         </div>
                     </div>
 
-                </div>
-            </div>
-        </div>
-    
                     <!-- ARCHIVOS CLINICOS -->
                     <div id="seccion_archivos" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
@@ -546,6 +542,9 @@ if (!$paciente) {
                                 <p class="text-sm text-slate-500 font-medium mt-1">Radiografías, fotos intraorales y documentos.</p>
                             </div>
                             <div class="flex gap-2 w-full md:w-auto">
+                                <a href="generar_consentimiento.php?id=<?php echo $paciente_id; ?>" target="_blank" class="flex-1 md:flex-none bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                    <i data-lucide="printer" class="w-4 h-4"></i> Consentimiento
+                                </a>
                                 <button onclick="abrirModalSubirArchivo()" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="upload-cloud" class="w-4 h-4"></i> Subir Archivo
                                 </button>
@@ -564,6 +563,12 @@ if (!$paciente) {
                             </div>
                         </div>
                     </div>
+
+                </div>
+            </div>
+        </div>
+    
+
 
     </main>
 
@@ -2078,11 +2083,24 @@ if (!$paciente) {
             } catch(e) { alert('Error de conexión'); }
         }
 
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        const lightboxImg = document.getElementById('lightboxImg');
+
+        function actualizarTransform() {
+            lightboxImg.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
+        }
+
         function abrirLightbox(ruta, desc) {
-            document.getElementById('lightboxImg').src = ruta;
+            lightboxImg.src = ruta;
             document.getElementById('lightboxTitulo').innerText = desc;
             currentZoom = 1;
-            document.getElementById('lightboxImg').style.transform = `scale(1)`;
+            panX = 0;
+            panY = 0;
+            actualizarTransform();
             const m = document.getElementById('lightboxVisor');
             m.classList.remove('hidden');
             m.classList.add('flex');
@@ -2092,14 +2110,41 @@ if (!$paciente) {
             const m = document.getElementById('lightboxVisor');
             m.classList.add('hidden');
             m.classList.remove('flex');
-            document.getElementById('lightboxImg').src = '';
+            lightboxImg.src = '';
         }
 
         function zoomImg(delta, reset=false) {
-            if (reset) currentZoom = 1;
-            else currentZoom = Math.max(0.5, Math.min(4, currentZoom + delta));
-            document.getElementById('lightboxImg').style.transform = `scale(${currentZoom})`;
+            if (reset) {
+                currentZoom = 1;
+                panX = 0;
+                panY = 0;
+            } else {
+                currentZoom = Math.max(0.5, Math.min(5, currentZoom + delta));
+            }
+            actualizarTransform();
         }
+
+        lightboxImg.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+            lightboxImg.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            lightboxImg.style.cursor = 'grab';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            actualizarTransform();
+        });
+
+        lightboxImg.style.cursor = 'grab';
 
         // Cargar lista al iniciar
         document.addEventListener('DOMContentLoaded', () => {

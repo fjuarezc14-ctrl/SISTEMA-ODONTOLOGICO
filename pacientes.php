@@ -119,9 +119,7 @@ $resultado_pacientes = $controller->index();
                                             <button onclick='abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
                                                 <i data-lucide="edit" class="w-4 h-4"></i>
                                             </button>
-                                            <button onclick="confirmarEliminacion(<?php echo $paciente['id']; ?>)" class="p-2 bg-slate-100 hover:bg-red-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Eliminar Paciente">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
+
                                         </div>
                                     </td>
                                 </tr>
@@ -140,8 +138,8 @@ $resultado_pacientes = $controller->index();
             </div>
         </div>
 
-        <div id="modalNuevoPaciente" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+        <div id="modalNuevoPaciente" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]" id="modalContent">
                 
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
@@ -152,21 +150,22 @@ $resultado_pacientes = $controller->index();
                     </button>
                 </div>
 
-                <div class="p-6">
+                <div class="p-6 overflow-y-auto">
                     <form method="POST" action="" class="space-y-4">
                         <input type="hidden" name="accion" value="nuevo_paciente">
                         
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">DNI</label>
-                            <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
-                            <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">DNI *</label>
+                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo *</label>
+                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono</label>
                                 <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
@@ -174,6 +173,54 @@ $resultado_pacientes = $controller->index();
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Correo Electrónico</label>
                                 <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Nacimiento</label>
+                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
+                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                    <option value="">Seleccione...</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ocupación</label>
+                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dirección / Residencia</label>
+                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                        </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lugar de Nacimiento</label>
+                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Procedencia</label>
+                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contacto de Emergencia</label>
+                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono de Emergencia</label>
+                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                             </div>
                         </div>
 
@@ -194,8 +241,8 @@ $resultado_pacientes = $controller->index();
     </main>
 
     <!-- Modal Editar Paciente -->
-    <div id="modalEditarPaciente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+    <div id="modalEditarPaciente" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 transition-opacity opacity-0 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
             <div class="bg-slate-50 border-b border-slate-100 p-6 flex justify-between items-center">
                 <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
                     <i data-lucide="edit" class="w-6 h-6 text-blue-600"></i> Editar Paciente
@@ -205,21 +252,22 @@ $resultado_pacientes = $controller->index();
                 </button>
             </div>
             
-            <form method="POST" action="pacientes.php" class="p-6 flex flex-col gap-5">
+            <form method="POST" action="pacientes.php" class="p-6 flex flex-col gap-5 overflow-y-auto">
                 <input type="hidden" name="accion" value="editar_paciente">
                 <input type="hidden" name="paciente_id" id="edit_paciente_id">
                 
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">DNI *</label>
-                    <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">DNI *</label>
+                        <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombre Completo *</label>
+                        <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
                 </div>
                 
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombre Completo *</label>
-                    <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Teléfono</label>
                         <input type="text" name="telefono" id="edit_telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
@@ -230,14 +278,68 @@ $resultado_pacientes = $controller->index();
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha Nacimiento</label>
+                        <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Sexo</label>
+                        <select name="sexo" id="edit_sexo" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                            <option value="">Seleccione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Ocupación</label>
+                        <input type="text" name="ocupacion" id="edit_ocupacion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Dirección</label>
+                        <input type="text" name="direccion" id="edit_direccion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Lugar Nacimiento</label>
+                        <input type="text" name="lugar_nacimiento" id="edit_lugar_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Procedencia</label>
+                        <input type="text" name="procedencia" id="edit_procedencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Contacto Emergencia</label>
+                        <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia" placeholder="Nombre de familiar" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tel. Emergencia</label>
+                        <input type="text" name="telefono_emergencia" id="edit_telefono_emergencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-xs font-bold text-red-500 uppercase mb-2 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Alergias / Condiciones Médicas</label>
+                    <label class="block text-xs font-bold text-red-500 uppercase mb-2 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Alergias / Condiciones</label>
                     <input type="text" name="alergias" id="edit_alergias" placeholder="Ej: Penicilina, Hipertensión..." class="w-full bg-red-50 border border-red-200 rounded-xl p-3 font-medium text-red-700 outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition placeholder:text-red-300 text-sm">
                 </div>
 
-                <div class="mt-4 flex gap-3">
-                    <button type="button" onclick="cerrarModalEdicion()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/30 transition">Guardar Cambios</button>
+                <div class="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <button type="button" onclick="confirmarEliminacion(document.getElementById('edit_paciente_id').value)" class="text-red-500 hover:text-red-600 font-bold text-sm flex items-center gap-2 transition px-2 py-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Inhabilitar Paciente
+                    </button>
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <button type="button" onclick="cerrarModalEdicion()" class="flex-1 md:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Cancelar</button>
+                        <button type="submit" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-600/30 transition">Guardar Cambios</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -294,6 +396,14 @@ $resultado_pacientes = $controller->index();
             document.getElementById('edit_nombre').value = paciente.nombre;
             document.getElementById('edit_telefono').value = paciente.telefono;
             document.getElementById('edit_email').value = paciente.email;
+            document.getElementById('edit_fecha_nacimiento').value = paciente.fecha_nacimiento || '';
+            document.getElementById('edit_sexo').value = paciente.sexo || '';
+            document.getElementById('edit_ocupacion').value = paciente.ocupacion || '';
+            document.getElementById('edit_direccion').value = paciente.direccion || '';
+            document.getElementById('edit_lugar_nacimiento').value = paciente.lugar_nacimiento || '';
+            document.getElementById('edit_procedencia').value = paciente.procedencia || '';
+            document.getElementById('edit_contacto_emergencia').value = paciente.contacto_emergencia || '';
+            document.getElementById('edit_telefono_emergencia').value = paciente.telefono_emergencia || '';
             document.getElementById('edit_alergias').value = paciente.alergias || '';
 
             modal.classList.remove('hidden');

@@ -99,5 +99,37 @@ class Pago {
         }
         return $prefijo . '-000001';
     }
+
+    /**
+     * Obtiene todos los pagos en un rango de fechas para el reporte de caja.
+     */
+    public function getPagosPorFecha($fecha_inicio, $fecha_fin = null) {
+        if (!$fecha_fin) {
+            $fecha_fin = $fecha_inicio;
+        }
+        
+        $sql = "SELECT p.*, 
+                       u.nombre as registrado_nombre,
+                       pac.nombre as paciente_nombre, 
+                       pac.dni as paciente_dni,
+                       pr.total as presupuesto_total
+                FROM pagos p
+                LEFT JOIN usuarios u ON p.registrado_por = u.id
+                LEFT JOIN pacientes pac ON p.paciente_id = pac.id
+                LEFT JOIN presupuestos pr ON p.presupuesto_id = pr.id
+                WHERE DATE(p.fecha_pago) BETWEEN ? AND ?
+                ORDER BY p.fecha_pago DESC";
+                
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $fecha_inicio, $fecha_fin);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $pagos = [];
+        while ($row = $result->fetch_assoc()) {
+            $pagos[] = $row;
+        }
+        return $pagos;
+    }
 }
 ?>
