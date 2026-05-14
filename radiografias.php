@@ -53,132 +53,21 @@ if(!isset($_SESSION['usuario_id'])) {
         <div class="flex-1 overflow-y-auto p-8">
             <div class="flex flex-col lg:flex-row gap-8">
                 
-                <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="bg-brand h-24 relative">
-                            <div class="absolute -bottom-10 left-6">
-                                <div class="w-20 h-20 bg-white rounded-full p-1 shadow-md border-2 border-brand-secondary">
-                                    <div class="w-full h-full bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold text-2xl">AR</div>
-                                </div>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                                <div class="w-1.5 h-1.5 bg-white rounded-full"></div> Activo
-                            </div>
+                <div class="w-full">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center max-w-2xl mx-auto mt-10">
+                        <div class="w-24 h-24 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="folder-search" class="w-12 h-12"></i>
                         </div>
-                        <div class="pt-12 px-6 pb-6">
-                            <h2 class="text-xl font-black text-slate-800">Ana María Robles</h2>
-                            <p class="text-sm text-slate-500 font-medium mb-4">DNI: 76543210</p>
-                            <div class="space-y-3 pt-4 border-t border-slate-100">
-                                <div class="flex items-center gap-3 text-sm text-slate-600">
-                                    <i data-lucide="phone" class="w-4 h-4 text-slate-400"></i>
-                                    <span class="font-medium">+51 987 654 321</span>
-                                </div>
-                                <div class="flex items-center gap-3 text-sm text-slate-600">
-                                    <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
-                                    <span class="font-medium">ana.robles@email.com</span>
-                                </div>
-                            </div>
+                        <h2 class="text-2xl font-black text-slate-800 mb-4">Módulo de Archivos Clínicos Centralizado</h2>
+                        <p class="text-slate-500 mb-8">
+                            Para mantener la integridad médica y el orden, todas las radiografías, fotografías intraorales y documentos (como Consentimientos Informados) ahora se gestionan <b>directamente dentro del perfil de cada paciente</b>.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="pacientes.php" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg transition flex items-center justify-center gap-2">
+                                <i data-lucide="users" class="w-5 h-5"></i> Ir al Directorio de Pacientes
+                            </a>
                         </div>
                     </div>
-                </div>
-
-                <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
-                    
-                    <div class="flex gap-2 border-b border-slate-200 shrink-0">
-                        <a href="pacientes.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">Historia y Odontograma</a>
-                        <a href="presupuestos.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">Presupuestos (2)</a>
-                        <button class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition">Radiografías / Archivos</button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col min-h-[500px]">
-                        
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                            <div class="flex gap-2 bg-slate-50 p-1 rounded-xl border border-slate-200 w-full md:w-auto overflow-x-auto">
-                                <button class="px-4 py-2 text-sm font-bold rounded-lg bg-white text-slate-800 shadow-sm border border-slate-200 whitespace-nowrap">Todos</button>
-                                <button class="px-4 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition whitespace-nowrap">Radiografías</button>
-                                <button class="px-4 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition whitespace-nowrap">Fotos Intraorales</button>
-                                <button class="px-4 py-2 text-sm font-bold rounded-lg text-slate-500 hover:text-slate-800 transition whitespace-nowrap">Documentos</button>
-                            </div>
-                            
-                            <button class="bg-brand hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30 w-full md:w-auto justify-center">
-                                <i data-lucide="upload-cloud" class="w-5 h-5"></i> Subir Archivo
-                            </button>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            
-                            <div class="group border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white flex flex-col">
-                                <div class="relative h-40 bg-slate-900 flex items-center justify-center overflow-hidden">
-                                    <img src="https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=400&q=80" alt="Radiografía" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500">
-                                    <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-                                        <i data-lucide="image" class="w-3 h-3"></i> Rayos X
-                                    </div>
-                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 hover:text-brand hover:scale-110 transition"><i data-lucide="eye" class="w-5 h-5"></i></button>
-                                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 hover:text-brand hover:scale-110 transition"><i data-lucide="download" class="w-5 h-5"></i></button>
-                                    </div>
-                                </div>
-                                <div class="p-4 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <h4 class="font-bold text-slate-800 text-sm truncate" title="Radiografía Panorámica Inicial">Radiografía Panorámica Inicial</h4>
-                                        <p class="text-xs text-slate-500 mt-1 truncate-2-lines">Tomada en laboratorio externo para evaluación de cordales.</p>
-                                    </div>
-                                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-100">
-                                        <span class="text-[10px] font-bold text-slate-400">05 Mar 2026</span>
-                                        <span class="text-[10px] font-bold text-slate-400">2.4 MB</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="group border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white flex flex-col">
-                                <div class="relative h-40 bg-slate-50 flex flex-col items-center justify-center border-b border-slate-100 group-hover:bg-brand-light/30 transition-colors">
-                                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center text-red-500 mb-2 shadow-sm">
-                                        <i data-lucide="file-text" class="w-8 h-8"></i>
-                                    </div>
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Documento PDF</span>
-                                    
-                                    <div class="absolute inset-0 bg-white/40 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                        <button class="w-10 h-10 bg-white shadow border border-slate-200 rounded-full flex items-center justify-center text-slate-800 hover:text-brand hover:scale-110 transition"><i data-lucide="download" class="w-5 h-5"></i></button>
-                                    </div>
-                                </div>
-                                <div class="p-4 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <h4 class="font-bold text-slate-800 text-sm truncate" title="Consentimiento Informado - Endodoncia">Consentimiento Informado</h4>
-                                        <p class="text-xs text-slate-500 mt-1 truncate-2-lines">Firmado digitalmente para tratamiento de endodoncia pieza 36.</p>
-                                    </div>
-                                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-100">
-                                        <span class="text-[10px] font-bold text-slate-400">28 Abr 2026</span>
-                                        <span class="text-[10px] font-bold text-slate-400">450 KB</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="group border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow bg-white flex flex-col">
-                                <div class="relative h-40 bg-slate-100 flex items-center justify-center overflow-hidden">
-                                    <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=400&q=80" alt="Foto Clínica" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                    <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider flex items-center gap-1">
-                                        <i data-lucide="camera" class="w-3 h-3"></i> Fotografía
-                                    </div>
-                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 hover:text-brand hover:scale-110 transition"><i data-lucide="eye" class="w-5 h-5"></i></button>
-                                        <button class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-800 hover:text-brand hover:scale-110 transition"><i data-lucide="download" class="w-5 h-5"></i></button>
-                                    </div>
-                                </div>
-                                <div class="p-4 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <h4 class="font-bold text-slate-800 text-sm truncate" title="Estado Inicial Arcada Inferior">Estado Inicial Arcada Inferior</h4>
-                                        <p class="text-xs text-slate-500 mt-1 truncate-2-lines">Fotografía intraoral antes de profilaxis y tratamientos.</p>
-                                    </div>
-                                    <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-100">
-                                        <span class="text-[10px] font-bold text-slate-400">05 Mar 2026</span>
-                                        <span class="text-[10px] font-bold text-slate-400">1.8 MB</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
