@@ -219,24 +219,63 @@ if (!$paciente) {
                             <div class="space-y-3 pt-4 border-t border-slate-100">
                                 <div class="flex items-center gap-3 text-sm text-slate-600"><i data-lucide="phone"
                                         class="w-4 h-4 text-slate-400"></i><span
-                                        class="font-medium"><?php echo htmlspecialchars($paciente['telefono']); ?></span>
+                                        class="font-medium"><?php echo htmlspecialchars($paciente['telefono'] ?? '-'); ?></span>
                                 </div>
                                 <div class="flex items-center gap-3 text-sm text-slate-600"><i data-lucide="mail"
                                         class="w-4 h-4 text-slate-400"></i><span
-                                        class="font-medium"><?php echo htmlspecialchars($paciente['email']); ?></span>
+                                        class="font-medium"><?php echo htmlspecialchars($paciente['email'] ?? '-'); ?></span>
+                                </div>
+                                
+                                <?php
+                                    $edad = '-';
+                                    if (!empty($paciente['fecha_nacimiento'])) {
+                                        $fecha_nac = new DateTime($paciente['fecha_nacimiento']);
+                                        $hoy = new DateTime();
+                                        $edad = $hoy->diff($fecha_nac)->y . ' años';
+                                    }
+                                ?>
+                                <div class="flex flex-wrap gap-2 pt-2">
+                                    <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase border border-slate-200" title="Edad / Fecha Nacimiento">
+                                        <?php echo $edad; ?>
+                                    </span>
+                                    <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase border border-slate-200" title="Sexo">
+                                        <?php echo htmlspecialchars($paciente['sexo'] ?: 'No especificado'); ?>
+                                    </span>
+                                    <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase border border-slate-200" title="Lugar de Nacimiento">
+                                        <?php echo htmlspecialchars($paciente['lugar_nacimiento'] ?: 'S/L'); ?>
+                                    </span>
+                                </div>
+
+                                <div class="text-xs text-slate-500 font-medium">
+                                    <span class="block mb-1"><strong>Procedencia:</strong> <?php echo htmlspecialchars($paciente['procedencia'] ?: '-'); ?></span>
+                                    <span class="block mb-1"><strong>Ocupación:</strong> <?php echo htmlspecialchars($paciente['ocupacion'] ?: '-'); ?></span>
+                                    <span class="block"><strong>Dirección:</strong> <?php echo htmlspecialchars($paciente['direccion'] ?: '-'); ?></span>
+                                </div>
+                                
+                                <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl">
+                                    <h5 class="text-[10px] font-black text-blue-700 uppercase tracking-wider mb-1 flex items-center gap-1"><i data-lucide="users" class="w-3 h-3"></i> Contacto de Emergencia</h5>
+                                    <p class="text-xs text-slate-600 font-bold"><?php echo htmlspecialchars($paciente['contacto_emergencia'] ?: 'No registrado'); ?></p>
+                                    <p class="text-xs text-slate-500"><?php echo htmlspecialchars($paciente['telefono_emergencia'] ?: '-'); ?></p>
                                 </div>
                             </div>
-                            <?php if (!empty(trim($paciente['alergias'] ?? ''))): ?>
-                            <div class="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
+
+                            <div class="mt-4 <?php echo !empty(trim($paciente['alergias'] ?? '')) ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-200'; ?> border rounded-xl p-4">
                                 <div class="flex items-start gap-3">
-                                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mt-0.5 shrink-0"></i>
-                                    <div>
-                                        <h5 class="text-xs font-black text-red-700 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
-                                        <p class="text-sm font-bold text-red-600"><?php echo nl2br(htmlspecialchars($paciente['alergias'])); ?></p>
-                                    </div>
+                                    <?php if (!empty(trim($paciente['alergias'] ?? ''))): ?>
+                                        <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 mt-0.5 shrink-0"></i>
+                                        <div>
+                                            <h5 class="text-xs font-black text-red-700 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
+                                            <p class="text-sm font-bold text-red-600"><?php echo nl2br(htmlspecialchars($paciente['alergias'])); ?></p>
+                                        </div>
+                                    <?php else: ?>
+                                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 mt-0.5 shrink-0"></i>
+                                        <div>
+                                            <h5 class="text-xs font-black text-slate-500 uppercase tracking-wider mb-1">Alerta Médica / Alergias</h5>
+                                            <p class="text-sm font-bold text-slate-400">Ninguna registrada</p>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -254,11 +293,15 @@ if (!$paciente) {
                                 <h2 class="text-2xl font-black text-slate-800">Odontograma General</h2>
                                 <p class="text-sm text-slate-500">Selecciona un diente para registrar hallazgos.</p>
                             </div>
-                            <div class="flex gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
+                            <div class="flex flex-wrap gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
                                 <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
                                         class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></span> Caries</div>
                                 <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
                                         class="w-3 h-3 bg-blue-500 rounded-full shadow-sm"></span> Resina</div>
+                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
+                                        class="w-3 h-3 bg-amber-500 rounded-full shadow-sm"></span> Corona</div>
+                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
+                                        class="w-3 h-3 bg-slate-800 rounded-full shadow-sm"></span> Ausente</div>
                             </div>
                         </div>
 

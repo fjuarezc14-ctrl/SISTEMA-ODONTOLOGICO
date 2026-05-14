@@ -160,7 +160,7 @@ $resultado_pacientes = $controller->index();
                                 <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo *</label>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombres y Apellidos *</label>
                                 <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                             </div>
                         </div>
@@ -203,6 +203,7 @@ $resultado_pacientes = $controller->index();
                             </div>
                         </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lugar de Nacimiento</label>
                                 <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
@@ -262,7 +263,7 @@ $resultado_pacientes = $controller->index();
                         <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombre Completo *</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombres y Apellidos *</label>
                         <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
                     </div>
                 </div>
