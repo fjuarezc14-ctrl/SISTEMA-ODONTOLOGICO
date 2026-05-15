@@ -54,16 +54,29 @@ class CitaController {
                 $cita['css_height'] = $duracion_px;
                 
                 // Colores según estado o tipo
+                $fecha_hora_cita = strtotime($cita['fecha'] . ' ' . $cita['hora_inicio']);
+                $es_pasada = ($fecha_hora_cita < time());
+
                 if($cita['estado'] == 'Completada') {
                     $cita['css_color'] = 'bg-emerald-50 border-emerald-500 text-emerald-800';
                     $cita['css_text_light'] = 'text-emerald-600';
                 } elseif($cita['estado'] == 'Cancelada') {
                     $cita['css_color'] = 'bg-red-50 border-red-500 text-red-800';
                     $cita['css_text_light'] = 'text-red-600';
+                } elseif($cita['estado'] == 'En Curso') {
+                    $cita['css_color'] = 'bg-blue-50 border-blue-500 text-blue-800 animate-pulse';
+                    $cita['css_text_light'] = 'text-blue-600';
+                    $cita['motivo'] = '[EN SALA] ' . $cita['motivo'];
                 } else {
-                    // Pendiente: azul o naranja dependiendo
-                    $cita['css_color'] = 'bg-brand-light border-brand text-teal-900';
-                    $cita['css_text_light'] = 'text-brand';
+                    // Pendiente: azul o naranja dependiendo si ya pasó la hora
+                    if ($es_pasada) {
+                        $cita['css_color'] = 'bg-orange-50 border-orange-500 text-orange-800';
+                        $cita['css_text_light'] = 'text-orange-600';
+                        $cita['motivo'] = '[ATRASADA] ' . $cita['motivo'];
+                    } else {
+                        $cita['css_color'] = 'bg-brand-light border-brand text-teal-900';
+                        $cita['css_text_light'] = 'text-brand';
+                    }
                 }
                 
                 $agenda[$dia_semana][] = $cita;

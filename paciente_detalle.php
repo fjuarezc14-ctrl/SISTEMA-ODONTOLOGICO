@@ -281,6 +281,17 @@ if (!$paciente) {
                                     <?php endif; ?>
                                 </div>
                             </div>
+                            
+                            <!-- Acciones Rápidas -->
+                            <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
+                                <button onclick="abrirModalReceta()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i> Generar Receta
+                                </button>
+                                <a href="agenda.php?paciente_id=<?php echo $paciente_id; ?>" class="w-full bg-brand hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                    <i data-lucide="calendar-plus" class="w-4 h-4"></i> Agendar Cita
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -616,6 +627,38 @@ if (!$paciente) {
 
 
     </main>
+
+    <!-- Modal Generar Receta -->
+    <div id="modalReceta" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i> Generar Receta Médica</h3>
+                <button onclick="cerrarModalReceta()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <form id="formReceta" action="generar_receta.php" method="POST" target="_blank">
+                    <input type="hidden" name="id" value="<?php echo $paciente_id; ?>">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rp. (Medicamentos)</label>
+                        <textarea name="medicamentos" id="medicamentos_receta" rows="4" placeholder="Ej: Amoxicilina 500mg - 1 caja&#10;Ibuprofeno 400mg - 1 blister" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Indicaciones</label>
+                        <textarea name="indicaciones" id="indicaciones_receta" rows="4" placeholder="Ej: Tomar 1 cápsula cada 8 horas por 5 días.&#10;Tomar 1 tableta cada 8 horas por dolor." class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"></textarea>
+                    </div>
+
+                    <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-4">
+                        <button type="button" onclick="cerrarModalReceta()" class="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition">Cancelar</button>
+                        <button type="submit" onclick="setTimeout(cerrarModalReceta, 500)" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Receta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Registrar Pago -->
     <div id="modalRegistrarPago" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -2214,6 +2257,25 @@ if (!$paciente) {
         document.addEventListener('DOMContentLoaded', () => {
             cargarListaArchivos();
         });
+
+        // Modal Receta
+        function abrirModalReceta() {
+            const modal = document.getElementById('modalReceta');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+            document.getElementById('medicamentos_receta').value = '';
+            document.getElementById('indicaciones_receta').value = '';
+        }
+
+        function cerrarModalReceta() {
+            const modal = document.getElementById('modalReceta');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
     </script>
 
 </body>

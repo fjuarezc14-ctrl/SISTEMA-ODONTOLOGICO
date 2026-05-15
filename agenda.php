@@ -11,7 +11,11 @@ require_once 'controllers/PacienteController.php';
 $citaCtrl = new CitaController();
 $pacienteCtrl = new PacienteController();
 
+$pre_paciente_id = isset($_GET['paciente_id']) ? intval($_GET['paciente_id']) : 0;
+
 $mensaje = "";
+$mantener_modal_abierto = false;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
     if ($_POST['accion'] == 'nueva_cita') {
         $resultado = $citaCtrl->store($_POST);
@@ -19,6 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
             $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>¡Cita guardada con éxito!</div>";
         } else {
             $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al guardar: " . htmlspecialchars($resultado) . "</div>";
+            $mantener_modal_abierto = true;
+            if (isset($_POST['paciente_id'])) {
+                $pre_paciente_id = intval($_POST['paciente_id']);
+            }
         }
     } else if ($_POST['accion'] == 'cambiar_estado') {
         $resultado = $citaCtrl->cambiarEstado($_POST['cita_id'], $_POST['nuevo_estado']);
@@ -95,7 +103,8 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
     <title>Agenda Interactiva - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
         
@@ -169,7 +178,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                 </div>
             </div>
 
-            <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            <div id="agendaWrapper" class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-x-auto overflow-y-hidden transition-all duration-300 origin-left">
                 
                 <div class="calendar-grid border-b border-slate-200 bg-slate-50 shrink-0">
                     <div class="p-3 border-r border-slate-200">
@@ -346,9 +355,9 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 
         </div>
     
-    <!-- Modal Nueva Cita -->
-    <div id="modal-nueva-cita" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 transition-opacity">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+    <!-- Panel Lateral Nueva Cita -->
+    <div id="modal-nueva-cita" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-[-10px_0_30px_rgba(0,0,0,0.1)] z-50 hidden flex-col border-l border-slate-200 transition-transform transform translate-x-full duration-300">
+        <div class="flex-1 flex flex-col h-full overflow-hidden">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center shrink-0">
                 <h2 class="text-xl font-black text-slate-800 flex items-center gap-2">
                     <i data-lucide="calendar-plus" class="text-brand w-5 h-5"></i> Agendar Cita
@@ -363,11 +372,11 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Paciente</label>
-                        <select name="paciente_id" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white">
+                        <select name="paciente_id" id="pacienteSelect" required class="w-full rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white">
                             <option value="">Seleccione un paciente...</option>
                             <?php if($pacientes && $pacientes->num_rows > 0): ?>
                                 <?php while($p = $pacientes->fetch_assoc()): ?>
-                                    <option value="<?php echo $p['id']; ?>"><?php echo htmlspecialchars($p['nombre'] . ' - ' . $p['dni']); ?></option>
+                                    <option value="<?php echo $p['id']; ?>" <?php echo ($p['id'] == $pre_paciente_id) ? 'selected' : ''; ?>><?php echo htmlspecialchars($p['nombre'] . ' - ' . $p['dni']); ?></option>
                                 <?php endwhile; ?>
                             <?php endif; ?>
                         </select>
@@ -375,23 +384,23 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha</label>
-                        <input type="date" name="fecha" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        <input type="date" name="fecha" min="<?php echo date('Y-m-d'); ?>" value="<?php echo isset($_POST['fecha']) ? htmlspecialchars($_POST['fecha']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                            <input type="time" name="hora_inicio" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            <input type="time" name="hora_inicio" value="<?php echo isset($_POST['hora_inicio']) ? htmlspecialchars($_POST['hora_inicio']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Fin</label>
-                            <input type="time" name="hora_fin" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            <input type="time" name="hora_fin" value="<?php echo isset($_POST['hora_fin']) ? htmlspecialchars($_POST['hora_fin']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Motivo / Tratamiento</label>
-                        <input type="text" name="motivo" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        <input type="text" name="motivo" value="<?php echo isset($_POST['motivo']) ? htmlspecialchars($_POST['motivo']) : ''; ?>" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
                     </div>
 
                     <div class="pt-4 flex gap-3">
@@ -410,10 +419,26 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 
         function toggleModalCita() {
             const modal = document.getElementById('modal-nueva-cita');
-            modal.classList.toggle('hidden');
-            modal.classList.toggle('flex');
+            const wrapper = document.getElementById('agendaWrapper');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                wrapper.style.marginRight = '448px'; // max-w-md width
+                setTimeout(() => {
+                    modal.classList.remove('translate-x-full');
+                    modal.classList.add('translate-x-0');
+                }, 10);
+            } else {
+                modal.classList.remove('translate-x-0');
+                modal.classList.add('translate-x-full');
+                wrapper.style.marginRight = '0';
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 300);
+            }
         }
-
     </script>
 
     <!-- Modal Detalle/Edición de Cita -->
@@ -429,6 +454,8 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <h3 class="text-xl font-black text-slate-800" id="detalle_paciente_nombre">Nombre del Paciente</h3>
                     <p class="text-sm font-medium text-slate-500 flex items-center gap-1 mt-1">
                         <i data-lucide="clock" class="w-4 h-4"></i> <span id="detalle_horario">00:00 - 00:00</span>
+                        <span class="mx-2 text-slate-300">|</span>
+                        <i data-lucide="phone" class="w-4 h-4"></i> <span id="detalle_telefono">---</span>
                     </p>
                 </div>
                 
@@ -456,11 +483,14 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                         <input type="hidden" name="cita_id" id="detalle_cita_id">
                         
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cambiar Estado Rápido</p>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition text-sm">
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="submit" name="nuevo_estado" value="En Curso" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-blue-200 text-blue-700 font-bold hover:bg-blue-50 transition text-xs" title="El paciente ya está en clínica atendiéndose">
+                                <i data-lucide="play-circle" class="w-4 h-4"></i> En Curso
+                            </button>
+                            <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition text-xs">
                                 <i data-lucide="check-circle-2" class="w-4 h-4"></i> Completada
                             </button>
-                            <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition text-sm">
+                            <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition text-xs">
                                 <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelada
                             </button>
                         </div>
@@ -519,15 +549,19 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
             // Llenar UI visual
             document.getElementById('detalle_paciente_nombre').innerText = cita.paciente_nombre;
             document.getElementById('detalle_horario').innerText = cita.hora_inicio.substring(0,5) + ' - ' + cita.hora_fin.substring(0,5);
+            document.getElementById('detalle_telefono').innerText = cita.paciente_telefono || 'Sin Teléfono';
             document.getElementById('detalle_motivo').innerText = cita.motivo || 'Sin motivo especificado';
             
             const badge = document.getElementById('detalle_estado_badge');
-            badge.innerText = cita.estado;
+            // Usar estado_visual si existe (creado en PHP para 'Atrasada')
+            let estadoMostrar = cita.estado_visual ? cita.estado_visual : cita.estado;
+            badge.innerText = estadoMostrar;
             
             // Colores del badge
             badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ";
             if(cita.estado === 'Completada') badge.className += "bg-emerald-100 text-emerald-700";
             else if(cita.estado === 'Cancelada') badge.className += "bg-red-100 text-red-700";
+            else if(estadoMostrar === 'Atrasada') badge.className += "bg-orange-100 text-orange-700";
             else badge.className += "bg-blue-100 text-blue-700";
 
             // Lógica de Bloqueo Clínico
@@ -565,6 +599,25 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
         
         // Inicializar TODOS los iconos una vez que todo el DOM está cargado
         lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar buscador de pacientes
+            new TomSelect('#pacienteSelect', {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: 'Buscar paciente por nombre o DNI...'
+            });
+        });
+
+        <?php if ($pre_paciente_id > 0 || $mantener_modal_abierto): ?>
+        // Abrir automáticamente el modal si se seleccionó desde perfil de paciente o hubo un error
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(toggleModalCita, 100);
+        });
+        <?php endif; ?>
     </script>
 
 </body>

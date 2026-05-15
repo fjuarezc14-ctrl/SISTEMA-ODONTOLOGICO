@@ -8,7 +8,7 @@ class Cita {
 
     // Obtener las citas de una semana específica (basada en una fecha)
     public function getCitasSemana($fecha_inicio, $fecha_fin) {
-        $sql = "SELECT c.*, p.nombre as paciente_nombre 
+        $sql = "SELECT c.*, p.nombre as paciente_nombre, p.telefono as paciente_telefono 
                 FROM citas c 
                 JOIN pacientes p ON c.paciente_id = p.id 
                 WHERE c.fecha >= ? AND c.fecha <= ?
