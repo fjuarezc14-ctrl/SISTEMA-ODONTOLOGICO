@@ -1,0 +1,21 @@
+# Archivos generados y subidas de usuarios
+uploads/
+/uploads/*
+!uploads/.gitkeep
+
+# Dependencias (si usaras Composer en el futuro)
+vendor/
+
+# Archivos de entorno y configuración local
+.env
+.env.local
+.env.*.local
+config.local.php
+
+# Logs de error de PHP
+error_log
+php_errors.log
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db

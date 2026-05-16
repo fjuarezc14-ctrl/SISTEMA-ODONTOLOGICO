@@ -31,6 +31,12 @@ $historial_evolutivo = $evolucionCtrl->getByPaciente($paciente_id);
 
 $cita_id_activa = $_GET['cita_id'] ?? null;
 
+if ($cita_id_activa) {
+    require_once 'controllers/CitaController.php';
+    $citaCtrlAux = new CitaController();
+    $citaCtrlAux->cambiarEstado($cita_id_activa, 'En Curso');
+}
+
 if (!$paciente) {
     // Paciente no encontrado
     header("Location: pacientes.php");
@@ -562,8 +568,8 @@ if (!$paciente) {
                                     <button onclick="imprimirPresupuesto()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimir
                                     </button>
-                                    <button id="btnEnviarPresupuesto" onclick="enviarWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
-                                        <i data-lucide="send" class="w-4 h-4"></i> WhatsApp / Enviar
+                                    <button id="btnEnviarPresupuesto" onclick="abrirModalCompartir()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="share-2" class="w-4 h-4"></i> Enviar Propuesta
                                     </button>
                                     <button id="btnAprobarPresupuesto" onclick="cambiarEstadoPresupuesto('Aprobado')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow transition text-xs uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="check-circle" class="w-4 h-4"></i> Aprobar
@@ -713,6 +719,28 @@ if (!$paciente) {
             <div class="p-5 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end">
                 <button onclick="cerrarModalPago()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
                 <button onclick="confirmarRegistrarPago()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-700 shadow-md transition text-sm">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Compartir Presupuesto -->
+    <div id="modalCompartirPresupuesto" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 flex items-center gap-2"><i data-lucide="share-2" class="w-5 h-5 text-indigo-600"></i> Enviar Propuesta</h3>
+                <button onclick="cerrarModalCompartir()" class="text-slate-400 hover:text-red-500 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-5 flex flex-col gap-3">
+                <p class="text-xs text-slate-500 font-medium text-center mb-2">Seleccione el medio para enviar al paciente. El estado pasará automáticamente a "Enviado".</p>
+                <button onclick="enviarPorWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i> Enviar por WhatsApp
+                </button>
+                <button onclick="enviarPorEmail()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3">
+                    <i data-lucide="mail" class="w-5 h-5"></i> Enviar por Email
+                </button>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50">
+                <button onclick="cerrarModalCompartir()" class="w-full px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
             </div>
         </div>
     </div>
@@ -1760,8 +1788,9 @@ if (!$paciente) {
         }
 
         // --- Estado y eliminación ---
-        async function cambiarEstadoPresupuesto(nuevoEstado) {
-            if (!presupuestoActivo || !confirm(`¿Cambiar estado a "${nuevoEstado}"?`)) return;
+        async function cambiarEstadoPresupuesto(nuevoEstado, pedirConfirmacion = true) {
+            if (!presupuestoActivo) return;
+            if (pedirConfirmacion && !confirm(`¿Cambiar estado a "${nuevoEstado}"?`)) return;
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -1799,10 +1828,37 @@ if (!$paciente) {
             window.open('imprimir_presupuesto.php?id=' + presupuestoActivo.id + '&print=1', '_blank');
         }
 
-        function enviarWhatsApp() {
+        function abrirModalCompartir() {
             if (!presupuestoActivo) return;
-            // Usamos un teléfono genérico si no se guardó la variable PHP de teléfono explícitamente en el JS. 
-            // Tratamos de buscar si hay alguna parte donde se imprima, si no, alertamos.
+            const modal = document.getElementById('modalCompartirPresupuesto');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+        }
+
+        function cerrarModalCompartir() {
+            const modal = document.getElementById('modalCompartirPresupuesto');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function marcarPresupuestoComoEnviado() {
+            if (presupuestoActivo && presupuestoActivo.estado === 'Borrador') {
+                cambiarEstadoPresupuesto('Enviado', false);
+            }
+            cerrarModalCompartir();
+        }
+
+        function obtenerMensajePresupuesto() {
+            const total = parseFloat(presupuestoActivo.total).toFixed(2);
+            const numPR = presupuestoActivo.id.toString().padStart(5, '0');
+            return `Hola <?php echo htmlspecialchars($paciente['nombre']); ?>, te adjuntamos el detalle de tu presupuesto odontológico N° PR-${numPR} por un total de S/ ${total}. Quedamos atentos a cualquier duda. Atte: MahuDent.`;
+        }
+
+        function enviarPorWhatsApp() {
             const telefonoElem = document.getElementById('pacienteTelefonoTxt');
             const telefono = telefonoElem ? telefonoElem.innerText.replace(/\D/g, '') : "<?php echo preg_replace('/[^0-9]/', '', $paciente['telefono']); ?>";
             
@@ -1810,14 +1866,24 @@ if (!$paciente) {
                 alert("El paciente no tiene un número de teléfono válido registrado.");
                 return;
             }
-            const total = parseFloat(presupuestoActivo.total).toFixed(2);
-            const numPR = presupuestoActivo.id.toString().padStart(5, '0');
-            const msj = `Hola <?php echo htmlspecialchars($paciente['nombre']); ?>, te adjuntamos el detalle de tu presupuesto odontológico N° PR-${numPR} por un total de S/ ${total}. Quedamos atentos a cualquier duda. Atte: MahuDent.`;
-            
-            // Si el teléfono no empieza con un código de país (ej. no tiene 51), lo prefijamos asumiendo Perú por defecto.
+            const msj = obtenerMensajePresupuesto();
             const prefijo = telefono.startsWith('51') ? '' : '51';
             const url = `https://wa.me/${prefijo}${telefono}?text=${encodeURIComponent(msj)}`;
             window.open(url, '_blank');
+            marcarPresupuestoComoEnviado();
+        }
+
+        function enviarPorEmail() {
+            const email = "<?php echo htmlspecialchars($paciente['email']); ?>";
+            if (!email) {
+                alert("El paciente no tiene un correo electrónico registrado.");
+                return;
+            }
+            const msj = obtenerMensajePresupuesto();
+            const subject = "Detalle de Presupuesto Odontológico - MahuDent";
+            const url = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msj)}`;
+            window.open(url, '_blank');
+            marcarPresupuestoComoEnviado();
         }
 
         function cerrarEditorPresupuesto() {
@@ -1934,7 +2000,14 @@ if (!$paciente) {
                     actualizarTotalesUI(presupuestoActivo);
                     renderizarPagos(response.resumen.pagos);
                     cerrarModalPago();
-                    cargarListaPresupuestos(); // Actualiza la lista principal si muestra saldos
+                    
+                    // Si el estado es Borrador o Enviado, lo pasamos a Aprobado automáticamente
+                    if (presupuestoActivo.estado === 'Borrador' || presupuestoActivo.estado === 'Enviado') {
+                        cambiarEstadoPresupuesto('Aprobado', false);
+                    } else {
+                        cargarListaPresupuestos(); // Actualiza la lista si no cambió el estado
+                    }
+                    
                     alert('Pago registrado exitosamente.');
                 } else {
                     alert('Error: ' + response.error);

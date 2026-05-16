@@ -51,6 +51,26 @@ class Cita {
         return $result->num_rows > 0;
     }
 
+    // Verificar si existe cruce de horarios excluyendo una cita específica (para reprogramación)
+    public function verificarCruceExcluyendo($doctor_id, $fecha, $hora_inicio, $hora_fin, $cita_id_excluida) {
+        $sql = "SELECT id FROM citas 
+                WHERE doctor_id = ? 
+                AND fecha = ? 
+                AND id != ?
+                AND estado != 'Cancelada'
+                AND (
+                    (hora_inicio < ? AND hora_fin > ?) OR
+                    (hora_inicio < ? AND hora_fin > ?) OR
+                    (hora_inicio >= ? AND hora_fin <= ?)
+                )";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("isissssss", $doctor_id, $fecha, $cita_id_excluida, $hora_fin, $hora_inicio, $hora_inicio, $hora_inicio, $hora_inicio, $hora_fin);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->num_rows > 0;
+    }
+
+
     public function getById($id) {
         $sql = "SELECT c.*, p.nombre as paciente_nombre 
                 FROM citas c 

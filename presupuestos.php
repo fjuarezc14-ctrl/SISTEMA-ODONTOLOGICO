@@ -62,6 +62,8 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
     <title>Gestión Global de Presupuestos - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
@@ -259,6 +261,18 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
 
     <script>
         lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect("#selectNuevoPacientePresupuesto", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Buscar por nombre o DNI...",
+                maxOptions: 50
+            });
+        });
 
         function irANuevoPresupuesto() {
             const pacienteId = document.getElementById('selectNuevoPacientePresupuesto').value;

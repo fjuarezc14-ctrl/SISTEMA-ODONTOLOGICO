@@ -139,11 +139,14 @@ class CitaController {
         // Obtener la cita actual para saber el doctor_id
         $citaActual = $this->citaModel->getById($id);
         if(!$citaActual) return "La cita no existe.";
+        
+        $doctor_id = $citaActual['doctor_id'];
 
-        // Verificar cruce ignorando la cita actual (el modelo actual no tiene un 'excepto este ID', 
-        // pero podemos asumir que si se reprograma, hay que evitar cruces).
-        // NOTA: Para ser perfecto, verificarCruce debería excluir el ID actual. 
-        // Por simplicidad en este parche, confiaremos en que el usuario revisa visualmente.
+        // Verificar si hay cruce de horarios ignorando la cita actual
+        $cruce = $this->citaModel->verificarCruceExcluyendo($doctor_id, $fecha, $hora_inicio, $hora_fin, $id);
+        if ($cruce) {
+            return "El doctor ya tiene otra cita programada que se cruza con este horario.";
+        }
 
         $actualizadoFechas = $this->citaModel->updateFechas($id, $fecha, $hora_inicio, $hora_fin);
         if ($actualizadoFechas === true) {

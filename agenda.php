@@ -199,12 +199,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                 </div>
                 <div class="flex-1 overflow-y-auto no-scrollbar relative">
                     
-                    <div class="absolute w-full flex items-center z-10" style="top: 150px;">
+                    <?php
+                        $current_hour = (int)date('H');
+                        $current_minute = (int)date('i');
+                        // El calendario empieza a las 08:00 (480 minutos)
+                        $minutos_desde_8am = (($current_hour - 8) * 60) + $current_minute;
+                        $linea_roja_top = max(0, $minutos_desde_8am); 
+                        $hora_actual_formato = date('H:i');
+                    ?>
+                    <div class="absolute w-full flex items-center z-20 pointer-events-none" style="top: <?php echo $linea_roja_top; ?>px;">
                         <div class="w-14 text-right pr-2">
-                            <span class="text-[10px] font-bold text-red-500">10:30</span>
+                            <span class="text-[10px] font-bold text-red-500 bg-white/90 px-1 rounded shadow-sm"><?php echo $hora_actual_formato; ?></span>
                         </div>
                         <div class="flex-1 border-t-2 border-red-500 border-dashed relative">
-                            <div class="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div class="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
                         </div>
                     </div>
 
@@ -234,11 +242,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[1] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -255,11 +272,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[2] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -276,11 +302,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[3] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -297,11 +332,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[4] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -318,11 +362,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[5] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -339,11 +392,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[6] as $cita): ?>
-                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 <?php echo $cita['css_color']; ?>\" 
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
-                                <p class="text-[10px] font-bold uppercase mb-0.5"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
-                                <p class="text-xs font-bold leading-tight"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
-                                <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             </div>
                             <?php endforeach; ?>
                         </div>
@@ -478,26 +540,23 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <div class="h-px bg-slate-100 w-full my-1"></div>
 
                     <!-- Form Cambiar Estado -->
-                    <form method="POST" action="agenda.php" class="flex flex-col gap-2">
+                    <form method="POST" action="" class="flex flex-col gap-2">
                         <input type="hidden" name="accion" value="cambiar_estado">
                         <input type="hidden" name="cita_id" id="detalle_cita_id">
                         
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Cambiar Estado Rápido</p>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button type="submit" name="nuevo_estado" value="En Curso" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-blue-200 text-blue-700 font-bold hover:bg-blue-50 transition text-xs" title="El paciente ya está en clínica atendiéndose">
-                                <i data-lucide="play-circle" class="w-4 h-4"></i> En Curso
-                            </button>
-                            <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition text-xs">
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="submit" name="nuevo_estado" value="Completada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-emerald-200 text-emerald-700 font-bold hover:bg-emerald-50 transition text-sm">
                                 <i data-lucide="check-circle-2" class="w-4 h-4"></i> Completada
                             </button>
-                            <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-1 py-2 px-2 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition text-xs">
+                            <button type="submit" name="nuevo_estado" value="Cancelada" class="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border-2 border-red-200 text-red-600 font-bold hover:bg-red-50 transition text-sm">
                                 <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelada
                             </button>
                         </div>
                     </form>
 
                     <!-- Form Reprogramar -->
-                    <form method="POST" action="agenda.php" class="flex flex-col gap-2">
+                    <form method="POST" action="" class="flex flex-col gap-2">
                         <input type="hidden" name="accion" value="reprogramar_cita">
                         <input type="hidden" name="cita_id" id="reprogramar_cita_id">
                         
@@ -511,7 +570,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     </form>
                     
                     <!-- Form Eliminar -->
-                    <form method="POST" action="agenda.php" class="mt-2" onsubmit="return confirm('¿Estás seguro de ELIMINAR esta cita físicamente? Esto no se puede deshacer.');">
+                    <form method="POST" action="" class="mt-2" onsubmit="return confirm('¿Estás seguro de ELIMINAR esta cita físicamente? Esto no se puede deshacer.');">
                         <input type="hidden" name="accion" value="eliminar_cita">
                         <input type="hidden" name="cita_id" id="eliminar_cita_id">
                         <button type="submit" class="w-full py-2 flex items-center justify-center gap-2 text-red-500 hover:text-red-700 font-bold text-xs uppercase tracking-wider transition">
