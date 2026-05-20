@@ -62,13 +62,13 @@ $pacientes = $pacienteCtrl->index();
 
 // Generar array de días de la semana actual
 $dias_semana = [];
-$nombres_dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-for($i=0; $i<6; $i++) {
+$nombres_dias = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+for($i=0; $i<7; $i++) {
     $fecha_dia = date('Y-m-d', strtotime($lunes_fecha . " +$i days"));
     $dias_semana[$i+1] = [
         'nombre' => $nombres_dias[$i],
         'numero' => date('d', strtotime($fecha_dia)),
-        'fecha' => $fecha_dia,
+        'fecha'  => $fecha_dia,
         'es_hoy' => ($fecha_dia == date('Y-m-d'))
     ];
 }
@@ -79,9 +79,9 @@ $meses = ['January'=>'Enero', 'February'=>'Febrero', 'March'=>'Marzo', 'April'=>
 $mes_inicio = $meses[date('F', strtotime($lunes_fecha))];
 $anio_inicio = date('Y', strtotime($lunes_fecha));
 
-$sabado_fecha = date('Y-m-d', strtotime($lunes_fecha . ' + 5 days'));
-$mes_fin = $meses[date('F', strtotime($sabado_fecha))];
-$anio_fin = date('Y', strtotime($sabado_fecha));
+$domingo_fecha = date('Y-m-d', strtotime($lunes_fecha . ' + 6 days'));
+$mes_fin = $meses[date('F', strtotime($domingo_fecha))];
+$anio_fin = date('Y', strtotime($domingo_fecha));
 
 if ($mes_inicio == $mes_fin) {
     $titulo_mes = $mes_inicio . ' ' . $anio_inicio;
@@ -126,8 +126,8 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
         /* CSS personalizado para la cuadrícula del calendario */
         .calendar-grid {
             display: grid;
-            grid-template-columns: 60px repeat(6, 1fr); /* Hora + 6 días (Lun-Sáb) */
-            min-width: 800px; /* Para asegurar el scroll en móviles */
+            grid-template-columns: 60px repeat(7, 1fr); /* Hora + 7 días (Lun-Dom) */
+            min-width: 900px; /* Para asegurar el scroll en móviles */
         }
         
         /* Ocultar scrollbar para un look más limpio */
@@ -184,15 +184,15 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <div class="p-3 border-r border-slate-200">
                         <span class="text-xs text-slate-400 font-bold">HORA</span>
                     </div>
-                    <?php for($i=1; $i<=6; $i++): ?>
-                    <div class="p-3 border-r border-slate-200 text-center <?php echo $dias_semana[$i]['es_hoy'] ? 'relative overflow-hidden' : ''; ?>">
+                    <?php for($i=1; $i<=7; $i++): ?>
+                    <div class="p-3 border-r border-slate-200 text-center <?php echo $dias_semana[$i]['es_hoy'] ? 'relative overflow-hidden' : ($i==7 ? 'bg-amber-50/40' : ''); ?>">
                         <?php if($dias_semana[$i]['es_hoy']): ?>
                             <div class="absolute top-0 left-0 w-full h-1 bg-brand"></div>
                             <p class="text-xs font-bold text-brand uppercase mt-1"><?php echo $dias_semana[$i]['nombre']; ?></p>
                             <p class="text-xl font-black text-brand bg-brand-light w-10 h-10 mx-auto flex items-center justify-center rounded-full mt-1"><?php echo $dias_semana[$i]['numero']; ?></p>
                         <?php else: ?>
-                            <p class="text-xs font-bold text-slate-500 uppercase"><?php echo $dias_semana[$i]['nombre']; ?></p>
-                            <p class="text-xl font-black text-slate-700"><?php echo $dias_semana[$i]['numero']; ?></p>
+                            <p class="text-xs font-bold <?php echo $i==7 ? 'text-amber-600' : 'text-slate-500'; ?> uppercase"><?php echo $dias_semana[$i]['nombre']; ?></p>
+                            <p class="text-xl font-black <?php echo $i==7 ? 'text-amber-700' : 'text-slate-700'; ?>"><?php echo $dias_semana[$i]['numero']; ?></p>
                         <?php endif; ?>
                     </div>
                     <?php endfor; ?>
@@ -202,11 +202,13 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <?php
                         $current_hour = (int)date('H');
                         $current_minute = (int)date('i');
-                        // El calendario empieza a las 08:00 (480 minutos)
+                        // El calendario va de 08:00 a 20:00
+                        $mostrar_linea = ($current_hour >= 8 && $current_hour < 20);
                         $minutos_desde_8am = (($current_hour - 8) * 60) + $current_minute;
                         $linea_roja_top = max(0, $minutos_desde_8am); 
                         $hora_actual_formato = date('H:i');
                     ?>
+                    <?php if($mostrar_linea): ?>
                     <div class="absolute w-full flex items-center z-20 pointer-events-none" style="top: <?php echo $linea_roja_top; ?>px;">
                         <div class="w-14 text-right pr-2">
                             <span class="text-[10px] font-bold text-red-500 bg-white/90 px-1 rounded shadow-sm"><?php echo $hora_actual_formato; ?></span>
@@ -215,6 +217,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             <div class="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
                         </div>
                     </div>
+                    <?php endif; ?>
 
                     <div class="calendar-grid">
                         
@@ -227,10 +230,20 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">13:00</span></div>
                             <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">14:00</span></div>
                             <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">15:00</span></div>
+                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">16:00</span></div>
+                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">17:00</span></div>
+                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">18:00</span></div>
+                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">19:00</span></div>
+                            <div class="h-[60px] border-b border-slate-100 flex justify-end pr-2 pt-1"><span class="text-xs text-slate-400 font-medium">20:00</span></div>
                         </div>
 
                         <div class="border-r border-slate-200 relative bg-white">
                             <!-- Líneas de horas -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
                             <div class="h-[60px] border-b border-slate-100"></div>
@@ -392,6 +405,42 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             
                             <!-- Citas dinámicas -->
                             <?php foreach($agenda[6] as $cita): ?>
+                            <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
+                                 style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
+                                <?php if ($cita['css_height'] <= 35): ?>
+                                    <div class="flex items-center gap-1 h-full overflow-hidden">
+                                        <p class="text-[9px] font-black uppercase shrink-0"><?php echo date("H:i", strtotime($cita['hora_inicio'])); ?></p>
+                                        <p class="text-[10px] font-bold truncate leading-none mt-px"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-[10px] font-bold uppercase mb-0.5 truncate"><?php echo date("H:i", strtotime($cita['hora_inicio'])) . ' - ' . date("H:i", strtotime($cita['hora_fin'])); ?></p>
+                                    <p class="text-xs font-bold leading-tight truncate"><?php echo htmlspecialchars($cita['paciente_nombre']); ?></p>
+                                    <?php if ($cita['css_height'] >= 55): ?>
+                                    <p class="text-[10px] <?php echo $cita['css_text_light']; ?> truncate mt-0.5"><?php echo htmlspecialchars($cita['motivo']); ?></p>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+<div class="relative bg-amber-50/40">
+                            <!-- Líneas de horas Domingo -->
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            <div class="h-[60px] border-b border-slate-100"></div>
+                            
+                            <!-- Citas del Domingo -->
+                            <?php foreach($agenda[7] as $cita): ?>
                             <div onclick='abrirDetalleCita(<?php echo htmlspecialchars(json_encode($cita), ENT_QUOTES, "UTF-8"); ?>)' class="absolute w-[95%] left-[2.5%] border-l-4 rounded p-1.5 shadow-sm hover:shadow-md transition cursor-pointer z-10 overflow-hidden hover:z-50 <?php echo $cita['css_color']; ?>" 
                                  style="top: <?php echo $cita['css_top']; ?>px; height: <?php echo $cita['css_height']; ?>px;">
                                 <?php if ($cita['css_height'] <= 35): ?>
@@ -669,6 +718,18 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                 },
                 placeholder: 'Buscar paciente por nombre o DNI...'
             });
+        });
+
+        // Cerrar modales con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (!document.getElementById('modal-nueva-cita').classList.contains('hidden')) {
+                    toggleModalCita();
+                }
+                if (!document.getElementById('modalDetalleCita').classList.contains('hidden')) {
+                    cerrarDetalleCita();
+                }
+            }
         });
 
         <?php if ($pre_paciente_id > 0 || $mantener_modal_abierto): ?>

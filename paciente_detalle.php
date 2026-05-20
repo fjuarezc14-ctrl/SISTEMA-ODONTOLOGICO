@@ -286,11 +286,17 @@ if (!$paciente) {
                                         </div>
                                     <?php endif; ?>
                                 </div>
+                                <?php if ($paciente['embarazada'] == '1'): ?>
+                                <div class="mt-3 bg-pink-100/50 border border-pink-200 rounded-lg p-2 flex items-center gap-2">
+                                    <i data-lucide="heart" class="w-4 h-4 text-pink-500 fill-pink-500"></i>
+                                    <span class="text-[11px] font-black text-pink-700 uppercase tracking-wider">Paciente Embarazada</span>
+                                </div>
+                                <?php endif; ?>
                             </div>
                             
                             <!-- Acciones Rápidas -->
                             <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
-                                <button onclick="abrirModalReceta()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="file-text" class="w-4 h-4"></i> Generar Receta
                                 </button>
                                 <a href="agenda.php?paciente_id=<?php echo $paciente_id; ?>" class="w-full bg-brand hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
@@ -304,8 +310,10 @@ if (!$paciente) {
 
                 <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
                     <div class="flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto">
+                        <button onclick="document.getElementById('seccion_antecedentes').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Antecedentes</button>
                         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
                         <button onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
+                        <button onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Recetas</button>
                         <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
                     </div>
 
@@ -441,7 +449,164 @@ if (!$paciente) {
                         </div>
                     </div>
 
-                    <!-- PRESUPUESTOS -->
+                    <!-- TRIAJE Y SIGNOS VITALES -->
+                    <?php
+                    $stmt_signos = $conn->prepare("SELECT * FROM signos_vitales WHERE paciente_id = ? ORDER BY fecha_registro DESC LIMIT 1");
+                    if ($stmt_signos) {
+                        $stmt_signos->bind_param('i', $paciente_id);
+                        $stmt_signos->execute();
+                        $res_signos = $stmt_signos->get_result();
+                        $ultimo_signo = $res_signos->fetch_assoc() ?: [];
+                    } else { $ultimo_signo = []; }
+                    ?>
+                    <div id="seccion_triaje" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6 mb-6">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5 text-rose-500"></i> Triaje / Signos Vitales
+                            </h3>
+                            <div class="flex gap-2">
+                                <button onclick="verHistorialTriaje()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                    <i data-lucide="history" class="w-4 h-4"></i> Ver Historial
+                                </button>
+                                <button id="btnGuardarTriaje" onclick="guardarTriaje()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 focus-within:border-rose-300 focus-within:ring-1 focus-within:ring-rose-200 transition">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">P.A. (mmHg)</label>
+                                    <input type="text" id="det_pa" class="w-full bg-transparent border-0 border-b-2 border-slate-200 focus:border-rose-500 focus:ring-0 p-1 font-bold text-slate-800" placeholder="<?php echo htmlspecialchars($ultimo_signo['presion_arterial'] ?? 'Ej: 120/80'); ?>">
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 focus-within:border-rose-300 focus-within:ring-1 focus-within:ring-rose-200 transition">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Pulso (lpm)</label>
+                                    <input type="text" id="det_pulso" class="w-full bg-transparent border-0 border-b-2 border-slate-200 focus:border-rose-500 focus:ring-0 p-1 font-bold text-slate-800" placeholder="<?php echo htmlspecialchars($ultimo_signo['pulso'] ?? 'Ej: 75'); ?>">
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 focus-within:border-rose-300 focus-within:ring-1 focus-within:ring-rose-200 transition">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">F.C. (lpm)</label>
+                                    <input type="text" id="det_fc" class="w-full bg-transparent border-0 border-b-2 border-slate-200 focus:border-rose-500 focus:ring-0 p-1 font-bold text-slate-800" placeholder="<?php echo htmlspecialchars($ultimo_signo['frecuencia_cardiaca'] ?? 'Ej: 80'); ?>">
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 focus-within:border-rose-300 focus-within:ring-1 focus-within:ring-rose-200 transition">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">F.R. (rpm)</label>
+                                    <input type="text" id="det_fr" class="w-full bg-transparent border-0 border-b-2 border-slate-200 focus:border-rose-500 focus:ring-0 p-1 font-bold text-slate-800" placeholder="<?php echo htmlspecialchars($ultimo_signo['frecuencia_resp'] ?? 'Ej: 16'); ?>">
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 focus-within:border-rose-300 focus-within:ring-1 focus-within:ring-rose-200 transition">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Temp. (°C)</label>
+                                    <input type="text" id="det_temp" class="w-full bg-transparent border-0 border-b-2 border-slate-200 focus:border-rose-500 focus:ring-0 p-1 font-bold text-slate-800" placeholder="<?php echo htmlspecialchars($ultimo_signo['temperatura'] ?? 'Ej: 36.5'); ?>">
+                                </div>
+                            </div>
+                            <p class="text-[10px] font-medium text-slate-400 mt-3 flex items-center gap-1"><i data-lucide="info" class="w-3 h-3"></i> Escriba en los campos para registrar nuevos valores. Los textos en gris muestran el último registro.</p>
+                        </div>
+                    </div>
+
+                    <!-- ANTECEDENTES CLINICOS -->
+                    <div id="seccion_antecedentes" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-6 mt-6">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                                <i data-lucide="clipboard-list" class="w-5 h-5 text-indigo-600"></i> Antecedentes Clínicos
+                            </h3>
+                            <div class="flex gap-2">
+                                <button id="btnEditarAntecedentes" onclick="toggleEditAntecedentes()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i> Editar
+                                </button>
+                                <button id="btnGuardarAntecedentes" onclick="guardarAntecedentes()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                                <div class="space-y-4">
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-bold text-slate-600">¿Padece de alguna enfermedad?</span>
+                                            <div class="flex gap-3">
+                                                <label class="flex items-center gap-1"><input type="radio" name="padece_enfermedad" value="1" class="antecedentes-radio" disabled <?php echo $paciente['padece_enfermedad'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                                <label class="flex items-center gap-1"><input type="radio" name="padece_enfermedad" value="0" class="antecedentes-radio" disabled <?php echo $paciente['padece_enfermedad'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="det_enfermedades_cronicas" class="antecedentes-input w-full bg-transparent border-0 border-b border-slate-200 p-1 text-xs" placeholder="Ninguna" value="<?php echo htmlspecialchars($paciente['enfermedades_cronicas']); ?>" readonly>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-bold text-slate-600">¿Consume medicamentos?</span>
+                                            <div class="flex gap-3">
+                                                <label class="flex items-center gap-1"><input type="radio" name="consume_medicamentos" value="1" class="antecedentes-radio" disabled <?php echo $paciente['consume_medicamentos'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                                <label class="flex items-center gap-1"><input type="radio" name="consume_medicamentos" value="0" class="antecedentes-radio" disabled <?php echo $paciente['consume_medicamentos'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="det_medicamentos_detalle" class="antecedentes-input w-full bg-transparent border-0 border-b border-slate-200 p-1 text-xs" placeholder="Ninguno" value="<?php echo htmlspecialchars($paciente['medicamentos_detalle']); ?>" readonly>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-bold text-slate-600">¿Alérgico a algún medicamento?</span>
+                                            <div class="flex gap-3">
+                                                <label class="flex items-center gap-1"><input type="radio" name="alergia_medicamentos" value="1" class="antecedentes-radio" disabled <?php echo $paciente['alergia_medicamentos'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                                <label class="flex items-center gap-1"><input type="radio" name="alergia_medicamentos" value="0" class="antecedentes-radio" disabled <?php echo $paciente['alergia_medicamentos'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="det_alergia_medicamentos_detalle" class="antecedentes-input w-full bg-transparent border-0 border-b border-slate-200 p-1 text-xs" placeholder="Ninguna" value="<?php echo htmlspecialchars($paciente['alergia_medicamentos_detalle']); ?>" readonly>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                        <span class="font-bold text-slate-600">¿Alérgico a la anestesia?</span>
+                                        <div class="flex gap-3">
+                                            <label class="flex items-center gap-1"><input type="radio" name="alergia_anestesia" value="1" class="antecedentes-radio" disabled <?php echo $paciente['alergia_anestesia'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                            <label class="flex items-center gap-1"><input type="radio" name="alergia_anestesia" value="0" class="antecedentes-radio" disabled <?php echo $paciente['alergia_anestesia'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="flex flex-col">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-bold text-slate-600">¿Antecedentes Familiares?</span>
+                                            <div class="flex gap-3">
+                                                <label class="flex items-center gap-1"><input type="radio" name="antecedentes_familiares" value="1" class="antecedentes-radio" disabled <?php echo $paciente['antecedentes_familiares'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                                <label class="flex items-center gap-1"><input type="radio" name="antecedentes_familiares" value="0" class="antecedentes-radio" disabled <?php echo $paciente['antecedentes_familiares'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" id="det_antecedentes_familiares_detalle" class="antecedentes-input w-full bg-transparent border-0 border-b border-slate-200 p-1 text-xs" placeholder="Ninguno" value="<?php echo htmlspecialchars($paciente['antecedentes_familiares_detalle']); ?>" readonly>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                        <span class="font-bold text-slate-600">¿Está embarazada?</span>
+                                        <div class="flex gap-3">
+                                            <label class="flex items-center gap-1"><input type="radio" name="embarazada" value="1" class="antecedentes-radio" disabled <?php echo $paciente['embarazada'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                            <label class="flex items-center gap-1"><input type="radio" name="embarazada" value="0" class="antecedentes-radio" disabled <?php echo $paciente['embarazada'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                                        <span class="font-bold text-slate-600">¿Le sangran las encías?</span>
+                                        <div class="flex gap-3">
+                                            <label class="flex items-center gap-1"><input type="radio" name="sangran_encias" value="1" class="antecedentes-radio" disabled <?php echo $paciente['sangran_encias'] == '1' ? 'checked' : ''; ?>> SÍ</label>
+                                            <label class="flex items-center gap-1"><input type="radio" name="sangran_encias" value="0" class="antecedentes-radio" disabled <?php echo $paciente['sangran_encias'] == '0' ? 'checked' : ''; ?>> NO</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-6">
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <label class="block font-bold mb-1 text-slate-600">Última visita al dentista:</label>
+                                    <input type="date" id="det_ultima_visita_dentista" class="antecedentes-input w-full bg-transparent border-0 border-b-2 border-slate-200 p-1 text-xs mb-3 font-medium text-slate-800" value="<?php echo $paciente['ultima_visita_dentista']; ?>" readonly>
+                                    <label class="block font-bold mb-1 text-slate-600">Motivo:</label>
+                                    <input type="text" id="det_ultima_visita_motivo" class="antecedentes-input w-full bg-transparent border-0 border-b-2 border-slate-200 p-1 text-xs font-medium text-slate-800" placeholder="Ej: Chequeo" value="<?php echo htmlspecialchars($paciente['ultima_visita_motivo']); ?>" readonly>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    <label class="block font-bold mb-1 text-slate-600">Frecuencia de cepillado:</label>
+                                    <input type="text" id="det_frecuencia_cepillado" class="antecedentes-input w-full bg-transparent border-0 border-b-2 border-slate-200 p-1 text-xs mb-3 font-medium text-slate-800" placeholder="Ej: 3 veces al día" value="<?php echo htmlspecialchars($paciente['frecuencia_cepillado']); ?>" readonly>
+                                    <label class="block font-bold mb-1 text-slate-600">Utiliza:</label>
+                                    <div class="flex gap-3 text-xs flex-wrap mt-2">
+                                        <label class="flex items-center gap-1 font-medium"><input type="checkbox" id="det_usa_cepillo" class="antecedentes-radio" disabled <?php echo $paciente['usa_cepillo'] ? 'checked' : ''; ?>> Cepillo</label>
+                                        <label class="flex items-center gap-1 font-medium"><input type="checkbox" id="det_usa_pasta_dental" class="antecedentes-radio" disabled <?php echo $paciente['usa_pasta_dental'] ? 'checked' : ''; ?>> Pasta</label>
+                                        <label class="flex items-center gap-1 font-medium"><input type="checkbox" id="det_usa_hilo_dental" class="antecedentes-radio" disabled <?php echo $paciente['usa_hilo_dental'] ? 'checked' : ''; ?>> Hilo</label>
+                                        <label class="flex items-center gap-1 font-medium"><input type="checkbox" id="det_usa_enjuague" class="antecedentes-radio" disabled <?php echo $paciente['usa_enjuague'] ? 'checked' : ''; ?>> Enjuague</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div id="seccion_presupuestos" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
                             <div>
@@ -594,6 +759,67 @@ if (!$paciente) {
                         </div>
                     </div>
 
+                    <!-- ═══════════ RECETAS MEDICAS ═══════════ -->
+                    <?php
+                    $stmt_recetas = $conn->prepare("SELECT r.*, u.nombre as doctor_nombre, u.colegiatura FROM recetas r JOIN usuarios u ON r.doctor_id = u.id WHERE r.paciente_id = ? ORDER BY r.fecha DESC");
+                    if ($stmt_recetas) {
+                        $stmt_recetas->bind_param('i', $paciente_id);
+                        $stmt_recetas->execute();
+                        $recetas = $stmt_recetas->get_result()->fetch_all(MYSQLI_ASSOC);
+                        $stmt_recetas->close();
+                    } else { $recetas = []; }
+                    ?>
+                    <div id="seccion_recetas" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                        <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="file-signature" class="w-5 h-5 text-sky-600"></i>
+                                <div>
+                                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest">Recetas Médicas</h3>
+                                    <p class="text-xs text-slate-400">Prescripciones e indicaciones para el paciente</p>
+                                </div>
+                            </div>
+                            <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition flex items-center gap-2 text-sm">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Nueva Receta
+                            </button>
+                        </div>
+                        
+                        <div class="p-6">
+                            <?php if (empty($recetas)): ?>
+                            <div class="text-center py-10">
+                                <i data-lucide="file-text" class="w-12 h-12 text-slate-200 mx-auto mb-3"></i>
+                                <p class="text-slate-400 font-medium">No hay recetas registradas.</p>
+                            </div>
+                            <?php else: ?>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <?php foreach ($recetas as $receta): ?>
+                                <div class="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md transition group relative overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-16 h-16 bg-sky-50 rounded-bl-full -z-10 transition group-hover:bg-sky-100"></div>
+                                    <div class="flex justify-between items-start mb-3">
+                                        <div class="bg-slate-100 text-slate-600 text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
+                                            <?php echo date('d/m/Y', strtotime($receta['fecha'])); ?>
+                                        </div>
+                                        <div class="flex gap-1">
+                                            <button onclick="imprimirReceta(<?php echo $receta['id']; ?>)" class="text-sky-600 bg-sky-50 p-1.5 rounded-lg hover:bg-sky-600 hover:text-white transition" title="Imprimir">
+                                                <i data-lucide="printer" class="w-4 h-4"></i>
+                                            </button>
+                                            <button onclick="eliminarReceta(<?php echo $receta['id']; ?>)" class="text-red-500 bg-red-50 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition" title="Eliminar">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm text-slate-700 line-clamp-3 mb-4 min-h-[3rem] whitespace-pre-wrap leading-relaxed"><?php echo htmlspecialchars($receta['contenido']); ?></div>
+                                    
+                                    <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+                                        <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">Dr</div>
+                                        <p class="text-[10px] font-bold text-slate-500 line-clamp-1"><?php echo htmlspecialchars($receta['doctor_nombre']); ?></p>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
                     <!-- ARCHIVOS CLINICOS -->
                     <div id="seccion_archivos" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
@@ -634,31 +860,27 @@ if (!$paciente) {
 
     </main>
 
-    <!-- Modal Generar Receta -->
-    <div id="modalReceta" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg transform scale-95 transition-transform duration-300 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                <h3 class="font-black text-slate-800 flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i> Generar Receta Médica</h3>
-                <button onclick="cerrarModalReceta()" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+    <!-- Modal Nueva Receta -->
+    <div id="modalNuevaReceta" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-fade-in-up">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center"><i data-lucide="file-signature" class="w-5 h-5"></i></div>
+                    <h3 class="font-black text-slate-800 text-lg">Nueva Receta Médica</h3>
+                </div>
+                <button onclick="document.getElementById('modalNuevaReceta').classList.add('hidden')" class="text-slate-400 hover:bg-slate-100 hover:text-slate-600 p-2 rounded-xl transition"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-5 space-y-4">
-                <form id="formReceta" action="generar_receta.php" method="POST" target="_blank">
-                    <input type="hidden" name="id" value="<?php echo $paciente_id; ?>">
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Rp. (Medicamentos)</label>
-                        <textarea name="medicamentos" id="medicamentos_receta" rows="4" placeholder="Ej: Amoxicilina 500mg - 1 caja&#10;Ibuprofeno 400mg - 1 blister" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"></textarea>
+            <div class="p-6">
+                <form id="formNuevaReceta" onsubmit="guardarNuevaReceta(event)">
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Rp. / Indicaciones</label>
+                        <textarea id="nueva_receta_contenido" required rows="10" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition font-medium text-slate-700 resize-none" placeholder="Escriba aquí todo su texto para la receta...&#10;&#10;Ejemplo:&#10;1. Paracetamol 500mg # 10&#10;   1 Tab V.O C/8 Horas por 3 días"></textarea>
+                        <p class="text-[10px] text-slate-400 mt-2">Puede usar saltos de línea libremente. Todo lo que escriba aquí se imprimirá directamente en la receta, sin divisiones.</p>
                     </div>
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Indicaciones</label>
-                        <textarea name="indicaciones" id="indicaciones_receta" rows="4" placeholder="Ej: Tomar 1 cápsula cada 8 horas por 5 días.&#10;Tomar 1 tableta cada 8 horas por dolor." class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition"></textarea>
-                    </div>
-
-                    <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-4">
-                        <button type="button" onclick="cerrarModalReceta()" class="px-5 py-2.5 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition">Cancelar</button>
-                        <button type="submit" onclick="setTimeout(cerrarModalReceta, 500)" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
-                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Receta
+                    <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="document.getElementById('modalNuevaReceta').classList.add('hidden')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition">Cancelar</button>
+                        <button type="submit" id="btnGuardarNuevaReceta" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Guardar Receta
                         </button>
                     </div>
                 </form>
@@ -2116,7 +2338,78 @@ if (!$paciente) {
         </div>
     </div>
 
+    <!-- Modal Historial Triaje -->
+    <div id="modalHistorialTriaje" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl transform transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <i data-lucide="history" class="w-6 h-6 text-indigo-600"></i> Historial de Triaje
+                </h3>
+                <button onclick="cerrarHistorialTriaje()" class="text-slate-400 hover:text-slate-600 transition bg-white hover:bg-slate-100 p-2 rounded-xl shadow-sm">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-[60vh] overflow-y-auto">
+                <div id="triajeHistorialContainer" class="space-y-4">
+                    <!-- JS rellena aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function cerrarHistorialTriaje() {
+            document.getElementById('modalHistorialTriaje').classList.add('hidden');
+            document.getElementById('modalHistorialTriaje').classList.remove('flex');
+        }
+
+        async function verHistorialTriaje() {
+            const m = document.getElementById('modalHistorialTriaje');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            
+            const cont = document.getElementById('triajeHistorialContainer');
+            cont.innerHTML = '<div class="text-center text-slate-400 py-8 text-sm"><i data-lucide="loader" class="w-6 h-6 animate-spin mx-auto mb-2"></i> Cargando historial...</div>';
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('ajax_clinico.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({accion: 'obtener_signos', paciente_id: <?php echo intval($paciente_id); ?>})
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    if (data.signos.length === 0) {
+                        cont.innerHTML = '<div class="text-center text-slate-400 py-8 text-sm font-bold">No hay registros de triaje para este paciente.</div>';
+                        return;
+                    }
+
+                    cont.innerHTML = data.signos.map(s => `
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                            <div class="flex justify-between items-center mb-3 border-b border-slate-200 pb-2">
+                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${s.fecha_registro}</span>
+                                <span class="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md uppercase">${s.registrado_nombre || 'Dr.'}</span>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-sm">
+                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase">P.A.</span><span class="font-bold text-slate-700">${s.presion_arterial || '-'}</span></div>
+                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase">Pulso</span><span class="font-bold text-slate-700">${s.pulso || '-'}</span></div>
+                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase">F.C.</span><span class="font-bold text-slate-700">${s.frecuencia_cardiaca || '-'}</span></div>
+                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase">F.R.</span><span class="font-bold text-slate-700">${s.frecuencia_resp || '-'}</span></div>
+                                <div><span class="block text-[10px] font-bold text-slate-400 uppercase">Temp.</span><span class="font-bold text-slate-700">${s.temperatura || '-'} °C</span></div>
+                            </div>
+                        </div>
+                    `).join('');
+                    lucide.createIcons();
+                } else {
+                    cont.innerHTML = '<div class="text-center text-red-500 py-8 text-sm font-bold">Error al cargar el historial.</div>';
+                }
+            } catch (e) {
+                cont.innerHTML = '<div class="text-center text-red-500 py-8 text-sm font-bold">Error de red.</div>';
+            }
+        }
+
         let currentZoom = 1;
         let listaArchivosGlobal = [];
         let filtroActual = 'Todos';
@@ -2348,6 +2641,160 @@ if (!$paciente) {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }, 300);
+        }
+
+        
+        // ═══════ ANTECEDENTES CLINICOS Y TRIAJE ═══════
+        function toggleEditAntecedentes() {
+            const inputs = document.querySelectorAll('.antecedentes-input');
+            const radios = document.querySelectorAll('.antecedentes-radio');
+            const btnEditar = document.getElementById('btnEditarAntecedentes');
+            const btnGuardar = document.getElementById('btnGuardarAntecedentes');
+            
+            let isReadOnly = inputs[0].hasAttribute('readonly');
+            
+            if (isReadOnly) {
+                inputs.forEach(el => {
+                    el.removeAttribute('readonly');
+                    el.classList.add('bg-white', 'border-indigo-200');
+                    el.classList.remove('border-0', 'bg-transparent');
+                });
+                radios.forEach(el => el.removeAttribute('disabled'));
+                btnEditar.classList.add('hidden');
+                btnGuardar.classList.remove('hidden');
+                btnGuardar.classList.add('flex');
+            }
+        }
+
+        async function guardarTriaje() {
+            const btn = document.getElementById('btnGuardarTriaje');
+            const iconHTML = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const payloadSignos = {
+                accion: 'registrar_signos',
+                paciente_id: PACIENTE_ID,
+                presion_arterial: document.getElementById('det_pa').value.trim(),
+                pulso: document.getElementById('det_pulso').value.trim(),
+                frecuencia_cardiaca: document.getElementById('det_fc').value.trim(),
+                frecuencia_resp: document.getElementById('det_fr').value.trim(),
+                temperatura: document.getElementById('det_temp').value.trim(),
+                observaciones: ''
+            };
+
+            try {
+                const res = await fetch('ajax_clinico.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payloadSignos) });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch(e) {
+                alert('Error de red al guardar triaje');
+            } finally {
+                btn.innerHTML = iconHTML;
+                btn.disabled = false;
+            }
+        }
+
+        async function guardarAntecedentes() {
+            const btn = document.getElementById('btnGuardarAntecedentes');
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const getRadio = (name) => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; };
+            const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : null; };
+            const getCheck = (id) => { const el = document.getElementById(id); return el ? (el.checked ? 1 : 0) : 0; };
+            
+            const payloadAntecedentes = {
+                accion: 'guardar_antecedentes', 
+                paciente_id: PACIENTE_ID,
+                padece_enfermedad: getRadio('padece_enfermedad'), enfermedades_cronicas: getVal('det_enfermedades_cronicas'),
+                consume_medicamentos: getRadio('consume_medicamentos'), medicamentos_detalle: getVal('det_medicamentos_detalle'),
+                alergia_medicamentos: getRadio('alergia_medicamentos'), alergia_medicamentos_detalle: getVal('det_alergia_medicamentos_detalle'),
+                antecedentes_familiares: getRadio('antecedentes_familiares'), antecedentes_familiares_detalle: getVal('det_antecedentes_familiares_detalle'),
+                alergia_anestesia: getRadio('alergia_anestesia'), embarazada: getRadio('embarazada'), sangran_encias: getRadio('sangran_encias'),
+                ultima_visita_dentista: getVal('det_ultima_visita_dentista'), ultima_visita_motivo: getVal('det_ultima_visita_motivo'),
+                frecuencia_cepillado: getVal('det_frecuencia_cepillado'),
+                usa_cepillo: getCheck('det_usa_cepillo'), usa_pasta_dental: getCheck('det_usa_pasta_dental'),
+                usa_hilo_dental: getCheck('det_usa_hilo_dental'), usa_enjuague: getCheck('det_usa_enjuague')
+            };
+
+            try {
+                const res = await fetch('ajax_clinico.php', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payloadAntecedentes) });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'desconocido'));
+                }
+            } catch(e) { 
+                alert('Error de red al guardar antecedentes'); 
+                btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Guardar';
+                btn.disabled = false;
+            }
+        }
+        // ═══════ RECETAS MEDICAS ═══════
+        const PACIENTE_ID = <?php echo intval($paciente_id); ?>;
+
+        async function guardarNuevaReceta(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnGuardarNuevaReceta');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Guardando...';
+            btn.disabled = true;
+
+            const payload = {
+                accion: 'guardar_receta',
+                paciente_id: PACIENTE_ID,
+                diagnostico: '', // Removido
+                contenido: document.getElementById('nueva_receta_contenido').value
+            };
+
+            try {
+                const res = await fetch('ajax_clinico.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + (data.error || 'Desconocido'));
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                alert('Error de red al guardar la receta');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function eliminarReceta(id) {
+            if (!confirm('¿Estás seguro de eliminar esta receta? Esta acción no se puede deshacer.')) return;
+            try {
+                const res = await fetch('ajax_clinico.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({accion: 'eliminar_receta', id: id})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar');
+                }
+            } catch(e) {
+                alert('Error de red');
+            }
+        }
+
+        function imprimirReceta(id) {
+            window.open('imprimir_receta.php?id=' + id, '_blank', 'width=800,height=900');
         }
     </script>
 

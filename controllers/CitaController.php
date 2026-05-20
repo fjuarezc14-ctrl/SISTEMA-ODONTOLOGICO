@@ -10,7 +10,7 @@ class CitaController {
         $this->citaModel = new Cita($conn);
     }
     
-    // Obtiene las citas de la semana (Lunes a Sábado) basada en una fecha
+    // Obtiene las citas de la semana (Lunes a Domingo) basada en una fecha
     public function getAgendaSemanal($fecha_referencia = null) {
         if(!$fecha_referencia) {
             $fecha_referencia = date('Y-m-d');
@@ -22,19 +22,19 @@ class CitaController {
         $dias_para_lunes = $dia_semana_ref - 1;
         $lunes = date('Y-m-d', strtotime("$fecha_referencia -$dias_para_lunes days"));
         
-        // Calcular fecha del Sábado de esta semana
-        $sabado = date('Y-m-d', strtotime($lunes . ' + 5 days'));
+        // Calcular fecha del Domingo de esta semana
+        $domingo = date('Y-m-d', strtotime($lunes . ' + 6 days'));
         
-        $citas_planas = $this->citaModel->getCitasSemana($lunes, $sabado);
+        $citas_planas = $this->citaModel->getCitasSemana($lunes, $domingo);
         
-        // Agrupar las citas por día (1=Lunes, 2=Martes... 6=Sábado) para pintarlas en las columnas HTML
+        // Agrupar las citas por día (1=Lunes ... 7=Domingo)
         $agenda = [
-            1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => []
+            1 => [], 2 => [], 3 => [], 4 => [], 5 => [], 6 => [], 7 => []
         ];
         
         foreach($citas_planas as $cita) {
             $dia_semana = date('N', strtotime($cita['fecha']));
-            if($dia_semana <= 6) { // Ignoramos domingos si los hubiera
+            if($dia_semana >= 1 && $dia_semana <= 7) {
                 // Calcular posición en píxeles
                 // 08:00 = top 0px. Cada hora son 60px. Cada minuto 1px.
                 list($hora_inicio, $min_inicio, $seg) = explode(':', $cita['hora_inicio']);
@@ -85,6 +85,7 @@ class CitaController {
         
         return [
             'lunes_fecha' => $lunes,
+            'domingo_fecha' => $domingo,
             'dias' => $agenda
         ];
     }
