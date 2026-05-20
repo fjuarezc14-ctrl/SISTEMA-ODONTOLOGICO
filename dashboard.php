@@ -76,7 +76,7 @@ foreach ($chart_ingresos as $mes => $total) {
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                 <div>
                     <h1 class="text-3xl font-black text-slate-800 mb-1">Resumen General</h1>
-                    <p class="text-slate-500 font-medium">Monitorea la actividad de tu clinica en tiempo real.</p>
+                    <p class="text-slate-500 font-medium">Monitorea la actividad de tu cl&#237;nica en tiempo real.</p>
                 </div>
                 <button onclick="toggleModal()"
                     class="bg-brand hover:bg-teal-800 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all hover:scale-105 hover:shadow-teal-900/30">
@@ -170,8 +170,8 @@ foreach ($chart_ingresos as $mes => $total) {
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h2 class="text-lg font-black text-slate-800">Citas - Ultimos 7 dias</h2>
-                            <p class="text-xs text-slate-400 font-medium">Volumen de citas programadas por dia</p>
+                            <h2 class="text-lg font-black text-slate-800">Citas - &#218;ltimos 7 d&#237;as</h2>
+                            <p class="text-xs text-slate-400 font-medium">Volumen de citas programadas por d&#237;a</p>
                         </div>
                     </div>
                     <div class="relative h-64 w-full">
@@ -181,7 +181,7 @@ foreach ($chart_ingresos as $mes => $total) {
 
                 <!-- Proximas Citas -->
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
-                    <h2 class="text-lg font-black text-slate-800 mb-1">Proximas Citas (Hoy)</h2>
+                    <h2 class="text-lg font-black text-slate-800 mb-1">Pr&#243;ximas Citas (Hoy)</h2>
                     <p class="text-xs text-slate-400 font-medium mb-6">Agenda inmediata</p>
 
                     <div class="space-y-4 overflow-y-auto flex-1">
@@ -219,8 +219,8 @@ foreach ($chart_ingresos as $mes => $total) {
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h2 class="text-lg font-black text-slate-800">Ingresos - Ultimos 6 Meses</h2>
-                            <p class="text-xs text-slate-400 font-medium">Evolucion de los pagos recibidos</p>
+                            <h2 class="text-lg font-black text-slate-800">Ingresos - &#218;ltimos 6 Meses</h2>
+                            <p class="text-xs text-slate-400 font-medium">Evoluci&#243;n de los pagos recibidos</p>
                         </div>
                     </div>
                     <div class="relative h-64 w-full">
@@ -230,7 +230,7 @@ foreach ($chart_ingresos as $mes => $total) {
 
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                     <h2 class="text-lg font-black text-slate-800 mb-1">Top Tratamientos</h2>
-                    <p class="text-xs text-slate-400 font-medium mb-6">Los mas solicitados</p>
+                    <p class="text-xs text-slate-400 font-medium mb-6">Los m&#225;s solicitados</p>
                     <div class="space-y-4">
                         <?php if (!empty($top_tratamientos)): ?>
                             <?php 
@@ -254,7 +254,7 @@ foreach ($chart_ingresos as $mes => $total) {
                                 <div class="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center mb-3">
                                     <i data-lucide="bar-chart-3" class="w-8 h-8 text-slate-300"></i>
                                 </div>
-                                <p class="text-sm text-slate-400 font-medium">Sin datos de tratamientos aun.</p>
+                                <p class="text-sm text-slate-400 font-medium">Sin datos de tratamientos a&#250;n.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -275,7 +275,7 @@ foreach ($chart_ingresos as $mes => $total) {
                     </div>
                     <div>
                         <h2 class="text-xl font-black text-slate-800">Registrar Nuevo Paciente</h2>
-                        <p class="text-xs text-slate-500 font-medium">Completa los datos iniciales para la historia clinica.</p>
+                        <p class="text-xs text-slate-500 font-medium">Completa los datos iniciales para la historia cl&#237;nica.</p>
                     </div>
                 </div>
                 <button onclick="toggleModal()"
@@ -304,13 +304,13 @@ foreach ($chart_ingresos as $mes => $total) {
                                 class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Correo Electronico</label>
+                            <label class="text-xs font-bold text-slate-600">Correo Electr&#243;nico</label>
                             <input type="email" placeholder="correo@ejemplo.com"
                                 class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
                         </div>
                     </div>
                     <h3 class="text-sm font-bold text-orange-600 uppercase tracking-wider border-b border-slate-100 pb-2 mt-8">
-                        Alertas Clinicas</h3>
+                        Alertas Cl&#237;nicas</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="flex flex-col gap-1">
                             <label class="text-xs font-bold text-slate-600">Alergias Conocidas</label>
