@@ -804,7 +804,7 @@ if (!$paciente) {
                                             <button onclick="imprimirReceta(<?php echo $receta['id']; ?>)" class="text-sky-600 bg-sky-50 p-1.5 rounded-lg hover:bg-sky-600 hover:text-white transition" title="Imprimir">
                                                 <i data-lucide="printer" class="w-4 h-4"></i>
                                             </button>
-                                            <button onclick="eliminarReceta(<?php echo $receta['id']; ?>)" class="text-red-500 bg-red-50 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition" title="Eliminar">
+                                            <button type="button" onclick="eliminarReceta(<?php echo $receta['id']; ?>)" class="text-red-500 bg-red-50 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition" title="Eliminar">
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </button>
                                         </div>
