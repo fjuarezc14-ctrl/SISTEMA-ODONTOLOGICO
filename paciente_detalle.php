@@ -53,6 +53,8 @@ if (!$paciente) {
     <title>Historial Clínico - <?php echo htmlspecialchars($paciente['nombre']); ?> - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
     <script type="importmap">
@@ -310,8 +312,8 @@ if (!$paciente) {
 
                 <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
                     <div class="flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto">
-                        <button onclick="document.getElementById('seccion_antecedentes').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Antecedentes</button>
                         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
+                        <button onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
                         <button onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
                         <button onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Recetas</button>
                         <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
@@ -1605,32 +1607,61 @@ if (!$paciente) {
             } catch(e) { console.error('Error cargando catálogo:', e); }
         }
 
+        let tomSelectInstance = null;
+
         function poblarSelectCatalogo() {
             const select = document.getElementById('itemCatalogoSelect');
             if (!select) return;
-            select.innerHTML = '<option value="">-- Seleccionar tratamiento --</option>';
             
-            let categoriaActual = '';
-            catalogoTratamientos.forEach(t => {
-                if (t.categoria !== categoriaActual) {
-                    if (categoriaActual !== '') select.innerHTML += '</optgroup>';
-                    select.innerHTML += `<optgroup label="${t.categoria}">`;
-                    categoriaActual = t.categoria;
+            if (tomSelectInstance) {
+                tomSelectInstance.destroy();
+                tomSelectInstance = null;
+            }
+
+            select.innerHTML = '<option value="">-- Seleccionar tratamiento o insumo --</option>';
+
+            tomSelectInstance = new TomSelect('#itemCatalogoSelect', {
+                create: false,
+                maxOptions: 200,
+                lockOptgroupOrder: true,
+                placeholder: "Buscar tratamiento o insumo...",
+                render: {
+                    optgroup_header: function(data, escape) {
+                        return '<div style="padding:6px 10px;font-weight:800;font-size:11px;text-transform:uppercase;color:#475569;background:#f1f5f9;border-bottom:1px solid #e2e8f0;">' + escape(data.label) + '</div>';
+                    },
+                    option: function(data, escape) {
+                        return '<div style="padding:8px 12px;font-size:13px;border-bottom:1px solid #f8fafc;">' + escape(data.text) + '</div>';
+                    }
+                },
+                onChange: function(value) {
+                    if (!value) return;
+                    const item = catalogoTratamientos.find(t => String(t.id) === String(value));
+                    if (item) {
+                        document.getElementById('itemDescripcion').value = item.nombre;
+                        document.getElementById('itemPrecio').value = parseFloat(item.precio_base).toFixed(2);
+                    }
                 }
-                select.innerHTML += `<option value="${t.id}" data-precio="${t.precio_base}" data-nombre="${t.nombre}">
-                    ${t.nombre} - S/ ${parseFloat(t.precio_base).toFixed(2)}
-                </option>`;
             });
-            if (categoriaActual !== '') select.innerHTML += '</optgroup>';
+
+            // Build groups and options programmatically
+            const categorias = [];
+            catalogoTratamientos.forEach(t => {
+                if (!categorias.includes(t.categoria)) {
+                    categorias.push(t.categoria);
+                    tomSelectInstance.addOptionGroup(t.categoria, { label: t.categoria });
+                }
+                tomSelectInstance.addOption({
+                    value: String(t.id),
+                    text: t.nombre + ' - S/ ' + parseFloat(t.precio_base).toFixed(2),
+                    optgroup: t.categoria,
+                    $order: categorias.indexOf(t.categoria) * 1000 + catalogoTratamientos.indexOf(t)
+                });
+            });
+            tomSelectInstance.refreshOptions(false);
         }
 
         function seleccionarCatalogo() {
-            const select = document.getElementById('itemCatalogoSelect');
-            const option = select.options[select.selectedIndex];
-            if (option.value) {
-                document.getElementById('itemDescripcion').value = option.dataset.nombre;
-                document.getElementById('itemPrecio').value = parseFloat(option.dataset.precio).toFixed(2);
-            }
+            // Handled inline via onChange above
         }
 
         async function cargarListaPresupuestos() {
@@ -1892,7 +1923,11 @@ if (!$paciente) {
             if (!presupuestoActivo) return;
             const modal = document.getElementById('modalAgregarItem');
             // Reset form
-            document.getElementById('itemCatalogoSelect').value = '';
+            if (tomSelectInstance) {
+                tomSelectInstance.clear();
+            } else {
+                document.getElementById('itemCatalogoSelect').value = '';
+            }
             document.getElementById('itemDescripcion').value = '';
             document.getElementById('itemPieza').value = '';
             document.getElementById('itemCantidad').value = '1';
@@ -1900,7 +1935,12 @@ if (!$paciente) {
             // Mostrar
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+            setTimeout(() => {
+                modal.querySelector('div').classList.remove('scale-95');
+                if (tomSelectInstance) {
+                    tomSelectInstance.focus();
+                }
+            }, 10);
             lucide.createIcons();
         }
 
@@ -2108,10 +2148,24 @@ if (!$paciente) {
             marcarPresupuestoComoEnviado();
         }
 
-        function cerrarEditorPresupuesto() {
+        async function cerrarEditorPresupuesto() {
+            // Si el presupuesto está en borrador y su total es 0, asumimos que fue descartado
+            if (presupuestoActivo && presupuestoActivo.estado === 'Borrador' && parseFloat(presupuestoActivo.total) === 0) {
+                try {
+                    await fetch('ajax_presupuesto.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({accion: 'eliminar_presupuesto', presupuesto_id: presupuestoActivo.id})
+                    });
+                } catch(e) {}
+            }
+            
             document.getElementById('editorPresupuesto').classList.add('hidden');
             document.getElementById('listaPresupuestos').classList.remove('hidden');
             presupuestoActivo = null;
+            
+            // Recargar para ocultar el eliminado
+            cargarListaPresupuestos();
         }
 
         // --- PAGOS ---
