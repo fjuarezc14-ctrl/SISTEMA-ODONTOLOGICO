@@ -4,8 +4,7 @@ ini_set('display_errors', '0');
 error_reporting(E_ERROR | E_PARSE);
 
 ob_start();
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once 'includes/auth_guard.php';header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['usuario_id'])) {
     echo json_encode(['success' => false, 'error' => 'No autorizado'], JSON_UNESCAPED_UNICODE);

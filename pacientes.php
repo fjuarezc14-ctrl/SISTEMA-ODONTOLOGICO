@@ -1,6 +1,5 @@
 <?php
-session_start();
-// Si no hay sesión, al login
+require_once 'includes/auth_guard.php';// Si no hay sesión, al login
 if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;

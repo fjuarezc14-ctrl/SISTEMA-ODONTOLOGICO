@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once 'config/conexion.php';
+require_once 'includes/auth_guard.php';require_once 'config/conexion.php';
 require_once 'controllers/ArchivoController.php';
 
 header('Content-Type: application/json');

@@ -1,6 +1,5 @@
 <?php
-session_start();
-if (!isset($_SESSION['usuario_id']) || !isset($_GET['id'])) {
+require_once 'includes/auth_guard.php';if (!isset($_SESSION['usuario_id']) || !isset($_GET['id'])) {
     header("Location: index.php");
     exit;
 }

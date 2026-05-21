@@ -1,7 +1,6 @@
 <?php
 require_once 'config/conexion.php';
-session_start();
-if (!isset($_SESSION['usuario_id'])) die("No autorizado");
+require_once 'includes/auth_guard.php';if (!isset($_SESSION['usuario_id'])) die("No autorizado");
 
 $id = intval($_GET['id'] ?? 0);
 if (!$id) die("ID requerido");

@@ -2,8 +2,7 @@
 ob_start(); // Buffer desde el inicio absoluto
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once 'includes/auth_guard.php';header('Content-Type: application/json; charset=utf-8');
 
 ob_end_clean(); // Limpiar cualquier output previo (BOM, warnings, etc.)
 ob_start();     // Reiniciar buffer limpio

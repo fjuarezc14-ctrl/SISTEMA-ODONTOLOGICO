@@ -1,6 +1,5 @@
 <?php
-session_start();
-header('Content-Type: application/json');
+require_once 'includes/auth_guard.php';header('Content-Type: application/json');
 
 if (!isset($_SESSION['usuario_id'])) {
     echo json_encode(['success' => false, 'error' => 'No autorizado']);

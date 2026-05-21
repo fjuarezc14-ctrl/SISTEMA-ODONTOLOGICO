@@ -9,6 +9,12 @@ if(isset($_SESSION['usuario_id'])) {
 
 $error = "";
 
+// Mostrar mensaje de timeout si existe
+if (isset($_SESSION['timeout_msg'])) {
+    $error = $_SESSION['timeout_msg'];
+    unset($_SESSION['timeout_msg']);
+}
+
 // Lógica para cuando se presiona el botón de "Ingresar"
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include 'config/conexion.php';
@@ -17,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password_ingresada = $_POST['password'];
 
     // Buscamos al usuario en la base de datos
-    $sql = "SELECT id, nombre, password, rol FROM usuarios WHERE usuario = ?";
+    $sql = "SELECT id, nombre, password, rol, intentos_fallidos, bloqueado_hasta FROM usuarios WHERE usuario = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $usuario);
     $stmt->execute();
@@ -25,15 +31,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
-        // Verificamos si la contraseña coincide con la encriptada
-        if (password_verify($password_ingresada, $fila['password'])) {
-            $_SESSION['usuario_id'] = $fila['id'];
-            $_SESSION['usuario_nombre'] = $fila['nombre'];
-            $_SESSION['usuario_rol'] = $fila['rol'];
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = "Contraseña incorrecta.";
+        
+        // 1. Verificar si la cuenta está bloqueada
+        if ($fila['bloqueado_hasta']) {
+            $tiempo_bloqueo = strtotime($fila['bloqueado_hasta']);
+            $ahora = time();
+            
+            if ($ahora < $tiempo_bloqueo) {
+                $minutos_restantes = ceil(($tiempo_bloqueo - $ahora) / 60);
+                $error = "Cuenta bloqueada por seguridad. Inténtalo de nuevo en {$minutos_restantes} minuto(s).";
+            } else {
+                // El bloqueo expiró, limpiar contadores
+                $stmt_clear = $conn->prepare("UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id = ?");
+                $stmt_clear->bind_param("i", $fila['id']);
+                $stmt_clear->execute();
+                $fila['intentos_fallidos'] = 0;
+            }
+        }
+
+        // Solo procedemos si no está bloqueado
+        if ($error === "") {
+            // 2. Verificamos si la contraseña coincide
+            if (password_verify($password_ingresada, $fila['password'])) {
+                // Login exitoso: Limpiar intentos
+                $stmt_clear = $conn->prepare("UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id = ?");
+                $stmt_clear->bind_param("i", $fila['id']);
+                $stmt_clear->execute();
+                
+                // Regenerar ID de Sesión (Session Fixation Protection)
+                session_regenerate_id(true);
+
+                $_SESSION['usuario_id'] = $fila['id'];
+                $_SESSION['usuario_nombre'] = $fila['nombre'];
+                $_SESSION['usuario_rol'] = $fila['rol'];
+                header("Location: dashboard.php");
+                exit;
+            } else {
+                // Login fallido: Incrementar intentos
+                $intentos = intval($fila['intentos_fallidos']) + 1;
+                
+                if ($intentos >= 5) {
+                    $error = "Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.";
+                    $stmt_fail = $conn->prepare("UPDATE usuarios SET intentos_fallidos = ?, bloqueado_hasta = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id = ?");
+                    $stmt_fail->bind_param("ii", $intentos, $fila['id']);
+                    $stmt_fail->execute();
+                } else {
+                    $intentos_restantes = 5 - $intentos;
+                    $error = "Contraseña incorrecta. Te quedan {$intentos_restantes} intento(s).";
+                    $stmt_fail = $conn->prepare("UPDATE usuarios SET intentos_fallidos = ? WHERE id = ?");
+                    $stmt_fail->bind_param("ii", $intentos, $fila['id']);
+                    $stmt_fail->execute();
+                }
+            }
         }
     } else {
         $error = "El usuario no existe.";

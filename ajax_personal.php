@@ -1,6 +1,5 @@
 <?php
-session_start();
-header('Content-Type: application/json; charset=utf-8');
+require_once 'includes/auth_guard.php';header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'Admin') {
     echo json_encode(['success' => false, 'error' => 'No autorizado']);

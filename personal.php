@@ -1,6 +1,5 @@
 <?php
-session_start();
-if(!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'Admin') {
+require_once 'includes/auth_guard.php';if(!isset($_SESSION['usuario_id']) || $_SESSION['usuario_rol'] !== 'Admin') {
     header("Location: dashboard.php");
     exit;
 }

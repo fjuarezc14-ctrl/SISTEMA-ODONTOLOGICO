@@ -1,9 +1,5 @@
 <?php
-session_start();
-if(!isset($_SESSION['usuario_id'])) {
-    header("Location: index.php");
-    exit;
-}
+require_once 'includes/auth_guard.php';
 if($_SESSION['usuario_rol'] === 'Dentista') {
     header("Location: dashboard.php");
     exit;

@@ -1,6 +1,5 @@
 <?php
-session_start();
-// Si no hay sesión iniciada, redirige al login
+require_once 'includes/auth_guard.php';// Si no hay sesión iniciada, redirige al login
 if (!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
@@ -1394,10 +1393,24 @@ if (!$paciente) {
                         pathEl.classList.add(`estado-${estadoFinal}`);
                     }
                     
+                    const nombresEstados = {
+                        'caries': 'Caries', 'extraccion_indicada': 'Extracción Indicada',
+                        'restauracion_defectuosa': 'Restauración Defectuosa', 'fractura': 'Fractura',
+                        'endodoncia': 'Endodoncia', 'resina': 'Resina/Amalgama',
+                        'corona': 'Corona/Incrustación', 'implante': 'Implante',
+                        'sellante': 'Sellante', 'ausente': 'Ausente'
+                    };
+                    
+                    let titulos = [...new Set(estados.filter(e => e !== '').map(e => nombresEstados[e] || e))];
+                    let tooltipText = titulos.join(', ');
+                    
                     const notas = notasPorDiente[diente];
-                    if (notas && notas.length > 0) {
-                        pathEl.parentElement.parentElement.setAttribute('title', notas.join('\n'));
-                        // Añadir indicador visual (un borde o clase especial opcional)
+                    if (notas && notas.length > 0 && notas[0] !== "") {
+                        tooltipText += (tooltipText ? '\n' : '') + 'Notas: ' + notas.join(' | ');
+                    }
+                    
+                    if (tooltipText) {
+                        pathEl.parentElement.parentElement.setAttribute('title', tooltipText);
                         pathEl.parentElement.parentElement.classList.add('cursor-help');
                     } else {
                         pathEl.parentElement.parentElement.removeAttribute('title');
