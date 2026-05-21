@@ -126,7 +126,7 @@ if ($ver_inhabilitados) {
                             
                             <?php if($resultado_pacientes->num_rows > 0): ?>
                                 <?php while($paciente = $resultado_pacientes->fetch_assoc()): ?>
-                                <tr class="hover:bg-slate-50/80 transition-colors group">
+                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="location.href='paciente_detalle.php?id=<?php echo $paciente['id']; ?>'">
                                     <td class="px-6 py-4 text-sm font-bold text-slate-500"><?php echo htmlspecialchars($paciente['dni']); ?></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
@@ -143,18 +143,18 @@ if ($ver_inhabilitados) {
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
                                             <?php if ($ver_inhabilitados): ?>
-                                                <form method="POST" action="pacientes.php" class="inline" onsubmit="return confirm('¿Seguro que deseas restaurar a este paciente? Volverá a estar activo en el sistema.');">
+                                                <form method="POST" action="pacientes.php" class="inline" onsubmit="event.stopPropagation(); return confirm('¿Seguro que deseas restaurar a este paciente? Volverá a estar activo en el sistema.');">
                                                     <input type="hidden" name="accion" value="restaurar_paciente">
                                                     <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
-                                                    <button type="submit" class="p-2 bg-slate-100 hover:bg-emerald-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Restaurar Paciente">
+                                                    <button type="submit" onclick="event.stopPropagation()" class="p-2 bg-slate-100 hover:bg-emerald-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Restaurar Paciente">
                                                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                                                     </button>
                                                 </form>
                                             <?php else: ?>
-                                                <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia">
+                                                <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia" onclick="event.stopPropagation()">
                                                     <i data-lucide="folder-open" class="w-4 h-4"></i>
                                                 </a>
-                                                <button onclick='abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
+                                                <button onclick='event.stopPropagation(); abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
                                                     <i data-lucide="edit" class="w-4 h-4"></i>
                                                 </button>
                                             <?php endif; ?>

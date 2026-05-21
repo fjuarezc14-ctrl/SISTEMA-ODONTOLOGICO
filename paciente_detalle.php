@@ -119,31 +119,18 @@ if (!$paciente) {
         }
 
         /* Colores dinámicos para tratamientos (Se aplican tanto al 2D como al 3D) */
-        .estado-caries {
-            fill: #ef4444 !important;
-            stroke: #b91c1c !important;
-        }
-
-        /* Rojo */
-        .estado-resina {
-            fill: #3b82f6 !important;
-            stroke: #1d4ed8 !important;
-        }
-
-        /* Azul */
-        .estado-corona {
-            fill: #f59e0b !important;
-            stroke: #b45309 !important;
-        }
-
-        /* Naranja */
-        .estado-ausente {
-            fill: #94a3b8 !important;
-            stroke: #475569 !important;
-            opacity: 0.5;
-        }
-
-        /* Gris */
+        .estado-caries { fill: #ef4444 !important; stroke: #b91c1c !important; }
+        .estado-extraccion_indicada { fill: #b91c1c !important; stroke: #7f1d1d !important; }
+        .estado-restauracion_defectuosa { fill: #f97316 !important; stroke: #c2410c !important; }
+        .estado-fractura { fill: #e11d48 !important; stroke: #be123c !important; }
+        
+        .estado-resina { fill: #3b82f6 !important; stroke: #1d4ed8 !important; }
+        .estado-endodoncia { fill: #a855f7 !important; stroke: #7e22ce !important; }
+        .estado-corona { fill: #06b6d4 !important; stroke: #0891b2 !important; }
+        .estado-implante { fill: #475569 !important; stroke: #334155 !important; }
+        .estado-sellante { fill: #10b981 !important; stroke: #047857 !important; }
+        
+        .estado-ausente { fill: #cbd5e1 !important; stroke: #94a3b8 !important; opacity: 0.8; }
 
         /* Contenedor del visor 3D */
         #three-container {
@@ -326,21 +313,25 @@ if (!$paciente) {
                         <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
                     </div>
 
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
+                    <div class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
                         <div class="flex justify-between items-center mb-10">
                             <div>
                                 <h2 class="text-2xl font-black text-slate-800">Odontograma General</h2>
                                 <p class="text-sm text-slate-500">Selecciona un diente para registrar hallazgos.</p>
                             </div>
-                            <div class="flex flex-wrap gap-4 bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-inner">
-                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
-                                        class="w-3 h-3 bg-red-500 rounded-full shadow-sm"></span> Caries</div>
-                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
-                                        class="w-3 h-3 bg-blue-500 rounded-full shadow-sm"></span> Resina</div>
-                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
-                                        class="w-3 h-3 bg-amber-500 rounded-full shadow-sm"></span> Corona</div>
-                                <div class="flex items-center gap-2 text-xs font-bold text-slate-600"><span
-                                        class="w-3 h-3 bg-slate-800 rounded-full shadow-sm"></span> Ausente</div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-inner">
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2">
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-500 rounded-full shadow-sm shrink-0"></span> Caries</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-700 rounded-full shadow-sm shrink-0"></span> Extracción</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-orange-500 rounded-full shadow-sm shrink-0"></span> Defectuosa</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-rose-600 rounded-full shadow-sm shrink-0"></span> Fractura</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-blue-500 rounded-full shadow-sm shrink-0"></span> Resina</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-purple-500 rounded-full shadow-sm shrink-0"></span> Endodoncia</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-cyan-500 rounded-full shadow-sm shrink-0"></span> Corona</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-slate-600 rounded-full shadow-sm shrink-0"></span> Implante</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-emerald-500 rounded-full shadow-sm shrink-0"></span> Sellante</div>
+                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-slate-300 rounded-full shadow-sm shrink-0"></span> Ausente</div>
+                                </div>
                             </div>
                         </div>
 
@@ -400,7 +391,7 @@ if (!$paciente) {
                     </div>
                     
                     <!-- HISTORIAL EVOLUTIVO -->
-                    <div id="historial_evolutivo" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div id="historial_evolutivo" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-indigo-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -470,7 +461,7 @@ if (!$paciente) {
                         $ultimo_signo = $res_signos->fetch_assoc() ?: [];
                     } else { $ultimo_signo = []; }
                     ?>
-                    <div id="seccion_triaje" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6 mb-6">
+                    <div id="seccion_triaje" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-rose-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                 <i data-lucide="activity" class="w-5 h-5 text-rose-500"></i> Triaje / Signos Vitales
@@ -514,7 +505,7 @@ if (!$paciente) {
                     </div>
 
                     <!-- ANTECEDENTES CLINICOS -->
-                    <div id="seccion_antecedentes" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-6 mt-6">
+                    <div id="seccion_antecedentes" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-amber-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                 <i data-lucide="clipboard-list" class="w-5 h-5 text-indigo-600"></i> Antecedentes Clínicos
@@ -622,7 +613,7 @@ if (!$paciente) {
                         </div>
                     </div>
 
-                    <div id="seccion_presupuestos" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div id="seccion_presupuestos" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-emerald-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -784,7 +775,7 @@ if (!$paciente) {
                         $stmt_recetas->close();
                     } else { $recetas = []; }
                     ?>
-                    <div id="seccion_recetas" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div id="seccion_recetas" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-blue-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="file-signature" class="w-5 h-5 text-sky-600"></i>
@@ -840,7 +831,7 @@ if (!$paciente) {
                     </div>
 
                     <!-- ARCHIVOS CLINICOS -->
-                    <div id="seccion_archivos" class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-6">
+                    <div id="seccion_archivos" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-purple-500 overflow-hidden mb-8">
                         <div class="p-6 border-b border-slate-100 flex flex-wrap justify-between items-center bg-slate-50/50 gap-4">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
@@ -1078,13 +1069,24 @@ if (!$paciente) {
                         <label class="block text-xs font-black text-slate-500 uppercase mb-3 tracking-widest">1.
                             Configurar tipo de Hallazgo / Tratamiento</label>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <select id="estadoDiente"
-                                class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-brand focus:border-brand shadow-sm transition">
-                                <option value="caries">Caries (Pendiente - Rojo)</option>
-                                <option value="resina">Resina (Realizado - Azul)</option>
-                                <option value="corona">Corona / Incrustación (Naranja)</option>
-                                <option value="ausente">Pieza Ausente (Gris)</option>
-                                <option value="">Limpiar / Normal</option>
+                            <select id="estadoDiente" class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-brand focus:border-brand shadow-sm transition">
+                                <optgroup label="Pendientes / Patologías">
+                                    <option value="caries">Caries (Rojo)</option>
+                                    <option value="extraccion_indicada">Extracción Indicada (Rojo Oscuro)</option>
+                                    <option value="restauracion_defectuosa">Restauración Defectuosa (Naranja)</option>
+                                    <option value="fractura">Fractura (Rosa/Rojo)</option>
+                                </optgroup>
+                                <optgroup label="Sanos / Existentes">
+                                    <option value="resina">Resina / Amalgama (Azul)</option>
+                                    <option value="endodoncia">Endodoncia (Morado)</option>
+                                    <option value="corona">Corona / Incrustación (Celeste)</option>
+                                    <option value="implante">Implante (Gris Oscuro)</option>
+                                    <option value="ausente">Pieza Ausente (Gris Claro)</option>
+                                    <option value="sellante">Sellante (Verde)</option>
+                                </optgroup>
+                                <optgroup label="Acción">
+                                    <option value="">Limpiar / Normal</option>
+                                </optgroup>
                             </select>
                             <input type="text" id="notasDiente" placeholder="Notas opcionales (ej: Caries profunda)"
                                 class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-sm font-medium outline-none focus:ring-2 focus:ring-brand focus:border-brand shadow-sm transition">
@@ -1356,7 +1358,7 @@ if (!$paciente) {
         function renderizarGrilla() {
             // Limpiar todos los dientes primero
             document.querySelectorAll('.diente-svg path').forEach(path => {
-                path.classList.remove('estado-caries', 'estado-resina', 'estado-ausente', 'estado-corona');
+                path.classList.remove('estado-caries', 'estado-extraccion_indicada', 'estado-restauracion_defectuosa', 'estado-fractura', 'estado-resina', 'estado-endodoncia', 'estado-corona', 'estado-implante', 'estado-ausente', 'estado-sellante');
             });
 
             // Agrupar hallazgos por diente para encontrar el estado predominante
@@ -1379,8 +1381,14 @@ if (!$paciente) {
                     let estadoFinal = '';
                     if (estados.includes('ausente')) estadoFinal = 'ausente';
                     else if (estados.includes('caries')) estadoFinal = 'caries';
+                    else if (estados.includes('extraccion_indicada')) estadoFinal = 'extraccion_indicada';
+                    else if (estados.includes('fractura')) estadoFinal = 'fractura';
                     else if (estados.includes('corona')) estadoFinal = 'corona';
+                    else if (estados.includes('endodoncia')) estadoFinal = 'endodoncia';
                     else if (estados.includes('resina')) estadoFinal = 'resina';
+                    else if (estados.includes('implante')) estadoFinal = 'implante';
+                    else if (estados.includes('sellante')) estadoFinal = 'sellante';
+                    else if (estados.includes('restauracion_defectuosa')) estadoFinal = 'restauracion_defectuosa';
                     
                     if (estadoFinal) {
                         pathEl.classList.add(`estado-${estadoFinal}`);
@@ -1407,7 +1415,7 @@ if (!$paciente) {
 
             // Limpiar el mapa anatómico 2D y resetear formulario
             document.querySelectorAll('.cara-diente-2d').forEach(el => {
-                el.classList.remove('estado-caries', 'estado-resina', 'estado-ausente', 'estado-corona');
+                el.classList.remove('estado-caries', 'estado-extraccion_indicada', 'estado-restauracion_defectuosa', 'estado-fractura', 'estado-resina', 'estado-endodoncia', 'estado-corona', 'estado-implante', 'estado-ausente', 'estado-sellante');
             });
             document.getElementById('estadoDiente').value = "";
             document.getElementById('notasDiente').value = "";
@@ -1425,8 +1433,14 @@ if (!$paciente) {
             let estado3D = 'normal';
             const estados = hallazgosDiente.map(h => h.estado);
             if (estados.includes('caries')) estado3D = 'caries';
+            else if (estados.includes('extraccion_indicada')) estado3D = 'extraccion_indicada';
+            else if (estados.includes('fractura')) estado3D = 'fractura';
+            else if (estados.includes('restauracion_defectuosa')) estado3D = 'restauracion_defectuosa';
             else if (estados.includes('corona')) estado3D = 'corona';
+            else if (estados.includes('endodoncia')) estado3D = 'endodoncia';
             else if (estados.includes('resina')) estado3D = 'resina';
+            else if (estados.includes('implante')) estado3D = 'implante';
+            else if (estados.includes('sellante')) estado3D = 'sellante';
             else if (estados.includes('ausente')) estado3D = 'ausente';
 
             hallazgosDiente.forEach(h => {
@@ -1472,7 +1486,7 @@ if (!$paciente) {
             const estado = document.getElementById('estadoDiente').value;
             const nombreCara = elemento.getAttribute('data-cara');
 
-            elemento.classList.remove('estado-caries', 'estado-resina', 'estado-ausente', 'estado-corona');
+            elemento.classList.remove('estado-caries', 'estado-extraccion_indicada', 'estado-restauracion_defectuosa', 'estado-fractura', 'estado-resina', 'estado-endodoncia', 'estado-corona', 'estado-implante', 'estado-ausente', 'estado-sellante');
             if (estado !== "") {
                 elemento.classList.add('estado-' + estado);
             }
@@ -1499,9 +1513,15 @@ if (!$paciente) {
             document.querySelectorAll('.cara-diente-2d').forEach(cara => {
                 let estadoCara = '';
                 if (cara.classList.contains('estado-caries')) estadoCara = 'caries';
+                else if (cara.classList.contains('estado-extraccion_indicada')) estadoCara = 'extraccion_indicada';
+                else if (cara.classList.contains('estado-restauracion_defectuosa')) estadoCara = 'restauracion_defectuosa';
+                else if (cara.classList.contains('estado-fractura')) estadoCara = 'fractura';
                 else if (cara.classList.contains('estado-resina')) estadoCara = 'resina';
+                else if (cara.classList.contains('estado-endodoncia')) estadoCara = 'endodoncia';
                 else if (cara.classList.contains('estado-corona')) estadoCara = 'corona';
+                else if (cara.classList.contains('estado-implante')) estadoCara = 'implante';
                 else if (cara.classList.contains('estado-ausente')) estadoCara = 'ausente';
+                else if (cara.classList.contains('estado-sellante')) estadoCara = 'sellante';
                 
                 // Vamos a enviar un UPDATE para cada cara (incluso vacías para limpiar)
                 const payload = {
@@ -1529,9 +1549,15 @@ if (!$paciente) {
                     const nombreCara = cara.getAttribute('data-cara');
                     let estadoCara = '';
                     if (cara.classList.contains('estado-caries')) estadoCara = 'caries';
+                    else if (cara.classList.contains('estado-extraccion_indicada')) estadoCara = 'extraccion_indicada';
+                    else if (cara.classList.contains('estado-restauracion_defectuosa')) estadoCara = 'restauracion_defectuosa';
+                    else if (cara.classList.contains('estado-fractura')) estadoCara = 'fractura';
                     else if (cara.classList.contains('estado-resina')) estadoCara = 'resina';
+                    else if (cara.classList.contains('estado-endodoncia')) estadoCara = 'endodoncia';
                     else if (cara.classList.contains('estado-corona')) estadoCara = 'corona';
+                    else if (cara.classList.contains('estado-implante')) estadoCara = 'implante';
                     else if (cara.classList.contains('estado-ausente')) estadoCara = 'ausente';
+                    else if (cara.classList.contains('estado-sellante')) estadoCara = 'sellante';
 
                     // Eliminar hallazgos antiguos de esta cara
                     hallazgosOdontograma = hallazgosOdontograma.filter(h => !(h.diente_numero == diente && h.cara_afectada == nombreCara));
@@ -1607,7 +1633,7 @@ if (!$paciente) {
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
     <script>
-        // --- M�"DULO DE PRESUPUESTOS ---
+        // --- MÓDULO DE PRESUPUESTOS ---
         let presupuestoActivo = null;
         let catalogoTratamientos = [];
 
@@ -2135,20 +2161,29 @@ if (!$paciente) {
 
         function obtenerMensajePresupuesto() {
             const total = parseFloat(presupuestoActivo.total).toFixed(2);
-            return `Hola *<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>*, te adjuntamos el detalle de tu presupuesto odontol\u00F3gico por un total de *S/ ${total}*.\n_Quedamos atentos a cualquier duda._\nAtte: *MahuDent*.`;
+            return `Hola *<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>*, te adjuntamos el detalle de tu presupuesto odontológico por un total de *S/ ${total}*.\n_Quedamos atentos a cualquier duda._\nAtte: *MahuDent*.`;
         }
 
         function enviarPorWhatsApp() {
-            const telefonoElem = document.getElementById('pacienteTelefonoTxt');
-            const telefono = telefonoElem ? telefonoElem.innerText.replace(/\D/g, '') : "<?php echo preg_replace('/[^0-9]/', '', $paciente['telefono']); ?>";
+            const telefonoSpan = document.getElementById('paciente_telefono_span');
+            if (!telefonoSpan) return;
             
-            if (!telefono || telefono.length < 5) {
-                alert("El paciente no tiene un número de teléfono válido registrado.");
+            let phone = telefonoSpan.innerText.trim();
+            if (phone === '-' || phone === '') {
+                alert('El paciente no tiene un número de teléfono válido registrado.');
                 return;
             }
+            
+            // Clean phone number
+            phone = phone.replace(/\s+/g, '').replace(/\D/g, '');
+            if (phone.length === 9) {
+                phone = '51' + phone;
+            } else if (phone.startsWith('0')) {
+                phone = '51' + phone.substring(1);
+            }
+
             const msj = obtenerMensajePresupuesto();
-            const prefijo = telefono.startsWith('51') ? '' : '51';
-            const url = `https://wa.me/${prefijo}${telefono}?text=${encodeURIComponent(msj)}`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(msj)}`;
             window.open(url, '_blank');
             marcarPresupuestoComoEnviado();
         }
@@ -2892,6 +2927,42 @@ if (!$paciente) {
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
             window.open(url, '_blank');
         }
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Check and close modals if they are open
+                const modalDiente = document.getElementById('modalDiente');
+                if (modalDiente && !modalDiente.classList.contains('hidden')) {
+                    cerrarModalDiente();
+                }
+
+                const modalItem = document.getElementById('modalNuevoItem');
+                if (modalItem && !modalItem.classList.contains('hidden')) {
+                    cerrarModalItem();
+                }
+                
+                const modalPresupuesto = document.getElementById('modalNuevoPresupuesto');
+                if (modalPresupuesto && !modalPresupuesto.classList.contains('hidden')) {
+                    cerrarModalNuevoPresupuesto();
+                }
+
+                const lightboxVisor = document.getElementById('lightboxVisor');
+                if (lightboxVisor && !lightboxVisor.classList.contains('hidden')) {
+                    cerrarLightbox();
+                }
+                
+                const historialTriajeVisor = document.getElementById('historialTriajeVisor');
+                if (historialTriajeVisor && !historialTriajeVisor.classList.contains('hidden')) {
+                    cerrarHistorialTriaje();
+                }
+                
+                const modalPago = document.getElementById('modalNuevoPago');
+                if (modalPago && !modalPago.classList.contains('hidden')) {
+                    cerrarModalPago();
+                }
+            }
+        });
     </script>
 
 </body>
