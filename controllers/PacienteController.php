@@ -76,5 +76,13 @@ class PacienteController {
     public function delete($id) {
         return $this->pacienteModel->softDelete($id);
     }
+
+    public function restore($id) {
+        return $this->pacienteModel->restore($id);
+    }
+
+    public function inhabilitados() {
+        return $this->pacienteModel->getInhabilitados();
+    }
 }
 ?>

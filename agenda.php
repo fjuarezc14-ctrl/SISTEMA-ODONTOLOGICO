@@ -43,11 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
             $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al reprogramar: " . htmlspecialchars($resultado) . "</div>";
         }
     } else if ($_POST['accion'] == 'eliminar_cita') {
-        $resultado = $citaCtrl->delete($_POST['cita_id']);
-        if($resultado === true) {
-            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Cita eliminada físicamente.</div>";
+        if ($_SESSION['usuario_rol'] === 'Admin') {
+            $resultado = $citaCtrl->delete($_POST['cita_id']);
+            if($resultado === true) {
+                $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Cita eliminada físicamente.</div>";
+            } else {
+                $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+            }
         } else {
-            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Acceso denegado: Solo el Administrador puede eliminar citas físicamente. Utilice Cancelar.</div>";
         }
     }
 }
@@ -581,10 +585,16 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <p class="text-slate-700 font-medium" id="detalle_motivo"></p>                <div class="h-px bg-slate-100 w-full my-1"></div>
 
                 <div id="acciones_cita_container" class="flex flex-col gap-4">
-                    <!-- Botón Principal Clínico -->
+                    <!-- Botón Principal Clínico / Ver Ficha -->
+                    <?php if ($_SESSION['usuario_rol'] === 'Recepcionista'): ?>
+                    <a id="btn_atender_paciente" href="#" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-black py-3 px-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center gap-3 uppercase tracking-wider text-sm">
+                        <i data-lucide="folder-open" class="w-5 h-5"></i> Ver Ficha del Paciente
+                    </a>
+                    <?php else: ?>
                     <a id="btn_atender_paciente" href="#" class="w-full bg-brand hover:bg-teal-800 text-white font-black py-3 px-4 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 hover:shadow-xl flex items-center justify-center gap-3 uppercase tracking-wider text-sm">
                         <i data-lucide="stethoscope" class="w-5 h-5"></i> Atender Paciente
                     </a>
+                    <?php endif; ?>
                     
                     <div class="h-px bg-slate-100 w-full my-1"></div>
 
@@ -618,14 +628,16 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                         <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-sm transition">Actualizar Fecha/Hora</button>
                     </form>
                     
-                    <!-- Form Eliminar -->
-                    <form method="POST" action="" class="mt-2" onsubmit="return confirm('¿Estás seguro de ELIMINAR esta cita físicamente? Esto no se puede deshacer.');">
+                    <!-- Eliminar Cita (Solo Admin) -->
+                    <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
+                    <form method="POST" action="" class="mt-2" onsubmit="return confirm('¿Está SEGURO de eliminar físicamente esta cita? Si fue un error de registro, confirme.');">
                         <input type="hidden" name="accion" value="eliminar_cita">
                         <input type="hidden" name="cita_id" id="eliminar_cita_id">
-                        <button type="submit" class="w-full py-2 flex items-center justify-center gap-2 text-red-500 hover:text-red-700 font-bold text-xs uppercase tracking-wider transition">
-                            <i data-lucide="trash-2" class="w-3 h-3"></i> Eliminar cita (Error)
+                        <button type="submit" class="w-full py-2.5 px-4 rounded-xl text-red-500 font-bold hover:bg-red-50 transition text-sm flex items-center justify-center gap-2">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Eliminar Cita (Error)
                         </button>
                     </form>
+                    <?php endif; ?>
                 </div>
                 
                 <div id="cita_bloqueada_msg" class="hidden bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-200 flex items-center gap-3">
@@ -637,6 +649,8 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
     </div>
 
     <script>
+        const USUARIO_ROL = "<?php echo $_SESSION['usuario_rol']; ?>";
+
         function abrirDetalleCita(cita) {
             const modal = document.getElementById('modalDetalleCita');
             const inner = modal.querySelector('div');
@@ -644,10 +658,15 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
             // Llenar IDs
             document.getElementById('detalle_cita_id').value = cita.id;
             document.getElementById('reprogramar_cita_id').value = cita.id;
-            document.getElementById('eliminar_cita_id').value = cita.id;
+            const eliminarInput = document.getElementById('eliminar_cita_id');
+            if(eliminarInput) eliminarInput.value = cita.id;
             
             // Link de Atención Clínica
-            document.getElementById('btn_atender_paciente').href = `paciente_detalle.php?id=${cita.paciente_id}&cita_id=${cita.id}`;
+            if (USUARIO_ROL === 'Recepcionista') {
+                document.getElementById('btn_atender_paciente').href = `paciente_detalle.php?id=${cita.paciente_id}`;
+            } else {
+                document.getElementById('btn_atender_paciente').href = `paciente_detalle.php?id=${cita.paciente_id}&cita_id=${cita.id}`;
+            }
             
             // Llenar inputs de reprogramar
             document.getElementById('rep_fecha').value = cita.fecha;

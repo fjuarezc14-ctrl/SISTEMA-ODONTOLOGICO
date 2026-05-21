@@ -58,24 +58,30 @@ if (isset($notificaciones[0]['tipo']) && $notificaciones[0]['tipo'] === 'info') 
     $notif_count = 0;
 }
 ?>
-<header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm shrink-0 relative z-40">
-    <!-- Buscador interactivo -->
-    <?php if ($show_search): ?>
-        <div class="flex items-center gap-4 w-1/2 relative">
-            <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
-            <input type="text" id="sys-search-input" placeholder="Buscar pacientes por nombre o DNI..." class="w-full bg-transparent outline-none text-slate-600 placeholder-slate-400 font-semibold text-sm">
-            
-            <!-- Resultados flotantes -->
-            <div id="sys-search-results" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 hidden max-h-80 overflow-y-auto z-50">
-                <div class="p-3 text-xs font-bold text-slate-400 border-b border-slate-50 uppercase tracking-wider">Resultados de búsqueda</div>
-                <div id="sys-search-items" class="divide-y divide-slate-50">
-                    <!-- Dinámico -->
+<header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 shadow-sm shrink-0 relative z-40">
+    <div class="flex items-center gap-3 md:gap-4 w-full md:w-1/2">
+        <!-- Hamburger Button (Mobile only) -->
+        <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-brand transition-colors p-2 -ml-2 shrink-0">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <!-- Buscador interactivo o Título -->
+        <?php if ($show_search): ?>
+            <div class="flex items-center gap-2 md:gap-4 w-full relative">
+                <i data-lucide="search" class="w-5 h-5 text-slate-400 shrink-0"></i>
+                <input type="text" id="sys-search-input" placeholder="Buscar pacientes..." class="w-full bg-transparent outline-none text-slate-600 placeholder-slate-400 font-semibold text-sm">
+                
+                <!-- Resultados flotantes -->
+                <div id="sys-search-results" class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 hidden max-h-80 overflow-y-auto z-50">
+                    <div class="p-3 text-xs font-bold text-slate-400 border-b border-slate-50 uppercase tracking-wider">Resultados de búsqueda</div>
+                    <div id="sys-search-items" class="divide-y divide-slate-50">
+                        <!-- Dinámico -->
+                    </div>
                 </div>
             </div>
-        </div>
-    <?php else: ?>
-        <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight"><?php echo htmlspecialchars($page_title); ?></h1>
-    <?php endif; ?>
+        <?php else: ?>
+            <h1 class="text-lg md:text-xl font-black text-slate-800 uppercase tracking-tight truncate"><?php echo htmlspecialchars($page_title); ?></h1>
+        <?php endif; ?>
+    </div>
     
     <div class="flex items-center gap-6">
         <!-- Notificaciones -->

@@ -4,6 +4,10 @@ if(!isset($_SESSION['usuario_id'])) {
     header("Location: index.php");
     exit;
 }
+if($_SESSION['usuario_rol'] === 'Dentista') {
+    header("Location: dashboard.php");
+    exit;
+}
 
 require_once 'config/conexion.php';
 require_once 'models/Pago.php';
@@ -62,7 +66,7 @@ foreach ($pagos as $p) {
     <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
         <?php $page_title = 'Caja Diaria / Reportes'; include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
             <div class="max-w-7xl mx-auto space-y-6">
                 
                 <!-- Filtros -->

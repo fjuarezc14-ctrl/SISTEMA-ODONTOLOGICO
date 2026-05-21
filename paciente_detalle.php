@@ -189,7 +189,7 @@ if (!$paciente) {
         <?php $page_title = 'Detalles';
         include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8 relative">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
             <?php if ($cita_id_activa): ?>
             <div class="bg-brand text-white p-4 rounded-2xl mb-6 shadow-md flex justify-between items-center border border-teal-600 relative overflow-hidden">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -404,26 +404,28 @@ if (!$paciente) {
                         </div>
 
                         <div class="p-6">
-                            <?php if ($cita_id_activa): ?>
-                            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
-                                <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="pen-line" class="w-4 h-4"></i> Añadir Nota Clínica (Sesión Actual)
-                                </h4>
-                                <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
-                                <button onclick="guardarEvolucion(<?php echo $cita_id_activa; ?>)" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
-                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Evolución y Finalizar Cita
-                                </button>
-                            </div>
-                            <?php else: ?>
-                            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8">
-                                <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Nota Rápida (Sin cita)
-                                </h4>
-                                <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
-                                <button onclick="guardarEvolucion(null)" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                                    Guardar Nota Rápida
-                                </button>
-                            </div>
+                            <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
+                                <?php if ($cita_id_activa): ?>
+                                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-8">
+                                    <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="pen-line" class="w-4 h-4"></i> Añadir Nota Clínica (Sesión Actual)
+                                    </h4>
+                                    <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
+                                    <button onclick="guardarEvolucion(<?php echo $cita_id_activa; ?>)" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                                        <i data-lucide="save" class="w-4 h-4"></i> Guardar Evolución y Finalizar Cita
+                                    </button>
+                                </div>
+                                <?php else: ?>
+                                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-8">
+                                    <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Nota Rápida (Sin cita)
+                                    </h4>
+                                    <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
+                                    <button onclick="guardarEvolucion(null)" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                        Guardar Nota Rápida
+                                    </button>
+                                </div>
+                                <?php endif; ?>
                             <?php endif; ?>
 
                             <div class="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
@@ -470,9 +472,11 @@ if (!$paciente) {
                                 <button onclick="verHistorialTriaje()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="history" class="w-4 h-4"></i> Ver Historial
                                 </button>
+                                <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                                 <button id="btnGuardarTriaje" onclick="guardarTriaje()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="save" class="w-4 h-4"></i> Guardar
                                 </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="p-6">
@@ -509,9 +513,11 @@ if (!$paciente) {
                                 <i data-lucide="clipboard-list" class="w-5 h-5 text-indigo-600"></i> Antecedentes Clínicos
                             </h3>
                             <div class="flex gap-2">
+                                <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                                 <button id="btnEditarAntecedentes" onclick="toggleEditAntecedentes()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i> Editar
                                 </button>
+                                <?php endif; ?>
                                 <button id="btnGuardarAntecedentes" onclick="guardarAntecedentes()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="save" class="w-4 h-4"></i> Guardar
                                 </button>
@@ -780,9 +786,11 @@ if (!$paciente) {
                                     <p class="text-xs text-slate-400">Prescripciones e indicaciones para el paciente</p>
                                 </div>
                             </div>
+                            <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                             <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition flex items-center gap-2 text-sm">
                                 <i data-lucide="plus" class="w-4 h-4"></i> Nueva Receta
                             </button>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="p-6">
@@ -804,9 +812,11 @@ if (!$paciente) {
                                             <button onclick="imprimirReceta(<?php echo $receta['id']; ?>)" class="text-sky-600 bg-sky-50 p-1.5 rounded-lg hover:bg-sky-600 hover:text-white transition" title="Imprimir">
                                                 <i data-lucide="printer" class="w-4 h-4"></i>
                                             </button>
+                                            <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                                             <button type="button" onclick="eliminarReceta(<?php echo $receta['id']; ?>)" class="text-red-500 bg-red-50 p-1.5 rounded-lg hover:bg-red-500 hover:text-white transition" title="Eliminar">
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </button>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                     <div class="text-sm text-slate-700 line-clamp-3 mb-4 min-h-[3rem] whitespace-pre-wrap leading-relaxed"><?php echo htmlspecialchars($receta['contenido']); ?></div>
@@ -1108,10 +1118,12 @@ if (!$paciente) {
                         </div>
                     </div>
 
+                    <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                     <button onclick="guardarHallazgos()"
-                        class="w-full bg-brand text-white py-4 rounded-2xl font-black shadow-lg hover:bg-teal-800 transition uppercase tracking-widest flex justify-center items-center gap-3 hover:scale-[1.02] active:scale-95">
+                        class="bg-brand hover:bg-teal-800 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-[1.02] flex items-center justify-center gap-3">
                         <i data-lucide="save" class="w-6 h-6"></i> Guardar Hallazgos en Historial
                     </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

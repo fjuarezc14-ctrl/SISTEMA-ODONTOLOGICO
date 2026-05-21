@@ -28,17 +28,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accion'])) {
             $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al actualizar: " . htmlspecialchars($resultado) . "</div>";
         }
     } else if ($_POST['accion'] == 'eliminar_paciente') {
-        $resultado = $controller->delete($_POST['paciente_id']);
-        if($resultado === true) {
-            $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Paciente oculto/eliminado del registro.</div>";
+        if ($_SESSION['usuario_rol'] === 'Admin') {
+            $resultado = $controller->delete($_POST['paciente_id']);
+            if($resultado === true) {
+                $mensaje = "<div class='bg-gray-100 text-gray-700 p-3 rounded-xl mb-4 font-bold text-sm border border-gray-300'>Paciente oculto/eliminado del registro.</div>";
+            } else {
+                $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+            }
         } else {
-            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al eliminar: " . htmlspecialchars($resultado) . "</div>";
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Acceso denegado: Solo el Administrador puede inhabilitar pacientes.</div>";
+        }
+    } else if ($_POST['accion'] == 'restaurar_paciente' && $_SESSION['usuario_rol'] === 'Admin') {
+        $resultado = $controller->restore($_POST['paciente_id']);
+        if($resultado === true) {
+            $mensaje = "<div class='bg-emerald-100 text-emerald-700 p-3 rounded-xl mb-4 font-bold text-sm border border-emerald-200'>Paciente restaurado con éxito.</div>";
+        } else {
+            $mensaje = "<div class='bg-red-100 text-red-700 p-3 rounded-xl mb-4 font-bold text-sm border border-red-200'>Error al restaurar: " . htmlspecialchars($resultado) . "</div>";
         }
     }
 }
 
-// 3. Obtenemos la lista de pacientes usando el Controlador
-$resultado_pacientes = $controller->index();
+// 3. Obtenemos la lista de pacientes
+$ver_inhabilitados = isset($_GET['inhabilitados']) && $_GET['inhabilitados'] == '1' && $_SESSION['usuario_rol'] === 'Admin';
+if ($ver_inhabilitados) {
+    $resultado_pacientes = $controller->inhabilitados();
+} else {
+    $resultado_pacientes = $controller->index();
+}
 ?>
 
 <!DOCTYPE html>
@@ -66,7 +82,7 @@ $resultado_pacientes = $controller->index();
         
         <?php $page_title = 'Directorio de Pacientes'; include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8 relative">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
             
             <?php echo $mensaje; // Aquí mostramos si se guardó con éxito ?>
 
@@ -76,10 +92,23 @@ $resultado_pacientes = $controller->index();
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
                         <input type="text" placeholder="Buscar por nombre o DNI..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
                     </div>
-                    
-                    <button onclick="abrirModal()" class="w-full md:w-auto px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Paciente
-                    </button>
+                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                        <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
+                            <?php if ($ver_inhabilitados): ?>
+                                <a href="pacientes.php" class="w-full md:w-auto px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-200 transition flex items-center justify-center gap-2">
+                                    <i data-lucide="users" class="w-4 h-4"></i> Ver Activos
+                                </a>
+                            <?php else: ?>
+                                <a href="pacientes.php?inhabilitados=1" class="w-full md:w-auto px-5 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-bold shadow-sm hover:bg-red-100 transition flex items-center justify-center gap-2">
+                                    <i data-lucide="user-x" class="w-4 h-4"></i> Inhabilitados
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        
+                        <button onclick="abrirModal()" class="w-full md:w-auto px-5 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i> Nuevo Paciente
+                        </button>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -113,13 +142,22 @@ $resultado_pacientes = $controller->index();
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex justify-center gap-2">
-                                            <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia">
-                                                <i data-lucide="folder-open" class="w-4 h-4"></i>
-                                            </a>
-                                            <button onclick='abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
-                                                <i data-lucide="edit" class="w-4 h-4"></i>
-                                            </button>
-
+                                            <?php if ($ver_inhabilitados): ?>
+                                                <form method="POST" action="pacientes.php" class="inline" onsubmit="return confirm('¿Seguro que deseas restaurar a este paciente? Volverá a estar activo en el sistema.');">
+                                                    <input type="hidden" name="accion" value="restaurar_paciente">
+                                                    <input type="hidden" name="paciente_id" value="<?php echo $paciente['id']; ?>">
+                                                    <button type="submit" class="p-2 bg-slate-100 hover:bg-emerald-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Restaurar Paciente">
+                                                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                                    </button>
+                                                </form>
+                                            <?php else: ?>
+                                                <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia">
+                                                    <i data-lucide="folder-open" class="w-4 h-4"></i>
+                                                </a>
+                                                <button onclick='abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
+                                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                                </button>
+                                            <?php endif; ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -334,9 +372,13 @@ $resultado_pacientes = $controller->index();
                 </div>
 
                 <div class="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
                     <button type="button" onclick="confirmarEliminacion(document.getElementById('edit_paciente_id').value)" class="text-red-500 hover:text-red-600 font-bold text-sm flex items-center gap-2 transition px-2 py-2">
                         <i data-lucide="trash-2" class="w-4 h-4"></i> Inhabilitar Paciente
                     </button>
+                    <?php else: ?>
+                    <div></div>
+                    <?php endif; ?>
                     <div class="flex gap-3 w-full md:w-auto">
                         <button type="button" onclick="cerrarModalEdicion()" class="flex-1 md:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Cancelar</button>
                         <button type="submit" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-600/30 transition">Guardar Cambios</button>

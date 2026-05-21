@@ -42,7 +42,7 @@ if(!isset($_SESSION['usuario_id'])) {
         
         <?php $page_title = 'Detalles'; include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
             <div class="flex flex-col lg:flex-row gap-8">
                 
                 <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6">

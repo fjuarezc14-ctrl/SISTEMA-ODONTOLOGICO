@@ -61,11 +61,11 @@ class CitaController {
                     $cita['css_color'] = 'bg-emerald-50 border-emerald-500 text-emerald-800';
                     $cita['css_text_light'] = 'text-emerald-600';
                 } elseif($cita['estado'] == 'Cancelada') {
-                    $cita['css_color'] = 'bg-red-50 border-red-500 text-red-800';
-                    $cita['css_text_light'] = 'text-red-600';
+                    $cita['css_color'] = 'bg-red-50/70 border-red-300 text-red-500 opacity-60 z-0 hover:z-50';
+                    $cita['css_text_light'] = 'text-red-400';
                 } elseif($cita['estado'] == 'En Curso') {
-                    $cita['css_color'] = 'bg-blue-50 border-blue-500 text-blue-800 animate-pulse';
-                    $cita['css_text_light'] = 'text-blue-600';
+                    $cita['css_color'] = 'bg-indigo-50 border-indigo-500 text-indigo-800 animate-pulse';
+                    $cita['css_text_light'] = 'text-indigo-600';
                     $cita['motivo'] = '[EN SALA] ' . $cita['motivo'];
                 } else {
                     // Pendiente: azul o naranja dependiendo si ya pasó la hora
@@ -74,8 +74,9 @@ class CitaController {
                         $cita['css_text_light'] = 'text-orange-600';
                         $cita['motivo'] = '[ATRASADA] ' . $cita['motivo'];
                     } else {
-                        $cita['css_color'] = 'bg-brand-light border-brand text-teal-900';
-                        $cita['css_text_light'] = 'text-brand';
+                        // Pendiente standard uses a clean Sky blue instead of brand teal
+                        $cita['css_color'] = 'bg-sky-50 border-sky-400 text-sky-800';
+                        $cita['css_text_light'] = 'text-sky-600';
                     }
                 }
                 

@@ -92,7 +92,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
         
         <?php $page_title = 'Presupuestos'; include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
             
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">

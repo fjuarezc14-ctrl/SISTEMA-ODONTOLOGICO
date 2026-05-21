@@ -48,5 +48,17 @@ class Paciente {
         $stmt->bind_param("i", $id);
         return $stmt->execute() ? true : $this->conn->error;
     }
+
+    public function restore($id) {
+        $sql = "UPDATE pacientes SET estado_activo = 1 WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $id);
+        return $stmt->execute() ? true : $this->conn->error;
+    }
+
+    public function getInhabilitados() {
+        $sql = "SELECT * FROM pacientes WHERE estado_activo = 0 ORDER BY fecha_registro DESC";
+        return $this->conn->query($sql);
+    }
 }
 ?>

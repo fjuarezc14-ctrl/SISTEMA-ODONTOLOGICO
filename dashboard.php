@@ -71,7 +71,7 @@ foreach ($chart_ingresos as $mes => $total) {
         <?php $show_search = true;
         include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-8">
+        <div class="flex-1 overflow-y-auto p-4 md:p-8">
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
                 <div>
