@@ -171,8 +171,15 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                                     $total = floatval($p['total']);
                                     $pagado = floatval($p['monto_pagado'] ?? 0);
                                     $saldo = $total - $pagado;
+
+                                    $onclickAttr = "";
+                                    if (isset($p['paciente_estado_activo']) && $p['paciente_estado_activo'] == 0) {
+                                        $onclickAttr = "onclick=\"alert('Este presupuesto pertenece a un paciente inhabilitado. Debe restaurar al paciente desde el módulo de Pacientes para ver los detalles.')\"";
+                                    } else {
+                                        $onclickAttr = "onclick=\"location.href='paciente_detalle.php?id=" . $p['paciente_id'] . "&open_presupuesto=" . $p['id'] . "#presupuestos'\"";
+                                    }
                                 ?>
-                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" onclick="location.href='paciente_detalle.php?id=<?php echo $p['paciente_id']; ?>&open_presupuesto=<?php echo $p['id']; ?>#presupuestos'">
+                                <tr class="hover:bg-slate-50/80 transition-colors group cursor-pointer" <?php echo $onclickAttr; ?>>
                                     <td class="px-6 py-4 text-sm font-bold text-brand">#PR-<?php echo str_pad($p['id'], 5, '0', STR_PAD_LEFT); ?></td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">

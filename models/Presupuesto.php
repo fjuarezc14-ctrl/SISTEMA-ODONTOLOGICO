@@ -24,7 +24,7 @@ class Presupuesto {
     }
 
     public function getAll() {
-        $sql = "SELECT p.*, u.nombre as doctor_nombre, pac.nombre as paciente_nombre, pac.dni as paciente_dni
+        $sql = "SELECT p.*, u.nombre as doctor_nombre, pac.nombre as paciente_nombre, pac.dni as paciente_dni, pac.estado_activo as paciente_estado_activo
                 FROM presupuestos p 
                 LEFT JOIN usuarios u ON p.doctor_id = u.id 
                 LEFT JOIN pacientes pac ON p.paciente_id = pac.id

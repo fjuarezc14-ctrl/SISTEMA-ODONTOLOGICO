@@ -225,9 +225,16 @@ if (!$paciente) {
                             <p class="text-sm text-slate-500 font-medium mb-4">DNI:
                                 <?php echo htmlspecialchars($paciente['dni']); ?></p>
                             <div class="space-y-3 pt-4 border-t border-slate-100">
-                                <div class="flex items-center gap-3 text-sm text-slate-600"><i data-lucide="phone"
-                                        class="w-4 h-4 text-slate-400"></i><span
-                                        class="font-medium"><?php echo htmlspecialchars($paciente['telefono'] ?? '-'); ?></span>
+                                <div class="flex items-center gap-3 text-sm text-slate-600 justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="phone" class="w-4 h-4 text-slate-400"></i>
+                                        <span class="font-medium" id="paciente_telefono_span"><?php echo htmlspecialchars($paciente['telefono'] ?? '-'); ?></span>
+                                    </div>
+                                    <?php if (!empty($paciente['telefono'])): ?>
+                                    <button onclick="enviarWhatsAppPaciente('<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>')" class="bg-[#25D366] hover:bg-[#128C7E] text-white p-1.5 rounded-lg shadow-sm transition hover:scale-105 tooltip" title="Enviar WhatsApp">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i>
+                                    </button>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="flex items-center gap-3 text-sm text-slate-600"><i data-lucide="mail"
                                         class="w-4 h-4 text-slate-400"></i><span
@@ -2128,8 +2135,7 @@ if (!$paciente) {
 
         function obtenerMensajePresupuesto() {
             const total = parseFloat(presupuestoActivo.total).toFixed(2);
-            const numPR = presupuestoActivo.id.toString().padStart(5, '0');
-            return `Hola <?php echo htmlspecialchars($paciente['nombre']); ?>, te adjuntamos el detalle de tu presupuesto odontológico N° PR-${numPR} por un total de S/ ${total}. Quedamos atentos a cualquier duda. Atte: MahuDent.`;
+            return `Hola *<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>*, te adjuntamos el detalle de tu presupuesto odontol\u00F3gico por un total de *S/ ${total}*.\n_Quedamos atentos a cualquier duda._\nAtte: *MahuDent*.`;
         }
 
         function enviarPorWhatsApp() {
@@ -2861,6 +2867,30 @@ if (!$paciente) {
 
         function imprimirReceta(id) {
             window.open('imprimir_receta.php?id=' + id, '_blank', 'width=800,height=900');
+        }
+
+        function enviarWhatsAppPaciente(nombrePaciente) {
+            const telefonoSpan = document.getElementById('paciente_telefono_span');
+            if (!telefonoSpan) return;
+            
+            let phone = telefonoSpan.innerText.trim();
+            if (phone === '-' || phone === '') {
+                alert('El paciente no tiene un número de teléfono registrado.');
+                return;
+            }
+            
+            // Clean phone number
+            phone = phone.replace(/\s+/g, '').replace(/\D/g, '');
+            if (phone.length === 9) {
+                phone = '51' + phone;
+            } else if (phone.startsWith('0')) {
+                phone = '51' + phone.substring(1);
+            }
+
+            const mensaje = `Hola *${nombrePaciente}*, esperamos que est\xE9s muy bien tras tu tratamiento en *MahuDent*.\n_Cualquier molestia o para agendar tu pr\xF3xima revisi\xF3n, solo cont\xE1ctanos._\n\xA1Seguimos en contacto!`;
+            
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
         }
     </script>
 

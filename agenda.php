@@ -570,7 +570,12 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <p class="text-sm font-medium text-slate-500 flex items-center gap-1 mt-1">
                         <i data-lucide="clock" class="w-4 h-4"></i> <span id="detalle_horario">00:00 - 00:00</span>
                         <span class="mx-2 text-slate-300">|</span>
-                        <i data-lucide="phone" class="w-4 h-4"></i> <span id="detalle_telefono">---</span>
+                        <div class="flex items-center">
+                            <i data-lucide="phone" class="w-4 h-4"></i> <span id="detalle_telefono" class="ml-1">---</span>
+                            <button onclick="enviarRecordatorioWhatsApp()" class="ml-2 bg-[#25D366] text-white hover:bg-[#128C7E] p-1 rounded-full shadow-sm transition hover:scale-110" title="Enviar recordatorio por WhatsApp">
+                                <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
                     </p>
                 </div>
                 
@@ -650,8 +655,37 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 
     <script>
         const USUARIO_ROL = "<?php echo $_SESSION['usuario_rol']; ?>";
+        let citaActualSeleccionada = null;
+
+        function enviarRecordatorioWhatsApp() {
+            if (!citaActualSeleccionada) return;
+            const c = citaActualSeleccionada;
+            
+            // Format phone number
+            let phone = c.paciente_telefono ? c.paciente_telefono.replace(/\s+/g, '').replace(/\D/g, '') : '';
+            if (!phone) {
+                alert('El paciente no tiene un número de teléfono registrado.');
+                return;
+            }
+            if (phone.length === 9) { // Assuming typical Peruvian 9-digit mobile number without +51
+                phone = '51' + phone;
+            } else if (phone.startsWith('0')) {
+                phone = '51' + phone.substring(1);
+            }
+
+            // Parse date for friendly message (YYYY-MM-DD to DD/MM/YYYY)
+            const dateParts = c.fecha.split('-');
+            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            const formattedTime = c.hora_inicio.substring(0, 5);
+            // Construct message avoiding accents and emojis directly in the string, using WhatsApp markdown
+            const mensaje = `Hola *${c.paciente_nombre}*, te contactamos de *MahuDent* para recordarte tu cita:\n*Fecha:* ${formattedDate}\n*Hora:* ${formattedTime}\nPor favor, conf\xEDrmame si asistir\xE1s. _Si necesitas cambiar el d\xEDa, av\xEDsame con tiempo._\n\xA1Te esperamos!`;
+            
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(mensaje)}`;
+            window.open(url, '_blank');
+        }
 
         function abrirDetalleCita(cita) {
+            citaActualSeleccionada = cita;
             const modal = document.getElementById('modalDetalleCita');
             const inner = modal.querySelector('div');
             
