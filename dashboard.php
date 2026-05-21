@@ -280,54 +280,90 @@ foreach ($chart_ingresos as $mes => $total) {
                 </button>
             </div>
             <div class="p-8 overflow-y-auto">
-                <form class="space-y-6">
-                    <h3 class="text-sm font-bold text-brand uppercase tracking-wider border-b border-slate-100 pb-2">
-                        Datos Personales</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Nombres y Apellidos *</label>
-                            <input type="text" placeholder="Ej. Carlos Mendoza"
-                                class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+                <form method="POST" action="pacientes.php" class="space-y-4">
+                        <input type="hidden" name="accion" value="nuevo_paciente">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">DNI *</label>
+                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombres y Apellidos *</label>
+                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">DNI *</label>
-                            <input type="text" placeholder="Numero de documento"
-                                class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono</label>
+                                <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Correo Electrónico</label>
+                                <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Telefono / Celular *</label>
-                            <input type="tel" placeholder="+51 987 654 321"
-                                class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Nacimiento</label>
+                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
+                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                    <option value="">Seleccione...</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Correo Electr&#243;nico</label>
-                            <input type="email" placeholder="correo@ejemplo.com"
-                                class="px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ocupación</label>
+                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dirección / Residencia</label>
+                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
-                    </div>
-                    <h3 class="text-sm font-bold text-orange-600 uppercase tracking-wider border-b border-slate-100 pb-2 mt-8">
-                        Alertas Cl&#237;nicas</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Alergias Conocidas</label>
-                            <input type="text" placeholder="Ej. Penicilina (Opcional)"
-                                class="px-4 py-3 rounded-xl border border-orange-200 bg-orange-50 focus:bg-white focus:ring-2 focus:ring-orange-300 outline-none transition-all text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lugar de Nacimiento</label>
+                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Procedencia</label>
+                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-slate-600">Enfermedades Cronicas</label>
-                            <input type="text" placeholder="Ej. Diabetes (Opcional)"
-                                class="px-4 py-3 rounded-xl border border-orange-200 bg-orange-50 focus:bg-white focus:ring-2 focus:ring-orange-300 outline-none transition-all text-sm">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contacto de Emergencia</label>
+                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono de Emergencia</label>
+                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="bg-slate-50 px-8 py-5 border-t border-slate-200 flex justify-end gap-3 shrink-0">
-                <button onclick="toggleModal()"
-                    class="px-6 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-200 transition-colors">Cancelar</button>
-                <button
-                    class="bg-brand hover:bg-teal-800 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg shadow-teal-900/20 transition-all hover:scale-105 flex items-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i> Guardar Paciente
-                </button>
+
+                        <div>
+                            <label class="block text-xs font-bold text-red-500 uppercase mb-1 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3 h-3"></i> Alergias / Condiciones Médicas</label>
+                            <input type="text" name="alergias" placeholder="Ej: Penicilina, Hipertensión..." class="w-full px-4 py-2 rounded-xl border border-red-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 placeholder:text-red-200 text-sm">
+                        </div>
+
+                        <div class="pt-4 flex gap-3">
+                            <button type="button" onclick="toggleModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
+                            <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Paciente</button>
+                        </div>
+                    </form>
             </div>
         </div>
     </div>
