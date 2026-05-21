@@ -187,6 +187,13 @@ require_once 'config/conexion.php';
 
                         if (parseInt(u.id) === 1) badgeEstado = `<span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 border border-slate-200">INMUTABLE</span>`;
                         
+                        let bloqueadoBtn = '';
+                        if (u.bloqueado_hasta) {
+                            bloqueadoBtn = `<button onclick="desbloquearUsuario(${u.id}, '${u.nombre}')" class="text-red-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition" title="Desbloquear Acceso">
+                                <i data-lucide="unlock" class="w-4 h-4"></i>
+                            </button>`;
+                        }
+                        
                         const tr = document.createElement('tr');
                         tr.className = "hover:bg-slate-50 transition-colors " + (parseInt(u.estado_activo) === 0 ? "opacity-60" : "");
                         tr.innerHTML = `
@@ -205,6 +212,7 @@ require_once 'config/conexion.php';
                                     <button onclick="resetPassword(${u.id}, '${u.nombre}')" class="text-slate-400 hover:text-amber-500 p-1.5 rounded-lg hover:bg-amber-50 transition" title="Cambiar Contraseña">
                                         <i data-lucide="key" class="w-4 h-4"></i>
                                     </button>
+                                    ${bloqueadoBtn}
                                 </div>
                             </td>
                         `;
@@ -218,6 +226,30 @@ require_once 'config/conexion.php';
                 console.error(e);
             }
         }
+
+        async function desbloquearUsuario(id, nombre) {
+            if (confirm(`¿Estás seguro de desbloquear el acceso de ${nombre}?`)) {
+                try {
+                    const res = await fetch('ajax_personal.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({accion: 'desbloquear_usuario', id: id})
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        cargarUsuarios();
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Error de red");
+                }
+            }
+        }
+
+        // Cargar usuarios al iniciar
+        cargarUsuarios();
 
         async function guardarUsuario(e) {
             e.preventDefault();

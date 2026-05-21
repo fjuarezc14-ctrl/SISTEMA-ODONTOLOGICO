@@ -18,7 +18,7 @@ if (!isset($data['accion'])) {
 
 switch ($data['accion']) {
     case 'listar_usuarios':
-        $sql = "SELECT id, nombre, usuario, rol, colegiatura, estado_activo FROM usuarios ORDER BY nombre ASC";
+        $sql = "SELECT id, nombre, usuario, rol, colegiatura, estado_activo, bloqueado_hasta FROM usuarios ORDER BY nombre ASC";
         $result = $conn->query($sql);
         $usuarios = [];
         if ($result) {
@@ -118,6 +118,21 @@ switch ($data['accion']) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'error' => 'Error al cambiar estado']);
+        }
+        break;
+
+    case 'desbloquear_usuario':
+        $id = intval($data['id']);
+        if ($id <= 0) {
+            echo json_encode(['success' => false, 'error' => 'ID de usuario inválido.']);
+            exit;
+        }
+        $stmt = $conn->prepare("UPDATE usuarios SET intentos_fallidos = 0, bloqueado_hasta = NULL WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al desbloquear el usuario.']);
         }
         break;
 
