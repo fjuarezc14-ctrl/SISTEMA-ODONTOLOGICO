@@ -89,7 +89,10 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
                 <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;padding:3px;">
                     <img src="assets/logo_icon.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
                 </div>
-                <img src="assets/logo_text_dark.png" alt="MahuDent" style="height:24px;width:auto;object-fit:contain;">
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+                    <img src="assets/logo_text_dark.png" alt="MahuDent" style="height:20px;width:auto;object-fit:contain;">
+                    <p style="font-family:sans-serif; font-weight:bold; font-size:8px; color:#555; letter-spacing:1px; margin:2px 0 0 0; text-transform:uppercase;">Clínica Odontológica</p>
+                </div>
             </div>
             <div style="text-align:center; font-size:11px; color:#666; margin-top:2px;">
                 <p style="margin:2px 0;">RUC: 20123456789 | Jr. San Sebastián 116</p>
