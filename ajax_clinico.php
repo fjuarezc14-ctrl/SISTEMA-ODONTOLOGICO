@@ -141,6 +141,10 @@ switch ($data['accion']) {
         break;
     // ── Guardar Receta Médica ───────────────
     case 'guardar_receta':
+        if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Recepcionista') {
+            echo json_encode(['success' => false, 'error' => 'No autorizado para guardar recetas'], $J);
+            break;
+        }
         $paciente_id = intval($data['paciente_id'] ?? 0);
         $diagnostico = trim($data['diagnostico'] ?? '');
         $contenido   = trim($data['contenido'] ?? '');
@@ -162,6 +166,10 @@ switch ($data['accion']) {
 
     // ── Eliminar Receta ───────────────
     case 'eliminar_receta':
+        if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Recepcionista') {
+            echo json_encode(['success' => false, 'error' => 'No autorizado para eliminar recetas'], $J);
+            break;
+        }
         $id = intval($data['id'] ?? 0);
         if (!$id) {
             echo json_encode(['success' => false, 'error' => 'ID requerido'], $J);

@@ -56,6 +56,21 @@ if ($receta['fecha_nacimiento']) {
         }
         body { font-family: 'Montserrat', sans-serif; background: #f1f5f9; min-height: 100vh; padding: 2rem; }
         .hoja { background: white; max-width: 210mm; min-height: 297mm; margin: 0 auto; box-shadow: 0 10px 30px rgb(0 0 0 / 0.12); position: relative; padding: 0; box-sizing: border-box; overflow: hidden; }
+        .hoja::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            width: 130mm;
+            height: 130mm;
+            background-image: url('assets/logo_watermark.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            z-index: 0;
+        }
         @media print { .hoja { box-shadow: none; margin: 0; min-height: 100%; } body { padding: 0; } }
     </style>
 </head>
@@ -69,8 +84,8 @@ if ($receta['fecha_nacimiento']) {
         <div style="background: linear-gradient(135deg, #3a596a 0%, #937ec2 100%); padding: 28px 40px; position: relative;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:14px;">
-                    <div style="width:48px;height:48px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                        <img src="assets/logo_icon.jpg" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
+                    <div style="width:48px;height:48px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:4px;">
+                        <img src="assets/logo_icon.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
                     </div>
                     <div style="display:flex;flex-direction:column;justify-content:center;">
                         <img src="assets/logo_text.png" alt="MahuDent" style="height:22px;width:auto;object-fit:contain;">

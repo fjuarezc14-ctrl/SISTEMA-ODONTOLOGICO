@@ -91,10 +91,10 @@ foreach ($pagos as $p) {
                 <div class="hidden print:block border-b-2 border-slate-800 pb-4 mb-6">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-3">
-                            <img src="assets/logo.jpg" alt="Logo" class="w-12 h-12 rounded-xl object-cover border border-slate-200">
+                            <img src="assets/logo_icon.png" alt="Logo" class="w-12 h-12 rounded-xl object-contain p-1 border border-slate-200 bg-white">
                             <div>
-                                <h1 class="text-2xl font-black text-slate-800 tracking-tight">MAHUDENT</h1>
-                                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Clínica Odontológica</p>
+                                <img src="assets/logo_text_dark.png" alt="MahuDent" class="h-6 w-auto object-contain">
+                                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Clínica Odontológica</p>
                                 <p class="text-[10px] text-slate-400 mt-0.5">Jr. San Sebastián 116 | Cel/WhatsApp: 941124848</p>
                             </div>
                         </div>

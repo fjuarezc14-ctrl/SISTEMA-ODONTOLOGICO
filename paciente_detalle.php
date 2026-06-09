@@ -313,9 +313,11 @@ if (!$paciente) {
                             
                             <!-- Acciones Rápidas -->
                             <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
+                                <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
                                 <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="file-text" class="w-4 h-4"></i> Generar Receta
                                 </button>
+                                <?php endif; ?>
                                 <a href="agenda.php?paciente_id=<?php echo $paciente_id; ?>" class="w-full bg-brand hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="calendar-plus" class="w-4 h-4"></i> Agendar Cita
                                 </a>

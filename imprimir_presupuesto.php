@@ -56,6 +56,22 @@ $p = $resumen['presupuesto'];
             margin: 20mm auto;
             padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .hoja::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            width: 140mm;
+            height: 140mm;
+            background-image: url('assets/logo_watermark.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            z-index: 0;
         }
         @media print {
             body { background: white; margin: 0; padding: 0; }
@@ -75,7 +91,7 @@ $p = $resumen['presupuesto'];
         <!-- Encabezado -->
         <div class="flex justify-between items-start border-b-2 border-teal-600 pb-6 mb-8">
             <div class="flex items-center gap-4">
-                <img src="assets/logo_icon.jpg" alt="Logo" class="w-16 h-16 rounded-xl object-cover border border-slate-200">
+                <img src="assets/logo_icon.png" alt="Logo" class="w-16 h-16 rounded-xl object-contain p-2 border border-slate-200 bg-white">
                 <div>
                     <img src="assets/logo_text_dark.png" alt="MahuDent" class="h-8 w-auto object-contain">
                     <p class="text-slate-500 font-bold text-xs uppercase tracking-wider mt-1">Clínica Odontológica Especializada</p>

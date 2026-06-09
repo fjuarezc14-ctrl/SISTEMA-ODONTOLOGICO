@@ -30,7 +30,31 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
         body { font-family: 'Roboto', Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
-        .receipt-container { width: 148mm; min-height: 210mm; background: white; margin: 20px auto; padding: 15mm; box-sizing: border-box; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .receipt-container {
+            width: 148mm;
+            min-height: 210mm;
+            background: white;
+            margin: 20px auto;
+            padding: 15mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .receipt-container::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            width: 90mm;
+            height: 90mm;
+            background-image: url('assets/logo_watermark.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            z-index: 0;
+        }
         .header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
         .header h1 { color: #3a596a; margin: 0; font-size: 22px; text-transform: uppercase; }
         .header p { margin: 5px 0 0 0; font-size: 12px; color: #666; }
@@ -62,8 +86,8 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
     <div class="receipt-container">
         <div class="header" style="display:flex; flex-direction:column; align-items:center; gap:8px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px;">
             <div style="display:flex; align-items:center; gap:12px;">
-                <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;">
-                    <img src="assets/logo_icon.jpg" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
+                <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;padding:3px;">
+                    <img src="assets/logo_icon.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
                 </div>
                 <img src="assets/logo_text_dark.png" alt="MahuDent" style="height:24px;width:auto;object-fit:contain;">
             </div>
