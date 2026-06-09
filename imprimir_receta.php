@@ -69,12 +69,12 @@ if ($receta['fecha_nacimiento']) {
         <div style="background: linear-gradient(135deg, #3a596a 0%, #937ec2 100%); padding: 28px 40px; position: relative;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:14px;">
-                    <div style="width:48px;height:48px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                        <span style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:26px;color:#3a596a;">M</span>
+                    <div style="width:48px;height:48px;background:white;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <img src="assets/logo_icon.jpg" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
                     </div>
-                    <div>
-                        <h1 style="font-family:'Montserrat',sans-serif;font-weight:900;font-size:24px;color:white;letter-spacing:-0.5px;margin:0;">MAHUDENT</h1>
-                        <p style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:11px;color:#ede8f7;letter-spacing:3px;margin:4px 0 0 0;">CLINICA DENTAL</p>
+                    <div style="display:flex;flex-direction:column;justify-content:center;">
+                        <img src="assets/logo_text.png" alt="MahuDent" style="height:22px;width:auto;object-fit:contain;">
+                        <p style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:9px;color:#ede8f7;letter-spacing:2px;margin:4px 0 0 0;">CLÍNICA ODONTOLÓGICA</p>
                     </div>
                 </div>
                 <div style="text-align:right;">

@@ -1,6 +1,6 @@
 <?php
 require_once 'includes/auth_guard.php';
-if($_SESSION['usuario_rol'] === 'Dentista') {
+if($_SESSION['usuario_rol'] !== 'Admin') {
     header("Location: dashboard.php");
     exit;
 }

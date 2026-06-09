@@ -74,10 +74,13 @@ $p = $resumen['presupuesto'];
     <div class="hoja relative">
         <!-- Encabezado -->
         <div class="flex justify-between items-start border-b-2 border-teal-600 pb-6 mb-8">
-            <div>
-                <h1 class="text-4xl font-black text-teal-700 tracking-tighter">MahuDent</h1>
-                <p class="text-slate-500 font-medium text-sm mt-1">Clínica Odontológica Especializada</p>
-                <p class="text-slate-500 text-xs mt-1">Jr. San Sebastián 116<br>Cel/WhatsApp: 941124848</p>
+            <div class="flex items-center gap-4">
+                <img src="assets/logo_icon.jpg" alt="Logo" class="w-16 h-16 rounded-xl object-cover border border-slate-200">
+                <div>
+                    <img src="assets/logo_text_dark.png" alt="MahuDent" class="h-8 w-auto object-contain">
+                    <p class="text-slate-500 font-bold text-xs uppercase tracking-wider mt-1">Clínica Odontológica Especializada</p>
+                    <p class="text-slate-400 text-xs mt-0.5">Jr. San Sebastián 116 | Cel/WhatsApp: 941124848</p>
+                </div>
             </div>
             <div class="text-right">
                 <h2 class="text-2xl font-black text-slate-800">PRESUPUESTO</h2>

@@ -60,10 +60,17 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
     <button onclick="window.print()" class="print-btn">🖨️ Imprimir Recibo</button>
 
     <div class="receipt-container">
-        <div class="header">
-            <h1><?php echo $nombre_clinica; ?></h1>
-            <p>RUC: 20123456789 | Jr. San Sebastián 116</p>
-            <p>Cel/WhatsApp: +51 941124848</p>
+        <div class="header" style="display:flex; flex-direction:column; align-items:center; gap:8px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;">
+                    <img src="assets/logo_icon.jpg" alt="Logo" style="width:100%;height:100%;object-fit:cover;">
+                </div>
+                <img src="assets/logo_text_dark.png" alt="MahuDent" style="height:24px;width:auto;object-fit:contain;">
+            </div>
+            <div style="text-align:center; font-size:11px; color:#666; margin-top:2px;">
+                <p style="margin:2px 0;">RUC: 20123456789 | Jr. San Sebastián 116</p>
+                <p style="margin:2px 0;">Cel/WhatsApp: 941124848</p>
+            </div>
         </div>
 
         <div class="receipt-title">

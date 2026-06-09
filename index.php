@@ -138,9 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <div class="flex flex-col items-center mb-8">
             <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-lg mb-4 border border-slate-100">
-                <img src="assets/logo.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
+                <img src="assets/logo_icon.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
             </div>
-            <h1 class="text-3xl font-black tracking-widest text-slate-800 uppercase leading-tight">MAHUDENT</h1>
+            <img src="assets/logo_text_dark.png" alt="MahuDent" class="h-10 w-auto object-contain mb-2">
             <p class="text-xs text-brand font-bold tracking-widest uppercase">Clínica Odontológica</p>
         </div>
 

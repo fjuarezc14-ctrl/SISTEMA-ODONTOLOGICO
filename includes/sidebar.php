@@ -6,11 +6,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-md">
-                <img src="assets/logo.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
+                <img src="assets/logo_icon.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
             </div>
-            <div class="flex flex-col">
-                <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
-                <span class="text-[9px] text-brand-secondary tracking-widest uppercase">Clínica Odontológica</span>
+            <div class="flex flex-col justify-center">
+                <img src="assets/logo_text.png" alt="MahuDent" class="h-6 w-auto object-contain">
+                <span class="text-[9px] text-brand-secondary tracking-widest uppercase font-bold mt-0.5">Clínica Odontológica</span>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i data-lucide="file-text" class="w-5 h-5"></i>
             Presupuestos
         </a>
-        <?php if(isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] !== 'Dentista'): ?>
+        <?php if(isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
         <a href="caja.php" class="flex items-center gap-3 px-4 py-3 rounded-xl <?php echo ($current_page == 'caja.php') ? 'bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105' : 'text-brand-secondary hover:bg-white/10 hover:text-white transition-colors'; ?>">
             <i data-lucide="calculator" class="w-5 h-5"></i>
             Caja / Reportes
