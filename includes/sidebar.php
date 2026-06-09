@@ -5,8 +5,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside id="sys-sidebar" class="fixed inset-y-0 left-0 w-64 bg-brand text-white flex flex-col shadow-2xl z-50 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out shrink-0">
     <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand shadow-md">
-                <i data-lucide="smile" class="w-6 h-6"></i>
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-md">
+                <img src="assets/logo.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
             </div>
             <div class="flex flex-col">
                 <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
@@ -47,6 +47,18 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <?php endif; ?>
 
     </nav>
+    
+    <!-- Redes Sociales -->
+    <div class="p-4 border-t border-white/10 shrink-0 text-xs text-brand-secondary/80 space-y-2">
+        <div class="flex justify-around items-center">
+            <a href="https://www.instagram.com/mahudent" target="_blank" class="hover:text-white transition-colors flex items-center gap-1.5 font-semibold">
+                <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+            </a>
+            <a href="https://www.facebook.com/consultoriodental.mahudent" target="_blank" class="hover:text-white transition-colors flex items-center gap-1.5 font-semibold">
+                <i data-lucide="facebook" class="w-4 h-4"></i> Facebook
+            </a>
+        </div>
+    </div>
     
     <div class="p-4 border-t border-white/10 shrink-0">
         <a href="logout.php" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-red-500 hover:text-white transition-colors font-bold">

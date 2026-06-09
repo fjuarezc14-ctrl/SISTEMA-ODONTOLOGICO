@@ -24,6 +24,28 @@ $p = $resumen['presupuesto'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presupuesto #<?php echo str_pad($p['id'], 5, '0', STR_PAD_LEFT); ?> - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f5f3fa',
+                            100: '#ede8f7',
+                            200: '#dcd3ef',
+                            300: '#c5b5e4',
+                            400: '#ab92d6',
+                            500: '#937ec2',
+                            600: '#7e64ab',
+                            700: '#3a596a',
+                            800: '#2f4958',
+                            900: '#1b2d38',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&display=swap');
         body { font-family: 'Montserrat', sans-serif; background: #e2e8f0; }
@@ -55,7 +77,7 @@ $p = $resumen['presupuesto'];
             <div>
                 <h1 class="text-4xl font-black text-teal-700 tracking-tighter">MahuDent</h1>
                 <p class="text-slate-500 font-medium text-sm mt-1">Clínica Odontológica Especializada</p>
-                <p class="text-slate-500 text-xs mt-1">Av. Principal 123, Ciudad<br>Tel: (01) 123-4567 | Cel: 987 654 321</p>
+                <p class="text-slate-500 text-xs mt-1">Jr. San Sebastián 116<br>Cel/WhatsApp: 941124848</p>
             </div>
             <div class="text-right">
                 <h2 class="text-2xl font-black text-slate-800">PRESUPUESTO</h2>

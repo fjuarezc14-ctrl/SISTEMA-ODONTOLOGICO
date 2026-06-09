@@ -101,10 +101,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f5f3fa',
+                            100: '#ede8f7',
+                            200: '#dcd3ef',
+                            300: '#c5b5e4',
+                            400: '#ab92d6',
+                            500: '#937ec2',
+                            600: '#7e64ab',
+                            700: '#3a596a',
+                            800: '#2f4958',
+                            900: '#1b2d38',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
-        :root { --brand-primary: #0f766e; --brand-secondary: #ccfbf1; --brand-accent: #14b8a6; }
+        :root { --brand-primary: #3a596a; --brand-secondary: #ede8f7; --brand-accent: #937ec2; }
         body { font-family: 'Montserrat', sans-serif; background-color: #f8fafc; }
         .bg-brand { background-color: var(--brand-primary); }
         .text-brand { color: var(--brand-primary); }
@@ -115,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border border-slate-100">
         
         <div class="flex flex-col items-center mb-8">
-            <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center text-white shadow-lg mb-4">
-                <i data-lucide="smile" class="w-10 h-10"></i>
+            <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-lg mb-4 border border-slate-100">
+                <img src="assets/logo.jpg" alt="Logo MahuDent" class="w-full h-full object-cover">
             </div>
             <h1 class="text-3xl font-black tracking-widest text-slate-800 uppercase leading-tight">MAHUDENT</h1>
             <p class="text-xs text-brand font-bold tracking-widest uppercase">Clínica Odontológica</p>

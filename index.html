@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Clínico - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f5f3fa',
+                            100: '#ede8f7',
+                            200: '#dcd3ef',
+                            300: '#c5b5e4',
+                            400: '#ab92d6',
+                            500: '#937ec2',
+                            600: '#7e64ab',
+                            700: '#3a596a',
+                            800: '#2f4958',
+                            900: '#1b2d38',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
@@ -13,9 +35,9 @@
         
         :root {
             /* Paleta Clínica MahuDent */
-            --brand-primary: #0f766e; 
-            --brand-secondary: #ccfbf1; 
-            --brand-accent: #14b8a6; 
+            --brand-primary: #3a596a; 
+            --brand-secondary: #ede8f7; 
+            --brand-accent: #937ec2; 
         }
 
         body {
@@ -287,8 +309,8 @@
             const ctx = document.getElementById('atencionesChart').getContext('2d');
             
             // Colores corporativos (MahuDent)
-            const brandColor = '#14b8a6'; // Turquesa vibrante
-            const brandLight = '#ccfbf1'; // Turquesa claro
+            const brandColor = '#937ec2'; // Turquesa vibrante
+            const brandLight = '#ede8f7'; // Turquesa claro
             
             new Chart(ctx, {
                 type: 'bar', // Puede ser 'line', 'bar', etc.
@@ -299,7 +321,7 @@
                         data: [12, 18, 15, 22, 14, 28], // Datos de ejemplo
                         backgroundColor: brandColor,
                         borderRadius: 6, // Bordes redondeados en las barras
-                        hoverBackgroundColor: '#0f766e', // Color más oscuro al pasar el mouse
+                        hoverBackgroundColor: '#3a596a', // Color más oscuro al pasar el mouse
                     }]
                 },
                 options: {

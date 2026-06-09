@@ -51,6 +51,28 @@ if (!$paciente) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial Clínico - <?php echo htmlspecialchars($paciente['nombre']); ?> - MahuDent</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f5f3fa',
+                            100: '#ede8f7',
+                            200: '#dcd3ef',
+                            300: '#c5b5e4',
+                            400: '#ab92d6',
+                            500: '#937ec2',
+                            600: '#7e64ab',
+                            700: '#3a596a',
+                            800: '#2f4958',
+                            900: '#1b2d38',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
@@ -69,9 +91,9 @@ if (!$paciente) {
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
         :root {
-            --brand-primary: #0f766e;
-            --brand-secondary: #ccfbf1;
-            --brand-accent: #14b8a6;
+            --brand-primary: #3a596a;
+            --brand-secondary: #ede8f7;
+            --brand-accent: #937ec2;
         }
 
         body {

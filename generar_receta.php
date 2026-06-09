@@ -35,8 +35,8 @@ $fecha_actual = date('d/m/Y');
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             position: relative;
         }
-        .header { text-align: center; border-bottom: 2px solid #0f766e; padding-bottom: 10px; margin-bottom: 20px; }
-        .header h1 { color: #0f766e; margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+        .header { text-align: center; border-bottom: 2px solid #3a596a; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { color: #3a596a; margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
         .header p { margin: 3px 0 0 0; font-size: 11px; color: #666; }
         .title { text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 15px; letter-spacing: 2px; }
         .patient-info { font-size: 13px; margin-bottom: 20px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; }
@@ -44,14 +44,14 @@ $fecha_actual = date('d/m/Y');
         .patient-info td { padding: 3px 0; }
         
         .prescription-body { min-height: 100mm; }
-        .section-title { font-size: 14px; font-weight: bold; color: #0f766e; margin-bottom: 10px; border-left: 3px solid #0f766e; padding-left: 8px; }
+        .section-title { font-size: 14px; font-weight: bold; color: #3a596a; margin-bottom: 10px; border-left: 3px solid #3a596a; padding-left: 8px; }
         .content-box { font-size: 13px; white-space: pre-wrap; margin-bottom: 20px; padding: 10px; background: #f8fafc; border-radius: 5px; border: 1px solid #e2e8f0; }
         
         .footer-rx { position: absolute; bottom: 20mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; align-items: flex-end; }
         .signature-line { border-top: 1px solid #000; width: 60px; text-align: center; padding-top: 5px; font-size: 12px; font-weight: bold; }
         .validity { font-size: 10px; color: #999; text-align: center; position: absolute; bottom: 10mm; left: 0; right: 0; }
         
-        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background-color: #0f766e; color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; }
+        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background-color: #3a596a; color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; }
         
         @media print {
             body { background: white; margin: 0; padding: 0; }
@@ -68,7 +68,7 @@ $fecha_actual = date('d/m/Y');
         <div class="header">
             <h1><?php echo $nombre_clinica; ?></h1>
             <p>Odontología Especializada Integral</p>
-            <p>Av. Principal 123, Ciudad | Tel: 987 654 321</p>
+            <p>Jr. San Sebastián 116 | Cel/WhatsApp: 941124848</p>
         </div>
 
         <div class="title">RECETA MÉDICA</div>

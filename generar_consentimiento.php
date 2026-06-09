@@ -47,12 +47,12 @@ $fecha_actual = date('d/m/Y');
         }
         .header {
             text-align: center;
-            border-bottom: 2px solid #0f766e;
+            border-bottom: 2px solid #3a596a;
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
         .header h1 {
-            color: #0f766e;
+            color: #3a596a;
             margin: 0;
             font-size: 24px;
             text-transform: uppercase;
@@ -86,7 +86,7 @@ $fecha_actual = date('d/m/Y');
         }
         .content h3 {
             font-size: 14px;
-            color: #0f766e;
+            color: #3a596a;
             margin-top: 15px;
             margin-bottom: 5px;
         }
@@ -119,7 +119,7 @@ $fecha_actual = date('d/m/Y');
             width: 200px;
             margin: 20px auto;
             padding: 10px;
-            background-color: #0f766e;
+            background-color: #3a596a;
             color: white;
             text-align: center;
             text-decoration: none;
