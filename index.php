@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password_ingresada = $_POST['password'];
 
     // Buscamos al usuario en la base de datos
-    $sql = "SELECT id, nombre, password, rol, intentos_fallidos, bloqueado_hasta FROM usuarios WHERE usuario = ?";
+    $sql = "SELECT id, nombre, password, rol, intentos_fallidos, bloqueado_hasta, estado_activo FROM usuarios WHERE usuario = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $usuario);
     $stmt->execute();
@@ -32,8 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($resultado->num_rows > 0) {
         $fila = $resultado->fetch_assoc();
         
+        // 0. Verificar si la cuenta está inhabilitada
+        if (isset($fila['estado_activo']) && intval($fila['estado_activo']) === 0) {
+            $error = "Tu cuenta está inhabilitada. Comunícate con el Administrador.";
+        }
+        
         // 1. Verificar si la cuenta está bloqueada
-        if ($fila['bloqueado_hasta']) {
+        if ($error === "" && $fila['bloqueado_hasta']) {
             $tiempo_bloqueo = strtotime($fila['bloqueado_hasta']);
             $ahora = time();
             

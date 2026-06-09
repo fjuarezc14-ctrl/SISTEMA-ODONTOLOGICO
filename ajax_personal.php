@@ -121,6 +121,31 @@ switch ($data['accion']) {
         }
         break;
 
+    case 'eliminar_usuario':
+        $id = intval($data['id']);
+        if ($id === 1) {
+            echo json_encode(['success' => false, 'error' => 'No puedes eliminar al Administrador principal']);
+            break;
+        }
+        
+        $stmt = $conn->prepare("DELETE FROM usuarios WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        
+        try {
+            if ($stmt->execute()) {
+                echo json_encode(['success' => true]);
+            } else {
+                if ($conn->errno == 1451) {
+                    echo json_encode(['success' => false, 'error' => 'No se puede eliminar el usuario porque tiene registros asociados (como citas). Se recomienda inhabilitar su acceso en su lugar para conservar el historial.']);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Error al eliminar el usuario: ' . $conn->error]);
+                }
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'error' => 'No se puede eliminar el usuario porque tiene registros asociados. Se recomienda inhabilitar su acceso.']);
+        }
+        break;
+
     case 'desbloquear_usuario':
         $id = intval($data['id']);
         if ($id <= 0) {

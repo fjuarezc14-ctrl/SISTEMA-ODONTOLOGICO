@@ -212,6 +212,9 @@ require_once 'config/conexion.php';
                                     <button onclick="resetPassword(${u.id}, '${u.nombre}')" class="text-slate-400 hover:text-amber-500 p-1.5 rounded-lg hover:bg-amber-50 transition" title="Cambiar Contraseña">
                                         <i data-lucide="key" class="w-4 h-4"></i>
                                     </button>
+                                    <button onclick="eliminarUsuario(${u.id}, '${u.nombre}')" class="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 transition ${parseInt(u.id) === 1 ? 'hidden' : ''}" title="Eliminar Usuario">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
                                     ${bloqueadoBtn}
                                 </div>
                             </td>
@@ -313,6 +316,25 @@ require_once 'config/conexion.php';
                 const data = await res.json();
                 if(data.success) cargarUsuarios();
                 else alert('Error: ' + data.error);
+            } catch(e) {
+                alert('Error de red');
+            }
+        }
+
+        async function eliminarUsuario(id, nombre) {
+            if(!confirm(`¿Estás seguro de que deseas eliminar permanentemente al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
+            try {
+                const res = await fetch('ajax_personal.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({accion: 'eliminar_usuario', id: id})
+                });
+                const data = await res.json();
+                if(data.success) {
+                    cargarUsuarios();
+                } else {
+                    alert('Error: ' + data.error);
+                }
             } catch(e) {
                 alert('Error de red');
             }
