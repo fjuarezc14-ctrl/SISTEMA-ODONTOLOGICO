@@ -87,8 +87,27 @@ foreach ($pagos as $p) {
         <div class="flex-1 overflow-y-auto p-4 md:p-8">
             <div class="max-w-7xl mx-auto space-y-6">
                 
+                <!-- Cabecera de Reporte para Impresión -->
+                <div class="hidden print:block border-b-2 border-slate-800 pb-4 mb-6">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <img src="assets/logo.jpg" alt="Logo" class="w-12 h-12 rounded-xl object-cover border border-slate-200">
+                            <div>
+                                <h1 class="text-2xl font-black text-slate-800 tracking-tight">MAHUDENT</h1>
+                                <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Clínica Odontológica</p>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Jr. San Sebastián 116 | Cel/WhatsApp: 941124848</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <h2 class="text-lg font-black text-slate-800 uppercase">Reporte de Caja Diaria</h2>
+                            <p class="text-xs text-slate-500 mt-1"><strong>Periodo:</strong> <?php echo date('d/m/Y', strtotime($fecha_inicio)); ?> al <?php echo date('d/m/Y', strtotime($fecha_fin)); ?></p>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Generado el: <?php echo date('d/m/Y h:i A'); ?></p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Filtros -->
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-end justify-between gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-end justify-between gap-4 print:hidden">
                     <form method="GET" class="flex flex-wrap items-end gap-4 w-full md:w-auto">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Desde</label>
@@ -255,10 +274,22 @@ foreach ($pagos as $p) {
         body * { visibility: hidden; }
         main, main * { visibility: visible; }
         main { position: absolute; left: 0; top: 0; width: 100%; }
-        .print\:hidden { display: none !important; }
-        .shadow-sm, .shadow-md { box-shadow: none !important; }
-        .border-slate-200 { border-color: #e2e8f0 !important; }
-        .bg-brand { background-color: #3a596a !important; color: white !important; -webkit-print-color-adjust: exact; }
+        main > div { padding: 0 !important; }
+        header, .print\:hidden, #sys-sidebar, #sys-sidebar-overlay { display: none !important; }
+        
+        .shadow-sm, .shadow-md, .shadow-xl { box-shadow: none !important; border-radius: 8px !important; }
+        .border-slate-200, .border-slate-100 { border-color: #cbd5e1 !important; }
+        
+        /* Forzar impresión de colores de fondo en navegadores */
+        .bg-brand { background-color: #3a596a !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .bg-slate-50 { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .bg-teal-100 { background-color: #ede8f7 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        
+        /* Evitar saltos de página huérfanos */
+        tr { page-break-inside: avoid; break-inside: avoid; }
+        thead { display: table-header-group; }
+        .max-w-7xl { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        .space-y-6 > * + * { margin-top: 12px !important; }
     </style>
 </body>
 </html>
