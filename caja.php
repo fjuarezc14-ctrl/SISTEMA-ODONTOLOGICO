@@ -54,7 +54,7 @@ foreach ($pagos as $p) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -126,7 +126,7 @@ foreach ($pagos as $p) {
                         <?php endif; ?>
                     </form>
                     
-                    <button onclick="window.print()" class="bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-sm print:hidden">
+                    <button onclick="window.print()" class="bg-white border-2 border-slate-200 text-slate-700 hover:bg-teal-100 font-bold py-2 px-4 rounded-xl transition flex items-center gap-2 text-sm shadow-sm print:hidden">
                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Reporte
                     </button>
                 </div>
@@ -214,7 +214,7 @@ foreach ($pagos as $p) {
                                         if ($p['metodo_pago'] == 'Transferencia') $color_metodo = 'bg-indigo-100 text-indigo-700 border border-indigo-200';
                                         if ($p['metodo_pago'] == 'Yape/Plin') $color_metodo = 'bg-purple-100 text-purple-700 border border-purple-200';
                                     ?>
-                                    <tr class="hover:bg-slate-50 transition-colors">
+                                    <tr class="hover:bg-teal-100 transition-colors">
                                         <td class="p-4">
                                             <div class="font-bold text-slate-800"><?php echo $hora; ?></div>
                                             <div class="text-xs text-slate-400 font-medium"><?php echo $fecha; ?></div>

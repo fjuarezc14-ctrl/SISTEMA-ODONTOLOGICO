@@ -110,7 +110,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -173,7 +173,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     <h1 class="text-3xl font-black text-slate-800">Agenda</h1>
                     <div class="h-6 w-px bg-slate-300 hidden md:block"></div>
                     <div class="flex items-center gap-3">
-                        <a href="?fecha=<?php echo $semana_anterior; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 transition">
+                        <a href="?fecha=<?php echo $semana_anterior; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-teal-100 text-slate-600 transition">
                             <i data-lucide="chevron-left" class="w-5 h-5"></i>
                         </a>
                         <div class="relative group">
@@ -182,10 +182,10 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                             </button>
                             <input type="date" id="datePickerAgenda" class="absolute opacity-0 pointer-events-none -top-10" value="<?php echo $fecha_ref; ?>" onchange="window.location.href='?fecha='+this.value">
                         </div>
-                        <a href="?fecha=<?php echo $semana_siguiente; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-600 transition">
+                        <a href="?fecha=<?php echo $semana_siguiente; ?>" class="p-2 border border-slate-200 rounded-lg hover:bg-teal-100 text-slate-600 transition">
                             <i data-lucide="chevron-right" class="w-5 h-5"></i>
                         </a>
-                        <a href="?fecha=<?php echo date('Y-m-d'); ?>" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold rounded-lg hover:bg-slate-200 transition text-sm">
+                        <a href="?fecha=<?php echo date('Y-m-d'); ?>" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold rounded-lg hover:bg-teal-200 transition text-sm">
                             Hoy
                         </a>
                     </div>
@@ -505,7 +505,7 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
                     
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Paciente</label>
-                        <select name="paciente_id" id="pacienteSelect" required class="w-full rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white">
+                        <select name="paciente_id" id="pacienteSelect" required class="w-full rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 bg-white">
                             <option value="">Seleccione un paciente...</option>
                             <?php if($pacientes && $pacientes->num_rows > 0): ?>
                                 <?php while($p = $pacientes->fetch_assoc()): ?>
@@ -517,27 +517,27 @@ $semana_siguiente = date('Y-m-d', strtotime($lunes_fecha . ' + 7 days'));
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha</label>
-                        <input type="date" name="fecha" min="<?php echo date('Y-m-d'); ?>" value="<?php echo isset($_POST['fecha']) ? htmlspecialchars($_POST['fecha']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        <input type="date" name="fecha" min="<?php echo date('Y-m-d'); ?>" value="<?php echo isset($_POST['fecha']) ? htmlspecialchars($_POST['fecha']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Inicio</label>
-                            <input type="time" name="hora_inicio" value="<?php echo isset($_POST['hora_inicio']) ? htmlspecialchars($_POST['hora_inicio']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            <input type="time" name="hora_inicio" value="<?php echo isset($_POST['hora_inicio']) ? htmlspecialchars($_POST['hora_inicio']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hora Fin</label>
-                            <input type="time" name="hora_fin" value="<?php echo isset($_POST['hora_fin']) ? htmlspecialchars($_POST['hora_fin']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                            <input type="time" name="hora_fin" value="<?php echo isset($_POST['hora_fin']) ? htmlspecialchars($_POST['hora_fin']) : ''; ?>" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Motivo / Tratamiento</label>
-                        <input type="text" name="motivo" value="<?php echo isset($_POST['motivo']) ? htmlspecialchars($_POST['motivo']) : ''; ?>" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                        <input type="text" name="motivo" value="<?php echo isset($_POST['motivo']) ? htmlspecialchars($_POST['motivo']) : ''; ?>" placeholder="Ej. Profilaxis" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                     </div>
 
                     <div class="pt-4 flex gap-3">
-                        <button type="button" onclick="toggleModalCita()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
+                        <button type="button" onclick="toggleModalCita()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-teal-100 transition">Cancelar</button>
                         <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Cita</button>
                     </div>
                 </form>

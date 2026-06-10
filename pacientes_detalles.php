@@ -20,7 +20,7 @@ if(!isset($_SESSION['usuario_id'])) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -164,10 +164,10 @@ if(!isset($_SESSION['usuario_id'])) {
                         <button class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition">
                             Historia y Odontograma
                         </button>
-                        <button class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">
+                        <button class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition">
                             Presupuestos (1)
                         </button>
-                        <button class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">
+                        <button class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition">
                             Radiografías / Archivos
                         </button>
                     </div>

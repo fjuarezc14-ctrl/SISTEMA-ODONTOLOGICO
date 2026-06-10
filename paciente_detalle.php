@@ -59,7 +59,7 @@ if (!$paciente) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -314,7 +314,7 @@ if (!$paciente) {
                             <!-- Acciones Rápidas -->
                             <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
                                 <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
-                                <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                <button onclick="document.getElementById('modalNuevaReceta').classList.remove('hidden')" class="w-full bg-teal-50 hover:bg-teal-200 text-teal-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="file-text" class="w-4 h-4"></i> Generar Receta
                                 </button>
                                 <?php endif; ?>
@@ -330,10 +330,10 @@ if (!$paciente) {
                 <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
                     <div class="flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto">
                         <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
-                        <button onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
-                        <button onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
-                        <button onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Recetas</button>
-                        <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
+                        <button onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
+                        <button onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
+                        <button onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Recetas</button>
+                        <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
                     </div>
 
                     <div class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
@@ -431,7 +431,7 @@ if (!$paciente) {
                                     <h4 class="font-bold text-blue-800 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="pen-line" class="w-4 h-4"></i> Añadir Nota Clínica (Sesión Actual)
                                     </h4>
-                                    <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition mb-3"></textarea>
+                                    <textarea id="nota_evolucion" rows="3" placeholder="Ej: Profilaxis completa. Se detectó caries superficial en pieza 14, se procede con curación de resina simple. Paciente estable." class="w-full bg-white border-2 border-blue-100 rounded-xl p-4 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition mb-3"></textarea>
                                     <button onclick="guardarEvolucion(<?php echo $cita_id_activa; ?>)" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
                                         <i data-lucide="save" class="w-4 h-4"></i> Guardar Evolución y Finalizar Cita
                                     </button>
@@ -441,7 +441,7 @@ if (!$paciente) {
                                     <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="plus-circle" class="w-4 h-4"></i> Añadir Nota Rápida (Sin cita)
                                     </h4>
-                                    <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-400 transition mb-3 text-sm"></textarea>
+                                    <textarea id="nota_evolucion" rows="2" placeholder="Añadir una observación general al paciente..." class="w-full bg-white border-2 border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition mb-3 text-sm"></textarea>
                                     <button onclick="guardarEvolucion(null)" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                         Guardar Nota Rápida
                                     </button>
@@ -490,7 +490,7 @@ if (!$paciente) {
                                 <i data-lucide="activity" class="w-5 h-5 text-rose-500"></i> Triaje / Signos Vitales
                             </h3>
                             <div class="flex gap-2">
-                                <button onclick="verHistorialTriaje()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                <button onclick="verHistorialTriaje()" class="bg-slate-100 hover:bg-teal-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="history" class="w-4 h-4"></i> Ver Historial
                                 </button>
                                 <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
@@ -535,7 +535,7 @@ if (!$paciente) {
                             </h3>
                             <div class="flex gap-2">
                                 <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
-                                <button id="btnEditarAntecedentes" onclick="toggleEditAntecedentes()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
+                                <button id="btnEditarAntecedentes" onclick="toggleEditAntecedentes()" class="bg-slate-100 hover:bg-teal-200 text-slate-700 font-bold py-2 px-4 rounded-xl shadow-sm transition text-xs flex items-center gap-2">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i> Editar
                                 </button>
                                 <?php endif; ?>
@@ -648,7 +648,7 @@ if (!$paciente) {
                                 <button onclick="generarPresupuestoDesdeOdontograma()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="zap" class="w-4 h-4"></i> Generar desde Odontograma
                                 </button>
-                                <button onclick="abrirModalNuevoPresupuesto()" class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold py-2.5 px-4 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                                <button onclick="abrirModalNuevoPresupuesto()" class="bg-blue-50 text-blue-700 hover:bg-teal-200 font-bold py-2.5 px-4 rounded-xl transition text-xs flex items-center justify-center gap-2">
                                     <i data-lucide="plus" class="w-4 h-4"></i> Venta Directa
                                 </button>
                             </div>
@@ -664,7 +664,7 @@ if (!$paciente) {
                                         <span id="presupuestoEstadoBadge" class="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full font-bold ml-2">Borrador</span>
                                     </h4>
                                     <div class="flex gap-2">
-                                        <button onclick="agregarItemManual()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold py-2 px-4 rounded-lg transition text-xs flex items-center gap-1">
+                                        <button onclick="agregarItemManual()" class="bg-blue-50 hover:bg-teal-200 text-blue-700 font-bold py-2 px-4 rounded-lg transition text-xs flex items-center gap-1">
                                             <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Añadir Ítem
                                         </button>
                                         <button onclick="cerrarEditorPresupuesto()" class="bg-slate-50 hover:bg-slate-100 text-slate-500 font-bold py-2 px-4 rounded-lg transition text-xs flex items-center gap-1">
@@ -830,7 +830,7 @@ if (!$paciente) {
                                             <?php echo date('d/m/Y', strtotime($receta['fecha'])); ?>
                                         </div>
                                         <div class="flex gap-1">
-                                            <button onclick="imprimirReceta(<?php echo $receta['id']; ?>)" class="text-sky-600 bg-sky-50 p-1.5 rounded-lg hover:bg-sky-600 hover:text-white transition" title="Imprimir">
+                                            <button onclick="imprimirReceta(<?php echo $receta['id']; ?>)" class="text-sky-600 bg-teal-50 p-1.5 rounded-lg hover:bg-teal-200 hover:text-teal-700 transition" title="Imprimir">
                                                 <i data-lucide="printer" class="w-4 h-4"></i>
                                             </button>
                                             <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
@@ -863,7 +863,7 @@ if (!$paciente) {
                                 <p class="text-sm text-slate-500 font-medium mt-1">Radiografías, fotos intraorales y documentos.</p>
                             </div>
                             <div class="flex gap-2 w-full md:w-auto">
-                                <a href="generar_consentimiento.php?id=<?php echo $paciente_id; ?>" target="_blank" class="flex-1 md:flex-none bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                                <a href="generar_consentimiento.php?id=<?php echo $paciente_id; ?>" target="_blank" class="flex-1 md:flex-none bg-white border-2 border-slate-200 text-slate-700 hover:bg-teal-100 font-bold py-2.5 px-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
                                     <i data-lucide="printer" class="w-4 h-4"></i> Consentimiento
                                 </a>
                                 <button onclick="abrirModalSubirArchivo()" class="flex-1 md:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
@@ -907,11 +907,11 @@ if (!$paciente) {
                 <form id="formNuevaReceta" onsubmit="guardarNuevaReceta(event)">
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Rp. / Indicaciones</label>
-                        <textarea id="nueva_receta_contenido" required rows="10" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition font-medium text-slate-700 resize-none" placeholder="Escriba aquí todo su texto para la receta...&#10;&#10;Ejemplo:&#10;1. Paracetamol 500mg # 10&#10;   1 Tab V.O C/8 Horas por 3 días"></textarea>
+                        <textarea id="nueva_receta_contenido" required rows="10" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition font-medium text-slate-700 resize-none" placeholder="Escriba aquí todo su texto para la receta...&#10;&#10;Ejemplo:&#10;1. Paracetamol 500mg # 10&#10;   1 Tab V.O C/8 Horas por 3 días"></textarea>
                         <p class="text-[10px] text-slate-400 mt-2">Puede usar saltos de línea libremente. Todo lo que escriba aquí se imprimirá directamente en la receta, sin divisiones.</p>
                     </div>
                     <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                        <button type="button" onclick="document.getElementById('modalNuevaReceta').classList.add('hidden')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition">Cancelar</button>
+                        <button type="button" onclick="document.getElementById('modalNuevaReceta').classList.add('hidden')" class="px-5 py-2.5 text-slate-500 font-bold hover:bg-teal-100 rounded-xl transition">Cancelar</button>
                         <button type="submit" id="btnGuardarNuevaReceta" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition flex items-center gap-2">
                             <i data-lucide="save" class="w-4 h-4"></i> Guardar Receta
                         </button>
@@ -972,7 +972,7 @@ if (!$paciente) {
                 </div>
             </div>
             <div class="p-5 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end">
-                <button onclick="cerrarModalPago()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
+                <button onclick="cerrarModalPago()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-teal-200 transition text-sm">Cancelar</button>
                 <button onclick="confirmarRegistrarPago()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-700 shadow-md transition text-sm">Registrar Pago</button>
             </div>
         </div>
@@ -995,7 +995,7 @@ if (!$paciente) {
                 </button>
             </div>
             <div class="p-4 border-t border-slate-100 bg-slate-50">
-                <button onclick="cerrarModalCompartir()" class="w-full px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
+                <button onclick="cerrarModalCompartir()" class="w-full px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-teal-200 transition text-sm">Cancelar</button>
             </div>
         </div>
     </div>
@@ -1038,7 +1038,7 @@ if (!$paciente) {
                 </div>
             </div>
             <div class="bg-slate-50 border-t border-slate-100 p-5 flex justify-end gap-3">
-                <button onclick="cerrarModalItem()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl text-sm hover:bg-slate-50 transition">Cancelar</button>
+                <button onclick="cerrarModalItem()" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl text-sm hover:bg-teal-100 transition">Cancelar</button>
                 <button onclick="confirmarAgregarItem()" class="px-5 py-2.5 bg-emerald-600 text-white font-bold rounded-xl text-sm hover:bg-emerald-700 shadow-md transition flex items-center gap-2">
                     <i data-lucide="check" class="w-4 h-4"></i> Agregar al Presupuesto
                 </button>
@@ -1956,7 +1956,7 @@ if (!$paciente) {
             tbody.innerHTML = items.map(item => {
                 const precioMostrado = item.precio_ajustado ?? item.precio_unitario;
                 return `
-                <tr class="hover:bg-slate-50 transition">
+                <tr class="hover:bg-teal-100 transition">
                     <td class="p-3 font-medium text-slate-700">${item.descripcion}</td>
                     <td class="p-3 text-center text-slate-500">${item.diente_numero || '-'}</td>
                     <td class="p-3 text-center text-slate-700 font-bold">${item.cantidad}</td>
@@ -2286,7 +2286,7 @@ if (!$paciente) {
             tbody.innerHTML = pagos.map(p => {
                 const fecha = new Date(p.fecha_pago).toLocaleDateString('es-ES', {day: '2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
                 return `
-                <tr class="hover:bg-slate-50">
+                <tr class="hover:bg-teal-100">
                     <td class="p-2 font-medium text-slate-600">${fecha}</td>
                     <td class="p-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${p.tipo === 'Adelanto' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${p.tipo}</span></td>
                     <td class="p-2 text-slate-600">${p.metodo_pago}</td>
@@ -2447,7 +2447,7 @@ if (!$paciente) {
                     <input type="file" id="archivoFile" required accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition cursor-pointer border-2 border-slate-200 rounded-xl">
                 </div>
                 <div class="pt-4 flex gap-3 justify-end">
-                    <button type="button" onclick="cerrarModalSubirArchivo()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition text-sm">Cancelar</button>
+                    <button type="button" onclick="cerrarModalSubirArchivo()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-teal-200 transition text-sm">Cancelar</button>
                     <button type="submit" class="px-5 py-2.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md transition text-sm flex items-center gap-2">
                         <span id="textoBtnSubir">Guardar</span>
                         <div id="loaderBtnSubir" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

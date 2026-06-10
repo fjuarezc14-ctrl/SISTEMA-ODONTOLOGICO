@@ -20,7 +20,7 @@ if(!isset($_SESSION['usuario_id'])) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -98,9 +98,9 @@ if(!isset($_SESSION['usuario_id'])) {
                 <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
                     
                     <div class="flex gap-2 border-b border-slate-200 shrink-0">
-                        <a href="pacientes.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">Historia y Odontograma</a>
+                        <a href="pacientes.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition">Historia y Odontograma</a>
                         <button class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition">Presupuestos (2)</button>
-                        <a href="radiografias.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-slate-50 rounded-t-lg transition">Radiografías / Archivos</a>
+                        <a href="radiografias.php" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition">Radiografías / Archivos</a>
                     </div>
 
                     <div class="flex flex-col xl:flex-row gap-6">
@@ -111,7 +111,7 @@ if(!isset($_SESSION['usuario_id'])) {
                             </button>
 
                             <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                                <div class="p-4 border-b border-slate-100 bg-brand-light/20 border-l-4 border-l-brand cursor-pointer hover:bg-slate-50 transition">
+                                <div class="p-4 border-b border-slate-100 bg-brand-light/20 border-l-4 border-l-brand cursor-pointer hover:bg-teal-100 transition">
                                     <div class="flex justify-between items-start mb-2">
                                         <h4 class="font-bold text-slate-800">#PR-1042</h4>
                                         <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Pendiente</span>
@@ -120,7 +120,7 @@ if(!isset($_SESSION['usuario_id'])) {
                                     <p class="text-lg font-black text-brand">S/ 1,200.00</p>
                                 </div>
                                 
-                                <div class="p-4 border-b border-slate-100 border-l-4 border-l-transparent cursor-pointer hover:bg-slate-50 transition opacity-70">
+                                <div class="p-4 border-b border-slate-100 border-l-4 border-l-transparent cursor-pointer hover:bg-teal-100 transition opacity-70">
                                     <div class="flex justify-between items-start mb-2">
                                         <h4 class="font-bold text-slate-800">#PR-0981</h4>
                                         <span class="bg-emerald-100 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Aprobado</span>
@@ -139,10 +139,10 @@ if(!isset($_SESSION['usuario_id'])) {
                                     <p class="text-sm text-slate-500 mt-1"><?php echo $_SESSION['usuario_nombre']; ?> - MahuDent S.A.C.</p>
                                 </div>
                                 <div class="flex gap-2">
-                                    <button class="p-2 text-slate-400 hover:text-brand hover:bg-slate-50 rounded-lg border border-slate-200 transition tooltip" title="Imprimir PDF">
+                                    <button class="p-2 text-slate-400 hover:text-brand hover:bg-teal-100 rounded-lg border border-slate-200 transition tooltip" title="Imprimir PDF">
                                         <i data-lucide="printer" class="w-5 h-5"></i>
                                     </button>
-                                    <button class="p-2 text-slate-400 hover:text-brand hover:bg-slate-50 rounded-lg border border-slate-200 transition tooltip" title="Enviar por WhatsApp">
+                                    <button class="p-2 text-slate-400 hover:text-brand hover:bg-teal-100 rounded-lg border border-slate-200 transition tooltip" title="Enviar por WhatsApp">
                                         <i data-lucide="message-circle" class="w-5 h-5"></i>
                                     </button>
                                 </div>
@@ -196,7 +196,7 @@ if(!isset($_SESSION['usuario_id'])) {
                                 <button class="flex-1 bg-brand hover:bg-teal-800 text-white py-3 rounded-xl font-bold shadow-md transition">
                                     Aprobar Presupuesto
                                 </button>
-                                <button class="px-6 py-3 border border-slate-300 text-slate-600 hover:bg-slate-50 rounded-xl font-bold transition">
+                                <button class="px-6 py-3 border border-slate-300 text-slate-600 hover:bg-teal-100 rounded-xl font-bold transition">
                                     Editar
                                 </button>
                             </div>

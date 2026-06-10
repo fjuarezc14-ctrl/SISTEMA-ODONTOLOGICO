@@ -20,7 +20,7 @@ require_once 'config/conexion.php';
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -102,17 +102,17 @@ require_once 'config/conexion.php';
                     
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre Completo</label>
-                        <input type="text" id="nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-brand/30 focus:bg-white transition text-sm">
+                        <input type="text" id="nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 focus:bg-white transition text-sm">
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Usuario (Login)</label>
-                            <input type="text" id="usuario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-brand/30 focus:bg-white transition text-sm">
+                            <input type="text" id="usuario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 focus:bg-white transition text-sm">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Rol</label>
-                            <select id="rol" required onchange="toggleColegiatura()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-brand/30 focus:bg-white transition text-sm font-semibold cursor-pointer">
+                            <select id="rol" required onchange="toggleColegiatura()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 focus:bg-white transition text-sm font-semibold cursor-pointer">
                                 <option value="Dentista">Dentista / Doctor</option>
                                 <option value="Recepcionista">Recepcionista</option>
                                 <option value="Admin">Administrador General</option>
@@ -122,16 +122,16 @@ require_once 'config/conexion.php';
 
                     <div id="div-password">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contraseña <span id="pass-hint" class="text-[10px] lowercase font-normal">(Requerida para nuevos)</span></label>
-                        <input type="password" id="password" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-brand/30 focus:bg-white transition text-sm" placeholder="••••••••">
+                        <input type="password" id="password" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 focus:bg-white transition text-sm" placeholder="••••••••">
                     </div>
 
                     <div id="div-colegiatura">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">N° Colegiatura (COP)</label>
-                        <input type="text" id="colegiatura" placeholder="Ej. 12345" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-brand/30 focus:bg-white transition text-sm">
+                        <input type="text" id="colegiatura" placeholder="Ej. 12345" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 focus:bg-white transition text-sm">
                     </div>
 
                     <div class="pt-4 flex gap-3">
-                        <button type="button" onclick="cerrarModalUsuario()" class="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold py-3 rounded-xl transition text-sm">Cancelar</button>
+                        <button type="button" onclick="cerrarModalUsuario()" class="flex-1 bg-white border border-slate-200 text-slate-600 hover:bg-teal-100 font-bold py-3 rounded-xl transition text-sm">Cancelar</button>
                         <button type="submit" class="flex-1 bg-brand hover:bg-teal-800 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
                             <i data-lucide="save" class="w-4 h-4"></i> Guardar
                         </button>
@@ -217,7 +217,7 @@ require_once 'config/conexion.php';
                         }
                         
                         const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-50 transition-colors " + (parseInt(u.estado_activo) === 0 ? "opacity-60" : "");
+                        tr.className = "hover:bg-teal-100 transition-colors " + (parseInt(u.estado_activo) === 0 ? "opacity-60" : "");
                         tr.innerHTML = `
                             <td class="p-4">
                                 <div class="font-bold text-slate-800 text-sm">${u.nombre}</div>
@@ -228,7 +228,7 @@ require_once 'config/conexion.php';
                             <td class="p-4 text-center">${badgeEstado}</td>
                             <td class="p-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
-                                    <button onclick='abrirModalUsuario(${JSON.stringify(u)})' class="text-slate-400 hover:text-blue-500 p-1.5 rounded-lg hover:bg-blue-50 transition" title="Editar">
+                                    <button onclick='abrirModalUsuario(${JSON.stringify(u)})' class="text-slate-400 hover:text-blue-500 p-1.5 rounded-lg hover:bg-teal-100 transition" title="Editar">
                                         <i data-lucide="edit-2" class="w-4 h-4"></i>
                                     </button>
                                     <button onclick="resetPassword(${u.id}, '${u.nombre}')" class="text-slate-400 hover:text-amber-500 p-1.5 rounded-lg hover:bg-amber-50 transition" title="Cambiar Contraseña">

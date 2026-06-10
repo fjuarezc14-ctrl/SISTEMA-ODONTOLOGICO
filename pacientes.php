@@ -71,7 +71,7 @@ if ($ver_inhabilitados) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -111,12 +111,12 @@ if ($ver_inhabilitados) {
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
                     <div class="relative w-full md:w-96">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" placeholder="Buscar por nombre o DNI..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
+                        <input type="text" placeholder="Buscar por nombre o DNI..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                     </div>
                     <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                         <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
                             <?php if ($ver_inhabilitados): ?>
-                                <a href="pacientes.php" class="w-full md:w-auto px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-slate-200 transition flex items-center justify-center gap-2">
+                                <a href="pacientes.php" class="w-full md:w-auto px-5 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-teal-200 transition flex items-center justify-center gap-2">
                                     <i data-lucide="users" class="w-4 h-4"></i> Ver Activos
                                 </a>
                             <?php else: ?>
@@ -216,33 +216,33 @@ if ($ver_inhabilitados) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">DNI *</label>
-                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombres y Apellidos *</label>
-                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono</label>
-                                <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Correo Electrónico</label>
-                                <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Nacimiento</label>
-                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
-                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                                     <option value="">Seleccione...</option>
                                     <option value="Masculino">Masculino</option>
                                     <option value="Femenino">Femenino</option>
@@ -254,33 +254,33 @@ if ($ver_inhabilitados) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ocupación</label>
-                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dirección / Residencia</label>
-                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lugar de Nacimiento</label>
-                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Procedencia</label>
-                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contacto de Emergencia</label>
-                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono de Emergencia</label>
-                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
@@ -290,7 +290,7 @@ if ($ver_inhabilitados) {
                         </div>
 
                         <div class="pt-4 flex gap-3">
-                            <button type="button" onclick="cerrarModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
+                            <button type="button" onclick="cerrarModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-teal-100 transition">Cancelar</button>
                             <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Paciente</button>
                         </div>
                     </form>
@@ -319,33 +319,33 @@ if ($ver_inhabilitados) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">DNI *</label>
-                        <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="dni" id="edit_dni" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nombres y Apellidos *</label>
-                        <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-                        <input type="text" name="telefono" id="edit_telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="telefono" id="edit_telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Email</label>
-                        <input type="email" name="email" id="edit_email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="email" name="email" id="edit_email" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fecha Nacimiento</label>
-                        <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="date" name="fecha_nacimiento" id="edit_fecha_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Sexo</label>
-                        <select name="sexo" id="edit_sexo" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <select name="sexo" id="edit_sexo" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                             <option value="">Seleccione...</option>
                             <option value="Masculino">Masculino</option>
                             <option value="Femenino">Femenino</option>
@@ -357,33 +357,33 @@ if ($ver_inhabilitados) {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Ocupación</label>
-                        <input type="text" name="ocupacion" id="edit_ocupacion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="ocupacion" id="edit_ocupacion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Dirección</label>
-                        <input type="text" name="direccion" id="edit_direccion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="direccion" id="edit_direccion" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Lugar Nacimiento</label>
-                        <input type="text" name="lugar_nacimiento" id="edit_lugar_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="lugar_nacimiento" id="edit_lugar_nacimiento" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Procedencia</label>
-                        <input type="text" name="procedencia" id="edit_procedencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="procedencia" id="edit_procedencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Contacto Emergencia</label>
-                        <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia" placeholder="Nombre de familiar" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="contacto_emergencia" id="edit_contacto_emergencia" placeholder="Nombre de familiar" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tel. Emergencia</label>
-                        <input type="text" name="telefono_emergencia" id="edit_telefono_emergencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition">
+                        <input type="text" name="telefono_emergencia" id="edit_telefono_emergencia" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-medium text-slate-700 outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 transition">
                     </div>
                 </div>
 
@@ -401,7 +401,7 @@ if ($ver_inhabilitados) {
                     <div></div>
                     <?php endif; ?>
                     <div class="flex gap-3 w-full md:w-auto">
-                        <button type="button" onclick="cerrarModalEdicion()" class="flex-1 md:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Cancelar</button>
+                        <button type="button" onclick="cerrarModalEdicion()" class="flex-1 md:flex-none bg-slate-100 hover:bg-teal-200 text-slate-700 font-bold py-3 px-6 rounded-xl transition">Cancelar</button>
                         <button type="submit" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-blue-600/30 transition">Guardar Cambios</button>
                     </div>
                 </div>
@@ -422,7 +422,7 @@ if ($ver_inhabilitados) {
                 <input type="hidden" name="accion" value="eliminar_paciente">
                 <input type="hidden" name="paciente_id" id="delete_paciente_id">
                 
-                <button type="button" onclick="cerrarModalEliminacion()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition">Cancelar</button>
+                <button type="button" onclick="cerrarModalEliminacion()" class="flex-1 bg-slate-100 hover:bg-teal-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition">Cancelar</button>
                 <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-red-600/30 transition">Sí, eliminar</button>
             </form>
         </div>

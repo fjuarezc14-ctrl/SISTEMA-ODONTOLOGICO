@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
                     </div>
-                    <input type="text" name="usuario" required placeholder="Ej. admin" class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm font-medium text-slate-700">
+                    <input type="text" name="usuario" required placeholder="Ej. admin" class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all text-sm font-medium text-slate-700">
                 </div>
             </div>
 
@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i data-lucide="lock" class="w-5 h-5 text-slate-400"></i>
                     </div>
-                    <input type="password" name="password" required placeholder="••••••••" class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand/30 outline-none transition-all text-sm font-medium text-slate-700">
+                    <input type="password" name="password" required placeholder="••••••••" class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all text-sm font-medium text-slate-700">
                 </div>
             </div>
 

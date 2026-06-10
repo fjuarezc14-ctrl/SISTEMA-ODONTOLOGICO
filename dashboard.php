@@ -43,7 +43,7 @@ foreach ($chart_ingresos as $mes => $total) {
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -205,7 +205,7 @@ foreach ($chart_ingresos as $mes => $total) {
                     <div class="space-y-4 overflow-y-auto flex-1">
                         <?php if ($citas_hoy->num_rows > 0): ?>
                             <?php while ($cita = $citas_hoy->fetch_assoc()): ?>
-                                <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition">
+                                <div class="flex items-start gap-4 p-3 rounded-xl hover:bg-teal-100 border border-transparent hover:border-slate-100 transition">
                                     <div class="bg-brand-light text-brand px-3 py-2 rounded-lg text-center shrink-0">
                                         <p class="text-xs font-bold"><?php echo date("h:i", strtotime($cita['hora_inicio'])); ?></p>
                                         <p class="text-[10px] uppercase font-bold"><?php echo date("A", strtotime($cita['hora_inicio'])); ?></p>
@@ -226,7 +226,7 @@ foreach ($chart_ingresos as $mes => $total) {
                         <?php endif; ?>
                     </div>
                     <a href="agenda.php"
-                        class="block w-full mt-4 py-2 text-center text-sm font-bold text-brand hover:text-teal-800 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
+                        class="block w-full mt-4 py-2 text-center text-sm font-bold text-brand hover:text-teal-800 border border-slate-200 rounded-lg hover:bg-teal-100 transition">
                         Ver agenda completa
                     </a>
                 </div>
@@ -308,33 +308,33 @@ foreach ($chart_ingresos as $mes => $total) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">DNI *</label>
-                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="dni" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nombres y Apellidos *</label>
-                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="nombre" required class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono</label>
-                                <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="telefono" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Correo Electrónico</label>
-                                <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="email" name="email" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fecha de Nacimiento</label>
-                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="date" name="fecha_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Sexo</label>
-                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <select name="sexo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                                     <option value="">Seleccione...</option>
                                     <option value="Masculino">Masculino</option>
                                     <option value="Femenino">Femenino</option>
@@ -346,33 +346,33 @@ foreach ($chart_ingresos as $mes => $total) {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Ocupación</label>
-                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="ocupacion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dirección / Residencia</label>
-                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="direccion" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Lugar de Nacimiento</label>
-                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="lugar_nacimiento" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Procedencia</label>
-                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="procedencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Contacto de Emergencia</label>
-                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="contacto_emergencia" placeholder="Nombre del familiar/amigo" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono de Emergencia</label>
-                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30">
+                                <input type="text" name="telefono_emergencia" class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                             </div>
                         </div>
 
@@ -382,7 +382,7 @@ foreach ($chart_ingresos as $mes => $total) {
                         </div>
 
                         <div class="pt-4 flex gap-3">
-                            <button type="button" onclick="toggleModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition">Cancelar</button>
+                            <button type="button" onclick="toggleModal()" class="flex-1 px-4 py-3 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-teal-100 transition">Cancelar</button>
                             <button type="submit" class="flex-1 px-4 py-3 bg-brand hover:bg-teal-800 text-white rounded-xl font-bold shadow-lg transition">Guardar Paciente</button>
                         </div>
                     </form>

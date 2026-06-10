@@ -68,7 +68,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                         teal: {
                             50: '#f5f3fa',
                             100: '#ede8f7',
-                            200: '#dcd3ef',
+                            200: '#d7cde6',
                             300: '#c5b5e4',
                             400: '#ab92d6',
                             500: '#937ec2',
@@ -152,7 +152,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
                     <div class="relative w-full md:w-96">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" id="busquedaGlobal" placeholder="Buscar por paciente o N° presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20">
+                        <input type="text" id="busquedaGlobal" placeholder="Buscar por paciente o N° presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                     </div>
                     <div class="flex gap-2 w-full md:w-auto">
                         <button onclick="document.getElementById('modalSeleccionarPaciente').classList.remove('hidden'); document.getElementById('modalSeleccionarPaciente').classList.add('flex');" class="flex-1 md:flex-none px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-bold shadow-lg hover:bg-teal-800 transition flex items-center justify-center gap-2">
@@ -262,7 +262,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                 
                 <div class="mb-6">
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Seleccione el paciente</label>
-                    <select id="selectNuevoPacientePresupuesto" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/30 bg-white font-medium text-slate-700 text-sm">
+                    <select id="selectNuevoPacientePresupuesto" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500 bg-white font-medium text-slate-700 text-sm">
                         <option value="">Buscar paciente...</option>
                         <?php if($pacientes && $pacientes->num_rows > 0): ?>
                             <?php while($p = $pacientes->fetch_assoc()): ?>
@@ -273,7 +273,7 @@ $tasaCierre = ($totalAprobados + $totalRechazados) > 0 ? ($totalAprobados / ($to
                 </div>
 
                 <div class="flex gap-3">
-                    <button onclick="document.getElementById('modalSeleccionarPaciente').classList.add('hidden'); document.getElementById('modalSeleccionarPaciente').classList.remove('flex');" class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition">Cancelar</button>
+                    <button onclick="document.getElementById('modalSeleccionarPaciente').classList.add('hidden'); document.getElementById('modalSeleccionarPaciente').classList.remove('flex');" class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-teal-200 transition">Cancelar</button>
                     <button onclick="irANuevoPresupuesto()" class="flex-1 px-4 py-2.5 bg-brand text-white rounded-xl font-bold text-sm hover:bg-teal-800 transition shadow-lg flex items-center justify-center gap-2">
                         Continuar <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </button>

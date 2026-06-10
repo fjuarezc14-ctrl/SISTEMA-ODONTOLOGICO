@@ -86,7 +86,7 @@ if (isset($notificaciones[0]['tipo']) && $notificaciones[0]['tipo'] === 'info') 
     <div class="flex items-center gap-6">
         <!-- Notificaciones -->
         <div class="relative">
-            <button id="btn-notifications" class="relative text-slate-400 hover:text-brand transition-colors p-2 rounded-xl hover:bg-slate-50">
+            <button id="btn-notifications" class="relative text-slate-400 hover:text-brand transition-colors p-2 rounded-xl hover:bg-teal-100">
                 <i data-lucide="bell" class="w-6 h-6"></i>
                 <?php if ($notif_count > 0): ?>
                     <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
@@ -103,7 +103,7 @@ if (isset($notificaciones[0]['tipo']) && $notificaciones[0]['tipo'] === 'info') 
                 </div>
                 <div class="divide-y divide-slate-50 max-h-72 overflow-y-auto">
                     <?php foreach ($notificaciones as $n): ?>
-                        <a href="<?php echo $n['link']; ?>" class="flex gap-4 p-4 hover:bg-slate-50 transition-colors">
+                        <a href="<?php echo $n['link']; ?>" class="flex gap-4 p-4 hover:bg-teal-100 transition-colors">
                             <div class="w-10 h-10 rounded-xl <?php echo $n['color']; ?> flex items-center justify-center shrink-0">
                                 <i data-lucide="<?php echo $n['icono']; ?>" class="w-5 h-5"></i>
                             </div>
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             data.forEach(p => {
                                 const div = document.createElement('a');
                                 div.href = `paciente_detalle.php?id=${p.id}`;
-                                div.className = "flex items-center justify-between p-3 hover:bg-slate-50 transition-colors";
+                                div.className = "flex items-center justify-between p-3 hover:bg-teal-100 transition-colors";
                                 div.innerHTML = `
                                     <div>
                                         <p class="font-bold text-slate-800 text-xs">${p.nombre}</p>
