@@ -118,8 +118,7 @@ if (isset($notificaciones[0]['tipo']) && $notificaciones[0]['tipo'] === 'info') 
         </div>
 
         <div class="flex items-center gap-3 border-l pl-6">
-            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=100&q=80" alt="Perfil" class="w-10 h-10 rounded-full object-cover border-2 border-teal-500">
-            <div class="hidden md:block">
+            <div class="block">
                 <p class="text-sm font-bold text-slate-800"><?php echo isset($_SESSION['usuario_nombre']) ? htmlspecialchars($_SESSION['usuario_nombre']) : 'Usuario'; ?></p>
                 <p class="text-xs text-brand font-medium"><?php echo isset($_SESSION['usuario_rol']) ? htmlspecialchars($_SESSION['usuario_rol']) : 'Rol'; ?></p>
             </div>

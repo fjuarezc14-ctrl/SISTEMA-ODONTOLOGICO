@@ -2,9 +2,7 @@
 // includes/auth_guard.php
 
 // Iniciar sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/session_init.php';
 
 // 1. Verificación básica de autenticación
 if (!isset($_SESSION['usuario_id'])) {
@@ -21,7 +19,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     session_destroy();
     
     // Iniciar nueva sesión temporal para pasar el mensaje de timeout
-    session_start();
+    require __DIR__ . '/session_init.php';
     $_SESSION['timeout_msg'] = "Tu sesión ha expirado por inactividad (2 horas). Por favor, ingresa nuevamente.";
     
     header('Location: index.php');

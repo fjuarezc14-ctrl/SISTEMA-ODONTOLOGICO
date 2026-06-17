@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once '../config/conexion.php';
 require_once '../models/Odontograma.php';
 
-session_start();
+require_once __DIR__ . '/../includes/session_init.php';
 if(!isset($_SESSION['usuario_id'])) {
     echo json_encode(["status" => "error", "message" => "No autorizado"]);
     exit;

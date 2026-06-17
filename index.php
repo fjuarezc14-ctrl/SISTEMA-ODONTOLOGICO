@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/session_init.php';
 
 // Si ya hay sesión iniciada, saltamos directo al dashboard
 if(isset($_SESSION['usuario_id'])) {

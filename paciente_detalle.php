@@ -337,13 +337,13 @@ if (!$paciente) {
                     </div>
 
                     <div class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
-                        <div class="flex justify-between items-center mb-10">
+                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-10">
                             <div>
                                 <h2 class="text-2xl font-black text-slate-800">Odontograma General</h2>
                                 <p class="text-sm text-slate-500">Selecciona un diente para registrar hallazgos.</p>
                             </div>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-inner">
-                                <div class="grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-inner w-full lg:w-auto">
+                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-2">
                                     <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-500 rounded-full shadow-sm shrink-0"></span> Caries</div>
                                     <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-700 rounded-full shadow-sm shrink-0"></span> Extracción</div>
                                     <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-orange-500 rounded-full shadow-sm shrink-0"></span> Defectuosa</div>
@@ -2965,39 +2965,60 @@ if (!$paciente) {
             window.open(url, '_blank');
         }
 
-        // Close modals with Escape key
+        // Cerrar modales al hacer clic en el fondo oscuro (backdrop)
+        window.addEventListener('click', function(e) {
+            const modals = [
+                { id: 'modalDiente', close: cerrarModalDiente },
+                { id: 'modalAgregarItem', close: cerrarModalItem },
+                { id: 'modalRegistrarPago', close: cerrarModalPago },
+                { id: 'modalCompartirPresupuesto', close: cerrarModalCompartir },
+                { id: 'modalSubirArchivo', close: cerrarModalSubirArchivo },
+                { id: 'modalHistorialTriaje', close: () => {
+                    const m = document.getElementById('modalHistorialTriaje');
+                    m.classList.add('hidden'); m.classList.remove('flex');
+                }},
+                { id: 'modalNuevaReceta', close: () => {
+                    const m = document.getElementById('modalNuevaReceta');
+                    m.classList.add('hidden');
+                }},
+                { id: 'lightboxVisor', close: typeof cerrarLightbox === 'function' ? cerrarLightbox : () => {} },
+                { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} }
+            ];
+            
+            modals.forEach(m => {
+                const el = document.getElementById(m.id);
+                if (el && e.target === el && !el.classList.contains('hidden')) {
+                    m.close();
+                }
+            });
+        });
+
+        // Cerrar modales con la tecla Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                // Check and close modals if they are open
-                const modalDiente = document.getElementById('modalDiente');
-                if (modalDiente && !modalDiente.classList.contains('hidden')) {
-                    cerrarModalDiente();
-                }
-
-                const modalItem = document.getElementById('modalNuevoItem');
-                if (modalItem && !modalItem.classList.contains('hidden')) {
-                    cerrarModalItem();
-                }
-                
-                const modalPresupuesto = document.getElementById('modalNuevoPresupuesto');
-                if (modalPresupuesto && !modalPresupuesto.classList.contains('hidden')) {
-                    cerrarModalNuevoPresupuesto();
-                }
-
-                const lightboxVisor = document.getElementById('lightboxVisor');
-                if (lightboxVisor && !lightboxVisor.classList.contains('hidden')) {
-                    cerrarLightbox();
-                }
-                
-                const historialTriajeVisor = document.getElementById('historialTriajeVisor');
-                if (historialTriajeVisor && !historialTriajeVisor.classList.contains('hidden')) {
-                    cerrarHistorialTriaje();
-                }
-                
-                const modalPago = document.getElementById('modalNuevoPago');
-                if (modalPago && !modalPago.classList.contains('hidden')) {
-                    cerrarModalPago();
-                }
+                const modals = [
+                    { id: 'modalDiente', close: cerrarModalDiente },
+                    { id: 'modalAgregarItem', close: cerrarModalItem },
+                    { id: 'modalRegistrarPago', close: cerrarModalPago },
+                    { id: 'modalCompartirPresupuesto', close: cerrarModalCompartir },
+                    { id: 'modalSubirArchivo', close: cerrarModalSubirArchivo },
+                    { id: 'modalHistorialTriaje', close: () => {
+                        const m = document.getElementById('modalHistorialTriaje');
+                        m.classList.add('hidden'); m.classList.remove('flex');
+                    }},
+                    { id: 'modalNuevaReceta', close: () => {
+                        const m = document.getElementById('modalNuevaReceta');
+                        m.classList.add('hidden');
+                    }},
+                    { id: 'lightboxVisor', close: typeof cerrarLightbox === 'function' ? cerrarLightbox : () => {} },
+                    { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} }
+                ];
+                modals.forEach(m => {
+                    const el = document.getElementById(m.id);
+                    if (el && !el.classList.contains('hidden')) {
+                        m.close();
+                    }
+                });
             }
         });
     </script>
