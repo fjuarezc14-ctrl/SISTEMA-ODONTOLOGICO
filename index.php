@@ -131,6 +131,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .bg-brand { background-color: var(--brand-primary); }
         .text-brand { color: var(--brand-primary); }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3a596a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MahuDent">
+    <link rel="apple-touch-icon" href="icono-192x192.png">
 </head>
 <body class="flex items-center justify-center h-screen bg-slate-100">
 
@@ -179,6 +185,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </div>
 
-    <script>lucide.createIcons();</script>
+    <script>
+        lucide.createIcons();
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito', reg))
+                    .catch(err => console.error('Error al registrar el Service Worker', err));
+            });
+        }
+    </script>
 </body>
 </html>

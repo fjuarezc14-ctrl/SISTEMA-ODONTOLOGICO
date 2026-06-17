@@ -79,6 +79,12 @@ foreach ($chart_ingresos as $mes => $total) {
         .bg-brand-light { background-color: var(--brand-secondary); }
         .text-brand-accent { color: var(--brand-accent); }
     </style>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3a596a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MahuDent">
+    <link rel="apple-touch-icon" href="icono-192x192.png">
 </head>
 
 <body class="flex h-screen overflow-hidden relative">
@@ -503,7 +509,15 @@ foreach ($chart_ingresos as $mes => $total) {
                 }
             });
         });
+
+        // Registro del Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrado con éxito', reg))
+                    .catch(err => console.error('Error al registrar el Service Worker', err));
+            });
+        }
     </script>
 </body>
-
 </html>
