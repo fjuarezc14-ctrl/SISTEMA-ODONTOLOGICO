@@ -64,6 +64,21 @@ class PresupuestoController {
      * Genera un presupuesto automático basado en los hallazgos del odontograma.
      * AGRUPA por diente para evitar duplicados (múltiples caras = 1 tratamiento).
      */
+    private function buscarTratamientoPorNombre($nombre) {
+        global $conn;
+        $sql = "SELECT id, nombre, precio_base FROM catalogo_tratamientos WHERE nombre LIKE ? AND activo = 1 LIMIT 1";
+        $stmt = $conn->prepare($sql);
+        $term = '%' . $nombre . '%';
+        $stmt->bind_param("s", $term);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        return $res->num_rows > 0 ? $res->fetch_assoc() : null;
+    }
+
+    /**
+     * Genera un presupuesto automático basado en los hallazgos del odontograma.
+     * Agrupa y calcula tratamientos de forma inteligente (simple/compuesta/compleja, extracciones anatómicas).
+     */
     public function generarDesdeOdontograma($paciente_id, $hallazgos, $doctor_id = null) {
         $fecha_emision = date('Y-m-d');
         $fecha_vigencia = date('Y-m-d', strtotime('+30 days'));
@@ -78,40 +93,132 @@ class PresupuestoController {
 
         $subtotal = 0;
 
-        // Agrupar hallazgos por diente+estado para evitar duplicados
-        $dientes_procesados = [];
+        // Agrupar hallazgos por diente para analizarlos
+        $dientes_hallazgos = [];
         foreach ($hallazgos as $hallazgo) {
-            $estado = $hallazgo['estado'] ?? '';
             $diente = $hallazgo['diente_numero'] ?? null;
-
-            if (empty($estado)) continue;
-
-            // Clave única: diente + estado
-            $clave = $diente . '_' . $estado;
-            if (isset($dientes_procesados[$clave])) continue;
-            $dientes_procesados[$clave] = true;
-
-            // Buscar tratamientos sugeridos del catálogo
-            $tratamientos = $this->catalogoModel->getByEstadoOdontograma($estado);
+            if (!$diente) continue;
             
-            if (!empty($tratamientos)) {
-                // Tomar el primer tratamiento sugerido como predeterminado
-                $trat = $tratamientos[0];
-                $precio = $trat['precio_base'];
-                $item_subtotal = $precio * 1;
+            if (!isset($dientes_hallazgos[$diente])) {
+                $dientes_hallazgos[$diente] = [];
+            }
+            $dientes_hallazgos[$diente][] = $hallazgo;
+        }
 
-                $this->presupuestoModel->addItem(
-                    $presupuesto_id,
-                    $trat['id'],
-                    $diente,
-                    $trat['nombre'] . ($diente ? " (Pieza #{$diente})" : ''),
-                    1,
-                    $precio,
-                    null,
-                    $item_subtotal
-                );
-
-                $subtotal += $item_subtotal;
+        foreach ($dientes_hallazgos as $diente => $caras) {
+            // Contamos caras con caries/fractura/defectuosa (patologías de curación)
+            $caras_patologia_restauracion = [];
+            $otras_patologias = [];
+            
+            foreach ($caras as $cara) {
+                $estado = $cara['estado'] ?? '';
+                if (empty($estado)) continue;
+                
+                if ($estado === 'caries' || $estado === 'fractura' || $estado === 'restauracion_defectuosa') {
+                    $caras_patologia_restauracion[] = $cara['cara_afectada'];
+                } else {
+                    $otras_patologias[$estado] = true;
+                }
+            }
+            
+            // 1. Procesar Restauraciones (Curaciones)
+            if (!empty($caras_patologia_restauracion)) {
+                $cant_caras = count(array_unique($caras_patologia_restauracion));
+                
+                if ($cant_caras === 1) {
+                    $nombre_buscar = 'Curacion Simple';
+                } elseif ($cant_caras === 2) {
+                    $nombre_buscar = 'Curacion Compuesta';
+                } else {
+                    $nombre_buscar = 'Curacion Compleja';
+                }
+                
+                $trat = $this->buscarTratamientoPorNombre($nombre_buscar);
+                if (!$trat) {
+                    if ($cant_caras === 1) {
+                        $nombre_buscar = 'Resina Simple';
+                    } else {
+                        $nombre_buscar = 'Resina Compuesta';
+                    }
+                    $trat = $this->buscarTratamientoPorNombre($nombre_buscar);
+                }
+                
+                if ($trat) {
+                    $precio = $trat['precio_base'];
+                    $item_subtotal = $precio * 1;
+                    $this->presupuestoModel->addItem(
+                        $presupuesto_id,
+                        $trat['id'],
+                        $diente,
+                        $trat['nombre'] . " (Pieza #{$diente})",
+                        1,
+                        $precio,
+                        null,
+                        $item_subtotal
+                    );
+                    $subtotal += $item_subtotal;
+                }
+            }
+            
+            // 2. Procesar otras patologías (e.g. extracción indicada, endodoncia)
+            foreach (array_keys($otras_patologias) as $estado) {
+                $trat = null;
+                
+                if ($estado === 'extraccion_indicada') {
+                    $diente_int = intval($diente);
+                    $es_incisivo_canino = in_array($diente_int, [11, 12, 13, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 61, 62, 63, 71, 72, 73, 81, 82, 83]);
+                    $es_premolar = in_array($diente_int, [14, 15, 24, 25, 34, 35, 44, 45]);
+                    $es_molar = in_array($diente_int, [16, 17, 26, 27, 36, 37, 46, 47, 54, 55, 64, 65, 74, 75, 84, 85]);
+                    $es_tercera = in_array($diente_int, [18, 28, 38, 48]);
+                    
+                    if ($es_incisivo_canino) {
+                        $trat = $this->buscarTratamientoPorNombre('Extraccion Incisivo');
+                    } elseif ($es_premolar) {
+                        $trat = $this->buscarTratamientoPorNombre('Extraccion Premolar');
+                    } elseif ($es_molar) {
+                        $trat = $this->buscarTratamientoPorNombre('Extraccion Molar');
+                    } elseif ($es_tercera) {
+                        $trat = $this->buscarTratamientoPorNombre('Extraccion Tercera');
+                    }
+                    
+                    if (!$trat) {
+                        $trat = $this->buscarTratamientoPorNombre('Extraccion Simple');
+                    }
+                } elseif ($estado === 'endodoncia') {
+                    $diente_int = intval($diente);
+                    $es_anterior = in_array($diente_int, [11, 12, 13, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 61, 62, 63, 71, 72, 73, 81, 82, 83]);
+                    $es_premolar = in_array($diente_int, [14, 15, 24, 25, 34, 35, 44, 45]);
+                    
+                    if ($es_anterior) {
+                        $trat = $this->buscarTratamientoPorNombre('Endodoncia Anterior');
+                        if (!$trat) $trat = $this->buscarTratamientoPorNombre('Endodoncia Incisivo');
+                    } elseif ($es_premolar) {
+                        $trat = $this->buscarTratamientoPorNombre('Endodoncia Premolar');
+                    } else {
+                        $trat = $this->buscarTratamientoPorNombre('Endodoncia Molar');
+                    }
+                } else {
+                    $sugeridos = $this->catalogoModel->getByEstadoOdontograma($estado);
+                    if (!empty($sugeridos)) {
+                        $trat = $sugeridos[0];
+                    }
+                }
+                
+                if ($trat) {
+                    $precio = $trat['precio_base'];
+                    $item_subtotal = $precio * 1;
+                    $this->presupuestoModel->addItem(
+                        $presupuesto_id,
+                        $trat['id'],
+                        $diente,
+                        $trat['nombre'] . " (Pieza #{$diente})",
+                        1,
+                        $precio,
+                        null,
+                        $item_subtotal
+                    );
+                    $subtotal += $item_subtotal;
+                }
             }
         }
 

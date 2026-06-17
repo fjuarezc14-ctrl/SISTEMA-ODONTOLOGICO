@@ -410,6 +410,61 @@ if (!$paciente) {
                                     </div>
                                 <?php endfor; ?>
                             </div>
+                            
+                            <!-- Divisor y Dentadura Infantil -->
+                            <div class="border-t border-slate-100 my-8 pt-6">
+                                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest text-center mb-6">Dentadura Infantil / Temporal</h3>
+                                
+                                <!-- Superior Infantil -->
+                                <div class="flex justify-center gap-1.5 md:gap-3 mb-6">
+                                    <?php for ($i = 55; $i >= 51; $i--): ?>
+                                        <div class="text-center group">
+                                            <span class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
+                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
+                                                <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
+                                                    stroke-width="1.5" />
+                                            </svg>
+                                        </div>
+                                    <?php endfor; ?>
+                                    <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
+                                    <?php for ($i = 61; $i <= 65; $i++): ?>
+                                        <div class="text-center group">
+                                            <span class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
+                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
+                                                <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
+                                                    stroke-width="1.5" />
+                                            </svg>
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
+
+                                <!-- Inferior Infantil -->
+                                <div class="flex justify-center gap-1.5 md:gap-3">
+                                    <?php for ($i = 85; $i >= 81; $i--): ?>
+                                        <div class="text-center group">
+                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
+                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
+                                                <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
+                                                    stroke="#94a3b8" stroke-width="1.5" />
+                                            </svg>
+                                            <span class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                        </div>
+                                    <?php endfor; ?>
+                                    <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
+                                    <?php for ($i = 71; $i <= 75; $i++): ?>
+                                        <div class="text-center group">
+                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
+                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
+                                                <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
+                                                    stroke="#94a3b8" stroke-width="1.5" />
+                                            </svg>
+                                            <span class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                        </div>
+                                    <?php endfor; ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -978,6 +1033,40 @@ if (!$paciente) {
         </div>
     </div>
 
+    <!-- Modal Selección de Hallazgos para Presupuesto -->
+    <div id="modalImportarPresupuesto" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md transform scale-95 transition-all duration-300 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="font-black text-slate-800 flex items-center gap-2"><i data-lucide="file-check" class="w-5 h-5 text-teal-600"></i> Generar Presupuesto</h3>
+                <button onclick="cerrarModalImportar()" class="text-slate-400 hover:text-red-500 transition"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div class="p-5 space-y-4">
+                <p class="text-xs text-slate-500 font-medium">Seleccione los hallazgos del odontograma que desea incluir en el nuevo presupuesto:</p>
+                
+                <!-- Opciones de Selección Rápida -->
+                <div class="flex gap-2">
+                    <button type="button" onclick="seleccionarImportar('todo')" class="flex-1 px-3 py-2 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-bold hover:bg-slate-200 transition">Importar Todo</button>
+                    <button type="button" id="btnImportarRecientes" onclick="seleccionarImportar('recientes')" class="flex-1 px-3 py-2 bg-teal-50 text-teal-700 rounded-xl text-[10px] font-bold hover:bg-teal-100 transition">Solo Recientes</button>
+                    <button type="button" onclick="seleccionarImportar('ninguno')" class="flex-1 px-3 py-2 bg-slate-100 text-slate-700 rounded-xl text-[10px] font-bold hover:bg-slate-200 transition">Desmarcar Todos</button>
+                </div>
+                
+                <!-- Lista de Hallazgos con Checkboxes -->
+                <div class="border border-slate-150 rounded-xl max-h-56 overflow-y-auto bg-slate-50/50 p-2 shadow-inner">
+                    <div id="listaImportarCheckboxes" class="divide-y divide-slate-100">
+                        <!-- Dinámico -->
+                    </div>
+                </div>
+            </div>
+            <div class="p-5 border-t border-slate-100 bg-slate-50 flex gap-3 justify-end">
+                <button type="button" onclick="cerrarModalImportar()" class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-teal-200 transition text-sm">Cancelar</button>
+                <button type="button" onclick="enviarPresupuestoSeleccionado()" class="px-5 py-2.5 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-700 shadow-md transition flex items-center justify-center gap-2 text-sm">
+                    <i data-lucide="file-plus" class="w-4 h-4"></i> Crear Presupuesto
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Compartir Presupuesto -->
     <div id="modalCompartirPresupuesto" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm transform scale-95 transition-transform duration-300 overflow-hidden">
@@ -1374,6 +1463,7 @@ if (!$paciente) {
     <script>
         const pacienteId = <?php echo $paciente_id; ?>;
         let hallazgosOdontograma = <?php echo json_encode($hallazgos); ?>;
+        let hallazgosModificadosRecientemente = [];
         
         const modal = document.getElementById('modalDiente');
         const numDienteTitulo = document.getElementById('numDienteTitulo');
@@ -1598,15 +1688,18 @@ if (!$paciente) {
 
                     // Eliminar hallazgos antiguos de esta cara
                     hallazgosOdontograma = hallazgosOdontograma.filter(h => !(h.diente_numero == diente && h.cara_afectada == nombreCara));
+                    hallazgosModificadosRecientemente = hallazgosModificadosRecientemente.filter(h => !(h.diente_numero == diente && h.cara_afectada == nombreCara));
                     
                     // Añadir si hay nuevo
                     if (estadoCara) {
-                        hallazgosOdontograma.push({
+                        const nuevoH = {
                             diente_numero: parseInt(diente),
                             cara_afectada: nombreCara,
                             estado: estadoCara,
                             notas: notasGlobales
-                        });
+                        };
+                        hallazgosOdontograma.push(nuevoH);
+                        hallazgosModificadosRecientemente.push(nuevoH);
                     }
                 });
 
@@ -1816,20 +1909,128 @@ if (!$paciente) {
         }
 
         // --- Generación automática ---
-        async function generarPresupuestoDesdeOdontograma() {
+        function generarPresupuestoDesdeOdontograma() {
+            abrirModalImportar();
+        }
+
+        function cerrarModalImportar() {
+            const modal = document.getElementById('modalImportarPresupuesto');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function abrirModalImportar() {
             if (!hallazgosOdontograma || hallazgosOdontograma.length === 0) {
                 alert('No hay hallazgos en el odontograma. Marque al menos un diente antes de generar.');
                 return;
             }
-            const hallazgosConEstado = hallazgosOdontograma.filter(h => h.estado && h.estado !== '');
-            if (hallazgosConEstado.length === 0) {
+            const activeHallazgos = hallazgosOdontograma.filter(h => h.estado && h.estado !== '');
+            if (activeHallazgos.length === 0) {
                 alert('No hay hallazgos activos en el odontograma.');
                 return;
             }
-            // Contar dientes únicos
-            const dentesUnicos = [...new Set(hallazgosConEstado.map(h => h.diente_numero + '_' + h.estado))];
-            if (!confirm(`Se generará un presupuesto basado en ${dentesUnicos.length} hallazgo(s) del odontograma. ¿Continuar?`)) return;
+            
+            // Agrupar por diente y por estado
+            const agrupados = {};
+            activeHallazgos.forEach(h => {
+                const clave = h.diente_numero + '_' + h.estado;
+                if (!agrupados[clave]) {
+                    agrupados[clave] = {
+                        diente_numero: h.diente_numero,
+                        estado: h.estado,
+                        caras: [],
+                        notas: h.notas,
+                        es_reciente: false
+                    };
+                }
+                agrupados[clave].caras.push(h.cara_afectada);
+                
+                const esReciente = hallazgosModificadosRecientemente.some(r => r.diente_numero === h.diente_numero && r.cara_afectada === h.cara_afectada && r.estado === h.estado);
+                if (esReciente) {
+                    agrupados[clave].es_reciente = true;
+                }
+            });
+            
+            const nombresEstados = {
+                'caries': 'Caries', 'extraccion_indicada': 'Extracción Indicada',
+                'restauracion_defectuosa': 'Restauración Defectuosa', 'fractura': 'Fractura',
+                'endodoncia': 'Endodoncia', 'resina': 'Resina/Amalgama',
+                'corona': 'Corona/Incrustación', 'implante': 'Implante',
+                'sellante': 'Sellante', 'ausente': 'Ausente'
+            };
+            
+            const container = document.getElementById('listaImportarCheckboxes');
+            container.innerHTML = '';
+            
+            Object.values(agrupados).forEach(h => {
+                const labelEstado = nombresEstados[h.estado] || h.estado;
+                const carasTexto = h.caras.join(', ');
+                
+                const label = document.createElement('label');
+                label.className = "flex items-center gap-3 p-3 hover:bg-white rounded-xl transition cursor-pointer select-none border-b border-slate-100 last:border-0";
+                label.innerHTML = `
+                    <input type="checkbox" data-diente="${h.diente_numero}" data-estado="${h.estado}" data-caras='${JSON.stringify(h.caras)}' data-reciente="${h.es_reciente ? '1' : '0'}" checked class="chk-import-hallazgo w-4 h-4 text-brand bg-slate-100 border-slate-300 rounded focus:ring-brand">
+                    <div class="flex-1 text-xs font-semibold text-slate-700">
+                        Diente #${h.diente_numero} - <span class="${h.estado === 'caries' || h.estado === 'extraccion_indicada' || h.estado === 'fractura' ? 'text-red-600' : 'text-brand'}">${labelEstado}</span>
+                        <span class="text-[10px] text-slate-400 block font-bold uppercase mt-0.5">Caras: ${carasTexto} ${h.es_reciente ? '<span class="text-teal-600 bg-teal-50 px-1 py-0.5 rounded text-[8px] font-black lowercase ml-1">reciente</span>' : ''}</span>
+                    </div>
+                `;
+                container.appendChild(label);
+            });
+            
+            // Habilitar o deshabilitar botón de recientes
+            const btnRecientes = document.getElementById('btnImportarRecientes');
+            if (hallazgosModificadosRecientemente.length === 0) {
+                btnRecientes.classList.add('opacity-50', 'pointer-events-none');
+            } else {
+                btnRecientes.classList.remove('opacity-50', 'pointer-events-none');
+            }
+            
+            const modal = document.getElementById('modalImportarPresupuesto');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => modal.querySelector('div').classList.remove('scale-95'), 10);
+            lucide.createIcons();
+        }
 
+        function seleccionarImportar(tipo) {
+            document.querySelectorAll('.chk-import-hallazgo').forEach(chk => {
+                if (tipo === 'todo') {
+                    chk.checked = true;
+                } else if (tipo === 'ninguno') {
+                    chk.checked = false;
+                } else if (tipo === 'recientes') {
+                    chk.checked = (chk.getAttribute('data-reciente') === '1');
+                }
+            });
+        }
+
+        async function enviarPresupuestoSeleccionado() {
+            const selectedHallazgos = [];
+            document.querySelectorAll('.chk-import-hallazgo:checked').forEach(chk => {
+                const diente = parseInt(chk.getAttribute('data-diente'));
+                const estado = chk.getAttribute('data-estado');
+                const caras = JSON.parse(chk.getAttribute('data-caras'));
+                
+                caras.forEach(cara => {
+                    selectedHallazgos.push({
+                        diente_numero: diente,
+                        estado: estado,
+                        cara_afectada: cara
+                    });
+                });
+            });
+            
+            if (selectedHallazgos.length === 0) {
+                alert('Seleccione al menos un hallazgo para generar el presupuesto.');
+                return;
+            }
+            
+            cerrarModalImportar();
+            
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -1837,7 +2038,7 @@ if (!$paciente) {
                     body: JSON.stringify({
                         accion: 'generar_desde_odontograma',
                         paciente_id: pacienteId,
-                        hallazgos: hallazgosConEstado
+                        hallazgos: selectedHallazgos
                     })
                 });
                 const data = await res.json();
@@ -2982,7 +3183,8 @@ if (!$paciente) {
                     m.classList.add('hidden');
                 }},
                 { id: 'lightboxVisor', close: typeof cerrarLightbox === 'function' ? cerrarLightbox : () => {} },
-                { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} }
+                { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} },
+                { id: 'modalImportarPresupuesto', close: cerrarModalImportar }
             ];
             
             modals.forEach(m => {
@@ -3011,7 +3213,8 @@ if (!$paciente) {
                         m.classList.add('hidden');
                     }},
                     { id: 'lightboxVisor', close: typeof cerrarLightbox === 'function' ? cerrarLightbox : () => {} },
-                    { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} }
+                    { id: 'historialTriajeVisor', close: typeof cerrarHistorialTriaje === 'function' ? cerrarHistorialTriaje : () => {} },
+                    { id: 'modalImportarPresupuesto', close: cerrarModalImportar }
                 ];
                 modals.forEach(m => {
                     const el = document.getElementById(m.id);
