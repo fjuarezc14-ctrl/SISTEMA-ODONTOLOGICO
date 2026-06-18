@@ -2366,14 +2366,15 @@ if (!$paciente) {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({accion: 'eliminar_presupuesto', presupuesto_id: presupuestoActivo.id})
-                });
-                const data = await res.json();
-                if (data.success) {
-                    presupuestoActivo = null;
-                    cerrarEditorPresupuesto();
-                    cargarListaPresupuestos();
-                }
-            } catch(e) { console.error(e); }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        presupuestoActivo = null;
+                        cerrarEditorPresupuesto();
+                        cargarListaPresupuestos();
+                    }
+                } catch(e) { console.error(e); }
+            }, null, { title: '¿Eliminar presupuesto?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
         function imprimirPresupuesto() {
