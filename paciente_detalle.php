@@ -199,7 +199,7 @@ if (!$paciente) {
         <?php $page_title = 'Detalles';
         include 'includes/header.php'; ?>
 
-        <div id="pacienteDetalleScrollContainer" class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <div id="pacienteDetalleScrollContainer" class="flex-1 overflow-y-auto pb-4 px-4 md:pb-8 md:px-8 pt-0 md:pt-0 relative">
             <?php if ($cita_id_activa): ?>
             <div class="bg-brand text-white p-4 rounded-2xl mb-6 shadow-md flex justify-between items-center border border-teal-600 relative overflow-hidden">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -217,7 +217,7 @@ if (!$paciente) {
             <?php endif; ?>
             <div class="flex flex-col lg:flex-row gap-8">
 
-                <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6">
+                <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6 pt-4 md:pt-8">
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="bg-brand h-24 relative">
                             <div class="absolute -bottom-10 left-6">
@@ -329,8 +329,8 @@ if (!$paciente) {
                     </div>
                 </div>
 
-                <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
-                    <div id="stickySubmenuBar" class="sticky top-0 bg-slate-50/95 backdrop-blur-md z-30 flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto pt-3 pb-2 -mx-4 px-4 md:-mx-8 md:px-8 -mt-4 md:-mt-8 mb-4">
+                <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6 pt-4 md:pt-8">
+                    <div id="stickySubmenuBar" class="sticky top-0 bg-slate-50/95 backdrop-blur-md z-30 flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto pt-3 pb-2 -mx-4 px-4 md:-mx-8 md:px-8 mb-4">
                         <button id="tab-odontograma" onclick="document.getElementById('pacienteDetalleScrollContainer').scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
                         <button id="tab-triaje" onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
                         <button id="tab-presupuestos" onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
