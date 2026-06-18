@@ -86,6 +86,8 @@ if ($ver_inhabilitados) {
         }
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Toast & Confirm helper -->
+    <script src="assets/js/toast_alerts.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
@@ -175,7 +177,9 @@ if ($ver_inhabilitados) {
                                                 <a href="paciente_detalle.php?id=<?php echo $paciente['id']; ?>" class="p-2 bg-slate-100 hover:bg-brand hover:text-white rounded-lg text-slate-500 transition tooltip" title="Ver Historia" onclick="event.stopPropagation()">
                                                     <i data-lucide="folder-open" class="w-4 h-4"></i>
                                                 </a>
-                                                <button onclick='event.stopPropagation(); abrirModalEdicion(<?php echo htmlspecialchars(json_encode($paciente), ENT_QUOTES, "UTF-8"); ?>)' class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
+                                                <button onclick='event.stopPropagation(); abrirModalEdicion(this)' 
+                                                    data-paciente="<?php echo htmlspecialchars(json_encode($paciente, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), ENT_QUOTES, "UTF-8"); ?>"
+                                                    class="p-2 bg-slate-100 hover:bg-blue-600 hover:text-white rounded-lg text-slate-500 transition tooltip" title="Editar Paciente">
                                                     <i data-lucide="edit" class="w-4 h-4"></i>
                                                 </button>
                                             <?php endif; ?>
@@ -452,14 +456,25 @@ if ($ver_inhabilitados) {
             }, 300);
         }
 
-        function abrirModalEdicion(paciente) {
+        function abrirModalEdicion(element) {
+            let paciente;
+            try {
+                paciente = JSON.parse(element.getAttribute('data-paciente'));
+            } catch (e) {
+                console.error("Error parsing patient JSON:", e);
+                showToast("Error al cargar la información del paciente.", "error");
+                return;
+            }
+
+            if (!paciente) return;
+
             const modal = document.getElementById('modalEditarPaciente');
             
-            document.getElementById('edit_paciente_id').value = paciente.id;
-            document.getElementById('edit_dni').value = paciente.dni;
-            document.getElementById('edit_nombre').value = paciente.nombre;
-            document.getElementById('edit_telefono').value = paciente.telefono;
-            document.getElementById('edit_email').value = paciente.email;
+            document.getElementById('edit_paciente_id').value = paciente.id || '';
+            document.getElementById('edit_dni').value = paciente.dni || '';
+            document.getElementById('edit_nombre').value = paciente.nombre || '';
+            document.getElementById('edit_telefono').value = paciente.telefono || '';
+            document.getElementById('edit_email').value = paciente.email || '';
             document.getElementById('edit_fecha_nacimiento').value = paciente.fecha_nacimiento || '';
             document.getElementById('edit_sexo').value = paciente.sexo || '';
             document.getElementById('edit_ocupacion').value = paciente.ocupacion || '';

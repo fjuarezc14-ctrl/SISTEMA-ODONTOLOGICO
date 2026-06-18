@@ -1464,7 +1464,7 @@ if (!$paciente) {
 
     <script>
         const pacienteId = <?php echo $paciente_id; ?>;
-        let hallazgosOdontograma = <?php echo json_encode($hallazgos); ?>;
+        let hallazgosOdontograma = <?php echo json_encode($hallazgos, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE); ?>;
         let hallazgosModificadosRecientemente = [];
         
         const modal = document.getElementById('modalDiente');
