@@ -74,6 +74,8 @@ if (!$paciente) {
         }
     </script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Toast & Confirm helper -->
+    <script src="assets/js/toast_alerts.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
@@ -1705,18 +1707,18 @@ if (!$paciente) {
 
                 renderizarGrilla();
                 cerrarModalDiente();
-                alert('Hallazgos guardados exitosamente.');
+                showToast('Hallazgos guardados exitosamente.', 'success');
                 
             } catch (error) {
                 console.error("Error al guardar:", error);
-                alert("Ocurrió un error al guardar los hallazgos.");
+                showToast('Ocurrió un error al guardar los hallazgos.', 'error');
             }
         }
 
         async function guardarEvolucion(cita_id) {
             const nota = document.getElementById('nota_evolucion').value.trim();
             if (!nota) {
-                alert('Por favor, escriba una nota evolutiva antes de guardar.');
+                showToast('Por favor, escriba una nota evolutiva antes de guardar.', 'warning');
                 return;
             }
             
@@ -1739,20 +1741,20 @@ if (!$paciente) {
                 const result = await response.json();
                 if (result.success) {
                     if (cita_id) {
-                        alert('Evolución guardada y cita completada con éxito.');
-                        window.location.href = `paciente_detalle.php?id=<?php echo $paciente_id; ?>`;
+                        showToast('Evolución guardada y cita completada con éxito.', 'success');
+                        setTimeout(() => window.location.href = `paciente_detalle.php?id=<?php echo $paciente_id; ?>`, 1000);
                     } else {
                         window.location.reload();
                     }
                 } else {
-                    alert('Error: ' + result.error);
+                    showToast('Error: ' + result.error, 'error');
                     btn.innerHTML = textOriginal;
                     btn.disabled = false;
                     lucide.createIcons();
                 }
             } catch (error) {
                 console.error(error);
-                alert('Error de conexión.');
+                showToast('Error de conexión.', 'error');
                 btn.innerHTML = textOriginal;
                 btn.disabled = false;
                 lucide.createIcons();
@@ -1924,12 +1926,12 @@ if (!$paciente) {
 
         function abrirModalImportar() {
             if (!hallazgosOdontograma || hallazgosOdontograma.length === 0) {
-                alert('No hay hallazgos en el odontograma. Marque al menos un diente antes de generar.');
+                showToast('No hay hallazgos en el odontograma. Marque al menos un diente antes de generar.', 'warning');
                 return;
             }
             const activeHallazgos = hallazgosOdontograma.filter(h => h.estado && h.estado !== '');
             if (activeHallazgos.length === 0) {
-                alert('No hay hallazgos activos en el odontograma.');
+                showToast('No hay hallazgos activos en el odontograma.', 'warning');
                 return;
             }
             
@@ -2025,7 +2027,7 @@ if (!$paciente) {
             });
             
             if (selectedHallazgos.length === 0) {
-                alert('Seleccione al menos un hallazgo para generar el presupuesto.');
+                showToast('Seleccione al menos un hallazgo para generar el presupuesto.', 'warning');
                 return;
             }
             
@@ -2046,12 +2048,13 @@ if (!$paciente) {
                     presupuestoActivo = data.presupuesto;
                     mostrarEditorPresupuesto(data.presupuesto);
                     cargarListaPresupuestos();
+                    showToast('Presupuesto generado exitosamente.', 'success');
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo generar'));
+                    showToast('Error: ' + (data.error || 'No se pudo generar'), 'error');
                 }
             } catch(e) {
                 console.error(e);
-                alert('Error de conexión al generar presupuesto.');
+                showToast('Error de conexión al generar presupuesto.', 'error');
             }
         }
 
@@ -2068,10 +2071,11 @@ if (!$paciente) {
                     presupuestoActivo = data.presupuesto;
                     mostrarEditorPresupuesto(data.presupuesto);
                     cargarListaPresupuestos();
+                    showToast('Presupuesto creado exitosamente.', 'success');
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo crear'));
+                    showToast('Error: ' + (data.error || 'No se pudo crear'), 'error');
                 }
-            } catch(e) { console.error(e); alert('Error de conexión.'); }
+            } catch(e) { console.error(e); showToast('Error de conexión.', 'error'); }
         }
 
         // --- Abrir existente ---
@@ -2088,10 +2092,10 @@ if (!$paciente) {
                     mostrarEditorPresupuesto(data.presupuesto);
                     return true;
                 } else {
-                    alert('Error: ' + (data.error || 'No encontrado'));
+                    showToast('Error: ' + (data.error || 'No encontrado'), 'error');
                     return false;
                 }
-            } catch(e) { console.error(e); alert('Error al cargar presupuesto.'); return false; }
+            } catch(e) { console.error(e); showToast('Error al cargar presupuesto.', 'error'); return false; }
         }
 
         // --- Editor ---
@@ -2240,8 +2244,8 @@ if (!$paciente) {
             const pieza = document.getElementById('itemPieza').value || null;
             const catalogoId = document.getElementById('itemCatalogoSelect').value || null;
 
-            if (!descripcion) { alert('Ingrese una descripción del tratamiento.'); return; }
-            if (precio <= 0) { alert('El precio debe ser mayor a 0.'); return; }
+            if (!descripcion) { showToast('Ingrese una descripción del tratamiento.', 'warning'); return; }
+            if (precio <= 0) { showToast('El precio debe ser mayor a 0.', 'warning'); return; }
 
             try {
                 const res = await fetch('ajax_presupuesto.php', {
@@ -2264,9 +2268,9 @@ if (!$paciente) {
                     actualizarTotalesUI(data.presupuesto);
                     cerrarModalItem();
                 } else {
-                    alert('Error: ' + (data.error || 'No se pudo agregar'));
+                    showToast('Error: ' + (data.error || 'No se pudo agregar'), 'error');
                 }
-            } catch(e) { console.error(e); alert('Error de conexión.'); }
+            } catch(e) { console.error(e); showToast('Error de conexión.', 'error'); }
         }
 
         // --- Operaciones sobre ítems ---
@@ -2299,20 +2303,23 @@ if (!$paciente) {
         }
 
         async function eliminarItem(itemId) {
-            if (!presupuestoActivo || !confirm('¿Eliminar este ítem?')) return;
-            try {
-                const res = await fetch('ajax_presupuesto.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({accion: 'eliminar_item', item_id: itemId, presupuesto_id: presupuestoActivo.id})
-                });
-                const data = await res.json();
-                if (data.success) {
-                    presupuestoActivo = data.presupuesto;
-                    renderizarItemsPresupuesto(data.presupuesto.items);
-                    actualizarTotalesUI(data.presupuesto);
-                }
-            } catch(e) { console.error(e); }
+            if (!presupuestoActivo) return;
+            showConfirm('Este ítem será eliminado del presupuesto.', async function() {
+                try {
+                    const res = await fetch('ajax_presupuesto.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({accion: 'eliminar_item', item_id: itemId, presupuesto_id: presupuestoActivo.id})
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        presupuestoActivo = data.presupuesto;
+                        renderizarItemsPresupuesto(data.presupuesto.items);
+                        actualizarTotalesUI(data.presupuesto);
+                        showToast('Ítem eliminado.', 'info');
+                    }
+                } catch(e) { console.error(e); }
+            }, null, { title: '¿Eliminar ítem?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
         async function aplicarDescuento() {
@@ -2333,9 +2340,8 @@ if (!$paciente) {
         }
 
         // --- Estado y eliminación ---
-        async function cambiarEstadoPresupuesto(nuevoEstado, pedirConfirmacion = true) {
+        async function cambiarEstadoPresupuesto(nuevoEstado, pedirConfirmacion = false) {
             if (!presupuestoActivo) return;
-            if (pedirConfirmacion && !confirm(`¿Cambiar estado a "${nuevoEstado}"?`)) return;
             try {
                 const res = await fetch('ajax_presupuesto.php', {
                     method: 'POST',
@@ -2347,17 +2353,19 @@ if (!$paciente) {
                     presupuestoActivo.estado = nuevoEstado;
                     mostrarEditorPresupuesto(presupuestoActivo);
                     cargarListaPresupuestos();
+                    showToast(`Estado cambiado a «${nuevoEstado}».`, 'success');
                 }
             } catch(e) { console.error(e); }
         }
 
         async function eliminarPresupuestoActivo() {
-            if (!presupuestoActivo || !confirm('¿Eliminar este presupuesto permanentemente?')) return;
-            try {
-                const res = await fetch('ajax_presupuesto.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({accion: 'eliminar_presupuesto', presupuesto_id: presupuestoActivo.id})
+            if (!presupuestoActivo) return;
+            showConfirm('Este presupuesto y todos sus ítems serán eliminados permanentemente.', async function() {
+                try {
+                    const res = await fetch('ajax_presupuesto.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({accion: 'eliminar_presupuesto', presupuesto_id: presupuestoActivo.id})
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -2408,7 +2416,7 @@ if (!$paciente) {
             
             let phone = telefonoSpan.innerText.trim();
             if (phone === '-' || phone === '') {
-                alert('El paciente no tiene un número de teléfono válido registrado.');
+                showToast('El paciente no tiene un número de teléfono válido registrado.', 'warning');
                 return;
             }
             
@@ -2429,7 +2437,7 @@ if (!$paciente) {
         function enviarPorEmail() {
             const email = "<?php echo htmlspecialchars($paciente['email']); ?>";
             if (!email) {
-                alert("El paciente no tiene un correo electrónico registrado.");
+                showToast('El paciente no tiene un correo electrónico registrado.', 'warning');
                 return;
             }
             const msj = obtenerMensajePresupuesto();
@@ -2511,7 +2519,7 @@ if (!$paciente) {
             const saldo = total - pagado;
             
             if (saldo <= 0) {
-                alert('Este presupuesto ya está totalmente pagado o su total es 0 (añada tratamientos primero).');
+                showToast('Este presupuesto ya está totalmente pagado o su total es 0 (añada tratamientos primero).', 'info');
                 return;
             }
             
@@ -2541,8 +2549,8 @@ if (!$paciente) {
             const pagado = parseFloat(presupuestoActivo.monto_pagado || 0);
             const saldo = total - pagado;
             
-            if (!monto || monto <= 0) { alert('Ingrese un monto válido.'); return; }
-            if (monto > saldo + 0.01) { alert('El monto no puede ser mayor al saldo pendiente.'); return; }
+            if (!monto || monto <= 0) { showToast('Ingrese un monto válido.', 'warning'); return; }
+            if (monto > saldo + 0.01) { showToast('El monto no puede ser mayor al saldo pendiente.', 'warning'); return; }
             
             const data = {
                 accion: 'registrar_pago',
@@ -2575,11 +2583,11 @@ if (!$paciente) {
                         cargarListaPresupuestos(); // Actualiza la lista si no cambió el estado
                     }
                     
-                    alert('Pago registrado exitosamente.');
+                    showToast('Pago registrado exitosamente.', 'success');
                 } else {
-                    alert('Error: ' + response.error);
+                    showToast('Error: ' + response.error, 'error');
                 }
-            } catch(e) { console.error(e); alert('Error de conexión.'); }
+            } catch(e) { console.error(e); showToast('Error de conexión.', 'error'); }
         }
 
         function formatearFecha(fecha) {
@@ -2797,10 +2805,10 @@ if (!$paciente) {
                     cerrarModalSubirArchivo();
                     cargarListaArchivos();
                 } else {
-                    alert('Error: ' + data.error);
+                    showToast('Error: ' + data.error, 'error');
                 }
             } catch (err) {
-                alert('Error de conexión');
+                showToast('Error de conexión.', 'error');
             } finally {
                 btnSubir.classList.remove('hidden');
                 loader.classList.add('hidden');
@@ -2885,20 +2893,22 @@ if (!$paciente) {
         }
 
         async function eliminarArchivo(id) {
-            if (!confirm('¿Está seguro de eliminar este archivo permanentemente?')) return;
-            try {
-                const res = await fetch('ajax_archivos.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ accion: 'eliminar', archivo_id: id })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    cargarListaArchivos();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-            } catch(e) { alert('Error de conexión'); }
+            showConfirm('Este archivo será eliminado permanentemente del sistema.', async function() {
+                try {
+                    const res = await fetch('ajax_archivos.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ accion: 'eliminar', archivo_id: id })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        cargarListaArchivos();
+                        showToast('Archivo eliminado.', 'info');
+                    } else {
+                        showToast('Error: ' + data.error, 'error');
+                    }
+                } catch(e) { showToast('Error de conexión.', 'error'); }
+            }, null, { title: '¿Eliminar archivo?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
         let panX = 0;
@@ -3034,10 +3044,10 @@ if (!$paciente) {
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    showToast('Error: ' + (data.error || 'desconocido'), 'error');
                 }
             } catch(e) {
-                alert('Error de red al guardar triaje');
+                showToast('Error de red al guardar triaje.', 'error');
             } finally {
                 btn.innerHTML = iconHTML;
                 btn.disabled = false;
@@ -3073,10 +3083,10 @@ if (!$paciente) {
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error: ' + (data.error || 'desconocido'));
+                    showToast('Error: ' + (data.error || 'desconocido'), 'error');
                 }
             } catch(e) { 
-                alert('Error de red al guardar antecedentes'); 
+                showToast('Error de red al guardar antecedentes.', 'error'); 
                 btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Guardar';
                 btn.disabled = false;
             }
@@ -3106,36 +3116,39 @@ if (!$paciente) {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    location.reload();
+                    showToast('Receta guardada exitosamente.', 'success');
+                    setTimeout(() => location.reload(), 800);
                 } else {
-                    alert('Error: ' + (data.error || 'Desconocido'));
+                    showToast('Error: ' + (data.error || 'Desconocido'), 'error');
                     btn.innerHTML = originalText;
                     btn.disabled = false;
                 }
             } catch(e) {
-                alert('Error de red al guardar la receta');
+                showToast('Error de red al guardar la receta.', 'error');
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
         }
 
         async function eliminarReceta(id) {
-            if (!confirm('¿Estás seguro de eliminar esta receta? Esta acción no se puede deshacer.')) return;
-            try {
-                const res = await fetch('ajax_clinico.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({accion: 'eliminar_receta', id: id})
-                });
-                const data = await res.json();
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error al eliminar');
+            showConfirm('Esta receta será eliminada permanentemente y no se puede recuperar.', async function() {
+                try {
+                    const res = await fetch('ajax_clinico.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({accion: 'eliminar_receta', id: id})
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Receta eliminada.', 'info');
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        showToast('Error al eliminar.', 'error');
+                    }
+                } catch(e) {
+                    showToast('Error de red.', 'error');
                 }
-            } catch(e) {
-                alert('Error de red');
-            }
+            }, null, { title: '¿Eliminar receta?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
         function imprimirReceta(id) {
@@ -3148,7 +3161,7 @@ if (!$paciente) {
             
             let phone = telefonoSpan.innerText.trim();
             if (phone === '-' || phone === '') {
-                alert('El paciente no tiene un número de teléfono registrado.');
+                showToast('El paciente no tiene un número de teléfono registrado.', 'warning');
                 return;
             }
             
