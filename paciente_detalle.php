@@ -187,6 +187,16 @@ if (!$paciente) {
             gap: 1rem;
             border-radius: 1rem;
         }
+
+        /* Ajuste de scroll para que las secciones no queden tapadas por la barra flotante */
+        #seccion_odontograma,
+        #seccion_triaje,
+        #seccion_antecedentes,
+        #seccion_presupuestos,
+        #seccion_recetas,
+        #seccion_archivos {
+            scroll-margin-top: 80px;
+        }
     </style>
 </head>
 
