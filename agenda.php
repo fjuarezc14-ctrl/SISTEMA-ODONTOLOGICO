@@ -461,7 +461,8 @@ if ($pre_hora && !$val_fin) {
             </div>
 
             <!-- Cuerpo: horas + celdas -->
-            <div class="flex-1 overflow-y-auto no-scrollbar relative">
+            <div class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar relative"
+                 style="min-width: <?php echo $vista === 'dia' ? '100%' : '780px'; ?>">
 
                 <?php
                     $current_hour      = (int)date('H');
