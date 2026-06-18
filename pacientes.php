@@ -113,7 +113,7 @@ if ($ver_inhabilitados) {
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50/50">
                     <div class="relative w-full md:w-96">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                        <input type="text" placeholder="Buscar por nombre o DNI..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
+                        <input type="text" id="searchPaciente" placeholder="Buscar por nombre o DNI..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-500">
                     </div>
                     <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
                         <?php if (isset($_SESSION['usuario_rol']) && $_SESSION['usuario_rol'] === 'Admin'): ?>
@@ -145,7 +145,7 @@ if ($ver_inhabilitados) {
                                 <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody id="tablaPacientesBody" class="divide-y divide-slate-50">
                             
                             <?php if($resultado_pacientes->num_rows > 0): ?>
                                 <?php while($paciente = $resultado_pacientes->fetch_assoc()): ?>
@@ -524,6 +524,44 @@ if ($ver_inhabilitados) {
                 modal.classList.remove('flex');
             }, 300);
         }
+
+        // Buscador en tiempo real de pacientes
+        document.getElementById('searchPaciente').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#tablaPacientesBody tr');
+            
+            rows.forEach(row => {
+                if (row.id === 'no-records-row') return;
+                
+                // Buscar en DNI (columna 0) y Nombre (columna 1)
+                const dni = row.cells[0] ? row.cells[0].textContent.toLowerCase() : '';
+                const nombre = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                
+                if (dni.includes(term) || nombre.includes(term)) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+            
+            // Gestionar mensaje de "no se encontraron registros"
+            const visibleRows = Array.from(rows).filter(r => r.id !== 'no-records-row' && !r.classList.contains('hidden'));
+            const noRecordsRow = document.getElementById('no-records-row');
+            if (visibleRows.length === 0) {
+                if (!noRecordsRow) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'no-records-row';
+                    tr.innerHTML = `<td colspan="5" class="px-6 py-10 text-center text-sm font-semibold text-slate-400">No se encontraron pacientes que coincidan con la búsqueda.</td>`;
+                    document.getElementById('tablaPacientesBody').appendChild(tr);
+                } else {
+                    noRecordsRow.classList.remove('hidden');
+                }
+            } else {
+                if (noRecordsRow) {
+                    noRecordsRow.classList.add('hidden');
+                }
+            }
+        });
     </script>
 </body>
 </html>

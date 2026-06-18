@@ -199,7 +199,7 @@ if (!$paciente) {
         <?php $page_title = 'Detalles';
         include 'includes/header.php'; ?>
 
-        <div class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <div id="pacienteDetalleScrollContainer" class="flex-1 overflow-y-auto p-4 md:p-8 relative">
             <?php if ($cita_id_activa): ?>
             <div class="bg-brand text-white p-4 rounded-2xl mb-6 shadow-md flex justify-between items-center border border-teal-600 relative overflow-hidden">
                 <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
@@ -330,15 +330,15 @@ if (!$paciente) {
                 </div>
 
                 <div class="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6">
-                    <div class="flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto">
-                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
-                        <button onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
-                        <button onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
-                        <button onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Recetas</button>
-                        <button onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
+                    <div id="stickySubmenuBar" class="sticky top-0 bg-slate-50/95 backdrop-blur-md z-30 flex gap-2 border-b border-slate-200 shrink-0 overflow-x-auto pt-3 pb-2 -mx-4 px-4 md:-mx-8 md:px-8 -mt-4 md:-mt-8 mb-4">
+                        <button id="tab-odontograma" onclick="document.getElementById('pacienteDetalleScrollContainer').scrollTo({top: 0, behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap">Historia y Odontograma</button>
+                        <button id="tab-triaje" onclick="document.getElementById('seccion_triaje').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Antecedentes y Triaje</button>
+                        <button id="tab-presupuestos" onclick="document.getElementById('seccion_presupuestos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Presupuestos</button>
+                        <button id="tab-recetas" onclick="document.getElementById('seccion_recetas').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Recetas</button>
+                        <button id="tab-archivos" onclick="document.getElementById('seccion_archivos').scrollIntoView({behavior: 'smooth'})" class="px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap">Radiografías / Archivos</button>
                     </div>
 
-                    <div class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
+                    <div id="seccion_odontograma" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
                         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-10">
                             <div>
                                 <h2 class="text-2xl font-black text-slate-800">Odontograma General</h2>
@@ -3238,6 +3238,44 @@ if (!$paciente) {
                 });
             }
         });
+
+        // Activar tab en base al scroll del contenedor
+        const scrollContainer = document.getElementById('pacienteDetalleScrollContainer');
+        const tabs = [
+            { id: 'tab-odontograma', element: document.getElementById('seccion_odontograma') },
+            { id: 'tab-triaje', element: document.getElementById('seccion_triaje') },
+            { id: 'tab-presupuestos', element: document.getElementById('seccion_presupuestos') },
+            { id: 'tab-recetas', element: document.getElementById('seccion_recetas') },
+            { id: 'tab-archivos', element: document.getElementById('seccion_archivos') }
+        ];
+
+        if (scrollContainer) {
+            scrollContainer.addEventListener('scroll', () => {
+                let activeTabId = 'tab-odontograma';
+                const containerTop = scrollContainer.getBoundingClientRect().top;
+                
+                // Buscar la sección visible más cercana al tope del scroll container
+                for (const tab of tabs) {
+                    if (!tab.element) continue;
+                    const rect = tab.element.getBoundingClientRect();
+                    // Si el tope del elemento está cerca o arriba del tope de la pantalla, lo consideramos activo
+                    if (rect.top - containerTop <= 150) {
+                        activeTabId = tab.id;
+                    }
+                }
+
+                // Actualizar clases de los botones de pestañas
+                tabs.forEach(tab => {
+                    const btn = document.getElementById(tab.id);
+                    if (!btn) return;
+                    if (tab.id === activeTabId) {
+                        btn.className = "px-6 py-3 border-b-2 border-brand text-brand font-bold text-sm bg-brand-light/30 rounded-t-lg transition whitespace-nowrap";
+                    } else {
+                        btn.className = "px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap";
+                    }
+                });
+            });
+        }
     </script>
 
 </body>

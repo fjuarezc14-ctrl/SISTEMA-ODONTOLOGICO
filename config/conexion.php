@@ -7,6 +7,11 @@ $user = "root";
 $password = "";
 $dbname = "mahudent_db";
 
+// Cargar configuración local/producción si existe (no sobreescrita por git pull)
+if (file_exists(__DIR__ . '/conexion.local.php')) {
+    include __DIR__ . '/conexion.local.php';
+}
+
 $conn = new mysqli($host, $user, $password, $dbname);
 
 if ($conn->connect_error) {

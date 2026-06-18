@@ -11,6 +11,7 @@ vendor/
 .env.local
 .env.*.local
 config.local.php
+config/conexion.local.php
 
 # Logs de error de PHP
 error_log
