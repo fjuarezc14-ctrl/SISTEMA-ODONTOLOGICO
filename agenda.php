@@ -334,37 +334,37 @@ if ($pre_hora && !$val_fin) {
                             <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400" id="monthArrow"></i>
                         </button>
 
-                        <!-- Popover de Navegación de Mes/Año -->
+                        <!-- Popover de Navegación de Mes/Año → Mini-Calendario -->
                         <div id="monthPopover"
-                             class="bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 w-72">
-                            <div class="flex items-center justify-between mb-4">
-                                <button onclick="cambiarAnioPopover(-1)" class="p-2 hover:bg-slate-100 rounded-xl transition">
+                             class="bg-white rounded-2xl shadow-2xl border border-slate-100 p-4" style="width:280px;">
+
+                            <!-- Navegación mes dentro del popover -->
+                            <div class="flex items-center justify-between mb-3">
+                                <button onclick="popoverNavMes(-1)" class="p-1.5 hover:bg-slate-100 rounded-xl transition">
                                     <i data-lucide="chevron-left" class="w-4 h-4 text-slate-500"></i>
                                 </button>
-                                <span id="popoverAnio" class="text-lg font-black text-slate-800"><?php echo $anio_inicio; ?></span>
-                                <button onclick="cambiarAnioPopover(1)" class="p-2 hover:bg-slate-100 rounded-xl transition">
+                                <button onclick="toggleModoAnio()" id="popoverMesAnioLabel"
+                                        class="font-black text-slate-800 text-sm hover:text-brand transition px-2"></button>
+                                <button onclick="popoverNavMes(1)" class="p-1.5 hover:bg-slate-100 rounded-xl transition">
                                     <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
                                 </button>
                             </div>
-                            <div class="grid grid-cols-4 gap-2" id="popoverMeses">
-                                <?php
-                                $meses_lista = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-                                $mes_actual_num = (int)date('m', strtotime($fecha_ref));
-                                $anio_actual_num = (int)date('Y', strtotime($fecha_ref));
-                                foreach ($meses_lista as $m_idx => $m_label):
-                                    $m_num = $m_idx + 1;
-                                    $es_seleccionado = ($m_num === $mes_actual_num && (int)$anio_inicio === $anio_actual_num);
-                                ?>
-                                <button type="button"
-                                        class="mes-btn py-2 rounded-xl text-xs font-bold transition <?php echo $es_seleccionado ? 'bg-brand text-white shadow-md' : 'hover:bg-teal-100 text-slate-600'; ?>"
-                                        data-mes="<?php echo $m_num; ?>"
-                                        onclick="irAMes(this.dataset.mes)">
-                                    <?php echo $m_label; ?>
-                                </button>
+
+                            <!-- Grid de días de la semana (encabezados) -->
+                            <div class="grid grid-cols-7 text-center mb-1.5" id="popoverDayHeaders">
+                                <?php foreach (['Lu','Ma','Mi','Ju','Vi','Sá','Do'] as $dh): ?>
+                                <div class="text-[9px] font-black text-slate-400 uppercase py-0.5"><?php echo $dh; ?></div>
                                 <?php endforeach; ?>
                             </div>
-                            <div class="mt-3 pt-3 border-t border-slate-100">
-                                <button onclick="irAHoy()" class="w-full py-2 text-xs font-bold text-brand hover:bg-teal-50 rounded-xl transition">
+
+                            <!-- Grid de días (dinámico via JS) -->
+                            <div class="grid grid-cols-7 gap-0.5" id="miniCalBody"></div>
+
+                            <!-- Modo selección de año: grid de meses (oculto por defecto) -->
+                            <div id="modoAnioGrid" class="hidden grid-cols-4 gap-1.5 mt-2"></div>
+
+                            <div class="mt-3 pt-2 border-t border-slate-100">
+                                <button onclick="irAHoy()" class="w-full py-1.5 text-xs font-bold text-brand hover:bg-teal-50 rounded-xl transition">
                                     Ir a Hoy
                                 </button>
                             </div>
@@ -386,12 +386,19 @@ if ($pre_hora && !$val_fin) {
             <!-- Derecha: Toggle de Vista + Botón Nueva Cita -->
             <div class="flex items-center gap-3">
                 <!-- Toggle Vista -->
+                <?php
+                    // Día "inteligente" para el toggle semana→día:
+                    // Si hoy está en la semana visible → mostrar hoy. Si no → mostrar fecha_ref.
+                    $hoy_str = date('Y-m-d');
+                    $dia_toggle = ($hoy_str >= $lunes_fecha && $hoy_str <= $domingo_fecha)
+                                  ? $hoy_str : $fecha_ref;
+                ?>
                 <div class="flex items-center gap-1 bg-slate-100 rounded-xl p-1">
-                    <a href="?fecha=<?php echo $fecha_ref; ?>&vista=semana"
+                    <a href="?fecha=<?php echo $fecha_ref; ?>&amp;vista=semana"
                        class="view-pill <?php echo $vista==='semana' ? 'active' : ''; ?>">
                         <i data-lucide="calendar-days" class="w-3.5 h-3.5 inline mr-1"></i>Semana
                     </a>
-                    <a href="?fecha=<?php echo $fecha_ref; ?>&vista=dia"
+                    <a href="?fecha=<?php echo $dia_toggle; ?>&amp;vista=dia"
                        class="view-pill <?php echo $vista==='dia' ? 'active' : ''; ?>">
                         <i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1"></i>Día
                     </a>
@@ -423,21 +430,31 @@ if ($pre_hora && !$val_fin) {
                     <span class="text-[10px] text-slate-400 font-bold">HORA</span>
                 </div>
                 <?php foreach ($dias_a_mostrar as $i => $dia): ?>
-                <div class="p-3 border-r border-slate-200 text-center <?php echo $dia['es_hoy'] ? 'relative overflow-hidden' : ($i==7 ? 'bg-amber-50/40' : ''); ?>">
+                <div class="border-r border-slate-200 text-center <?php echo $dia['es_hoy'] ? 'relative overflow-hidden' : ($i==7 ? 'bg-amber-50/40' : ''); ?> <?php echo $vista==='semana' ? 'cursor-pointer group hover:bg-teal-50/60 transition' : ''; ?>"
+                     <?php if ($vista==='semana'): ?>
+                     onclick="window.location.href='?fecha=<?php echo $dia['fecha']; ?>&amp;vista=dia'"
+                     title="Ver solo <?php echo $dia['nombre']; ?> <?php echo $dia['numero']; ?>"
+                     <?php endif; ?>
+                     style="padding: 8px 12px;">
                     <?php if ($dia['es_hoy']): ?>
                         <div class="absolute top-0 left-0 w-full h-1 bg-brand"></div>
                         <p class="text-xs font-bold text-brand uppercase mt-1"><?php echo $dia['nombre']; ?></p>
                         <p class="text-xl font-black text-brand bg-brand-light w-10 h-10 mx-auto flex items-center justify-center rounded-full mt-1"><?php echo $dia['numero']; ?></p>
                     <?php else: ?>
-                        <p class="text-xs font-bold <?php echo $i==7 ? 'text-amber-600' : 'text-slate-500'; ?> uppercase"><?php echo $dia['nombre']; ?></p>
-                        <p class="text-xl font-black <?php echo $i==7 ? 'text-amber-700' : 'text-slate-700'; ?>"><?php echo $dia['numero']; ?></p>
+                        <p class="text-xs font-bold <?php echo $i==7 ? 'text-amber-600' : 'text-slate-500 group-hover:text-brand'; ?> uppercase transition"><?php echo $dia['nombre']; ?></p>
+                        <p class="text-xl font-black <?php echo $i==7 ? 'text-amber-700' : 'text-slate-700 group-hover:text-brand'; ?> transition"><?php echo $dia['numero']; ?></p>
                     <?php endif; ?>
                     <?php if ($vista === 'semana'): ?>
-                    <!-- Mini botón añadir en la cabecera del día -->
-                    <button onclick="abrirNuevaCitaDia('<?php echo $dia['fecha']; ?>')"
-                            class="mt-1 text-[9px] font-bold text-brand/60 hover:text-brand hover:bg-teal-50 px-2 py-0.5 rounded-full transition">
-                        + Cita
-                    </button>
+                    <div class="mt-1 flex items-center justify-center gap-2">
+                        <button onclick="event.stopPropagation(); abrirNuevaCitaDia('<?php echo $dia['fecha']; ?>')"
+                                class="text-[9px] font-bold text-brand/60 hover:text-brand hover:bg-teal-100 px-2 py-0.5 rounded-full transition"
+                                title="Nueva cita este día">
+                            + Cita
+                        </button>
+                        <span class="text-[8px] text-slate-300 group-hover:text-teal-300 transition hidden sm:inline">
+                            <i data-lucide="external-link" class="w-2.5 h-2.5 inline"></i>
+                        </span>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
@@ -821,44 +838,190 @@ function cerrarNuevaCita() {
 }
 
 // ═══════════════════════════════════════════════════════════
-//  POPOVER NAVEGADOR DE MES
+//  MINI-CALENDARIO POPOVER — Variables de estado
 // ═══════════════════════════════════════════════════════════
-let popoverAnio = <?php echo $anio_inicio; ?>;
+const FECHA_REF      = "<?php echo $fecha_ref; ?>";       // Fecha actual de referencia
+const VISTA_ACTUAL   = "<?php echo $vista; ?>";            // 'semana' | 'dia'
+const LUNES_FECHA    = "<?php echo $lunes_fecha; ?>";      // Lunes de la semana visible
+const DOMINGO_FECHA  = "<?php echo $domingo_fecha; ?>";    // Domingo de la semana visible
 
-function toggleMonthPopover() {
-    const pop = document.getElementById('monthPopover');
-    const arrow = document.getElementById('monthArrow');
-    pop.classList.toggle('open');
-    arrow.style.transform = pop.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
-    if (typeof lucide !== 'undefined') lucide.createIcons();
+let popoverAnio = <?php echo (int)date('Y', strtotime($fecha_ref)); ?>;
+let popoverMes  = <?php echo (int)date('m', strtotime($fecha_ref)); ?>;
+let modoAnioActivo = false; // false = mini-cal, true = grid de meses
+
+const MESES_NOMBRES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MESES_CORTOS   = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// ─── Formato YYYY-MM-DD ───────────────────────────────────
+function fmtFecha(y, m, d) {
+    return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+function getTodayStr() {
+    const t = new Date();
+    return fmtFecha(t.getFullYear(), t.getMonth() + 1, t.getDate());
 }
 
-function cambiarAnioPopover(delta) {
-    popoverAnio += delta;
-    document.getElementById('popoverAnio').textContent = popoverAnio;
+// ─── Renderizar mini-calendario ───────────────────────────
+function renderMiniCalendar() {
+    const year  = popoverAnio;
+    const month = popoverMes;
+
+    // Actualizar etiqueta del header
+    const labelEl = document.getElementById('popoverMesAnioLabel');
+    if (labelEl) labelEl.textContent = MESES_NOMBRES[month - 1] + ' ' + year;
+
+    // Primer día del mes (0=Dom, 1=Lun, ...)
+    const firstDay = new Date(year, month - 1, 1);
+    const daysInMonth = new Date(year, month, 0).getDate();
+    let startDow = firstDay.getDay();
+    startDow = startDow === 0 ? 6 : startDow - 1; // Convertir a lunes=0
+
+    const todayStr  = getTodayStr();
+    let cells = [];
+
+    // Celdas vacías antes del día 1
+    for (let i = 0; i < startDow; i++) {
+        cells.push('<div></div>');
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = fmtFecha(year, month, d);
+        const isToday     = (dateStr === todayStr);
+        const isRef       = (dateStr === FECHA_REF);
+        const inWeek      = (dateStr >= LUNES_FECHA && dateStr <= DOMINGO_FECHA);
+        const esDomSab    = (() => { const dow = new Date(year, month - 1, d).getDay(); return dow === 0 || dow === 6; })();
+
+        let cls = 'w-8 h-8 flex items-center justify-center rounded-xl text-xs font-bold cursor-pointer transition mx-auto ';
+
+        if (isToday && isRef && VISTA_ACTUAL === 'dia') {
+            cls += 'bg-brand text-white shadow-md ring-2 ring-brand ring-offset-1';
+        } else if (isToday) {
+            cls += 'bg-brand text-white shadow-md';
+        } else if (isRef && VISTA_ACTUAL === 'dia') {
+            cls += 'ring-2 ring-brand bg-teal-50 text-brand';
+        } else if (inWeek && VISTA_ACTUAL === 'semana') {
+            cls += 'bg-teal-50 text-brand';
+        } else if (esDomSab) {
+            cls += 'text-amber-600 hover:bg-amber-50';
+        } else {
+            cls += 'text-slate-700 hover:bg-teal-50 hover:text-brand';
+        }
+
+        cells.push(`<button type="button" class="${cls}" onclick="irADia('${dateStr}')">${d}</button>`);
+    }
+
+    const body = document.getElementById('miniCalBody');
+    if (body) {
+        body.innerHTML = cells.join('');
+        body.className = 'grid grid-cols-7 gap-0.5';
+    }
+
+    // Ocultar grid de meses
+    const modoGrid = document.getElementById('modoAnioGrid');
+    const dayHeaders = document.getElementById('popoverDayHeaders');
+    if (modoGrid) { modoGrid.classList.add('hidden'); modoGrid.classList.remove('grid'); }
+    if (dayHeaders) dayHeaders.classList.remove('hidden');
+    modoAnioActivo = false;
+
+    lucide.createIcons();
 }
 
-function irAMes(mes) {
-    const mesStr = String(mes).padStart(2, '0');
-    const fecha  = `${popoverAnio}-${mesStr}-01`;
-    window.location.href = `?fecha=${fecha}&vista=<?php echo $vista; ?>`;
+// ─── Grid de meses (modo año) ─────────────────────────────
+function renderModoAnio() {
+    const modoGrid   = document.getElementById('modoAnioGrid');
+    const body       = document.getElementById('miniCalBody');
+    const dayHeaders = document.getElementById('popoverDayHeaders');
+    const labelEl    = document.getElementById('popoverMesAnioLabel');
+
+    if (labelEl) labelEl.textContent = String(popoverAnio);
+    if (body)       body.innerHTML = '';
+    if (dayHeaders) dayHeaders.classList.add('hidden');
+
+    const cells = MESES_CORTOS.map((m, idx) => {
+        const isActive = (idx + 1 === popoverMes && popoverAnio === <?php echo (int)date('Y', strtotime($fecha_ref)); ?>);
+        const cls = isActive
+            ? 'py-1.5 rounded-xl text-xs font-black bg-brand text-white shadow-sm'
+            : 'py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-teal-50 hover:text-brand transition';
+        return `<button class="${cls}" onclick="elegirMes(${idx + 1})">${m}</button>`;
+    }).join('');
+
+    if (modoGrid) {
+        modoGrid.innerHTML = cells;
+        modoGrid.classList.remove('hidden');
+        modoGrid.classList.add('grid');
+        modoGrid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+        modoGrid.style.gap = '6px';
+        modoGrid.style.marginTop = '8px';
+    }
+    modoAnioActivo = true;
+}
+
+function elegirMes(mes) {
+    popoverMes = mes;
+    renderMiniCalendar();
+}
+
+function toggleModoAnio() {
+    if (modoAnioActivo) {
+        renderMiniCalendar();
+    } else {
+        renderModoAnio();
+    }
+}
+
+// ─── Navegar mes en el popover ────────────────────────────
+function popoverNavMes(delta) {
+    if (modoAnioActivo) {
+        // En modo año: navegar por años
+        popoverAnio += delta;
+        renderModoAnio();
+        return;
+    }
+    popoverMes += delta;
+    if (popoverMes > 12) { popoverMes = 1; popoverAnio++; }
+    if (popoverMes < 1)  { popoverMes = 12; popoverAnio--; }
+    renderMiniCalendar();
+}
+
+// ─── Ir a un día específico ────────────────────────────────
+// En semana: muestra la semana que contiene ese día.
+// En día: muestra ese día exacto.
+function irADia(fecha) {
+    cerrarPopover();
+    window.location.href = `?fecha=${fecha}&vista=${VISTA_ACTUAL}`;
 }
 
 function irAHoy() {
-    window.location.href = `?fecha=<?php echo date('Y-m-d'); ?>&vista=<?php echo $vista; ?>`;
+    cerrarPopover();
+    window.location.href = `?fecha=${getTodayStr()}&vista=${VISTA_ACTUAL}`;
+}
+
+// ─── Abrir / Cerrar popover ────────────────────────────────
+function toggleMonthPopover() {
+    const pop   = document.getElementById('monthPopover');
+    const arrow = document.getElementById('monthArrow');
+    const isOpen = pop.classList.contains('open');
+    if (isOpen) {
+        cerrarPopover();
+    } else {
+        pop.classList.add('open');
+        arrow.style.transform = 'rotate(180deg)';
+        renderMiniCalendar(); // Renderiza el mini-cal al abrir
+    }
+}
+
+function cerrarPopover() {
+    const pop   = document.getElementById('monthPopover');
+    const arrow = document.getElementById('monthArrow');
+    if (pop)   pop.classList.remove('open');
+    if (arrow) arrow.style.transform = 'rotate(0)';
+    modoAnioActivo = false;
 }
 
 // Cerrar popover si click fuera
 document.addEventListener('click', (e) => {
     const wrapper = document.getElementById('monthPickerWrapper');
-    if (wrapper && !wrapper.contains(e.target)) {
-        const pop = document.getElementById('monthPopover');
-        const arrow = document.getElementById('monthArrow');
-        if (pop) {
-            pop.classList.remove('open');
-            if (arrow) arrow.style.transform = 'rotate(0)';
-        }
-    }
+    if (wrapper && !wrapper.contains(e.target)) cerrarPopover();
 });
 
 // ═══════════════════════════════════════════════════════════
