@@ -57,6 +57,7 @@ $p = $resumen['presupuesto'];
             padding: 20mm;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             position: relative;
+            z-index: 1;
         }
         .hoja::before {
             content: "";
@@ -71,7 +72,7 @@ $p = $resumen['presupuesto'];
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
         @media print {
             body { background: white; margin: 0; padding: 0; }

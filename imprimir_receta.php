@@ -55,7 +55,7 @@ if ($receta['fecha_nacimiento']) {
             #btn-print { display: none; }
         }
         body { font-family: 'Montserrat', sans-serif; background: #f1f5f9; min-height: 100vh; padding: 2rem; }
-        .hoja { background: white; max-width: 210mm; min-height: 297mm; margin: 0 auto; box-shadow: 0 10px 30px rgb(0 0 0 / 0.12); position: relative; padding: 0; box-sizing: border-box; overflow: hidden; }
+        .hoja { background: white; max-width: 210mm; min-height: 297mm; margin: 0 auto; box-shadow: 0 10px 30px rgb(0 0 0 / 0.12); position: relative; padding: 0; box-sizing: border-box; overflow: hidden; z-index: 1; }
         .hoja::before {
             content: "";
             position: absolute;
@@ -69,7 +69,7 @@ if ($receta['fecha_nacimiento']) {
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
         @media print { .hoja { box-shadow: none; margin: 0; min-height: 100%; } body { padding: 0; } }
     </style>

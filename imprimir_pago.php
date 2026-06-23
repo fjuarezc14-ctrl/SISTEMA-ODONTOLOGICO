@@ -39,6 +39,7 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
             box-sizing: border-box;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             position: relative;
+            z-index: 1;
         }
         .receipt-container::before {
             content: "";
@@ -53,7 +54,7 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
             background-repeat: no-repeat;
             background-position: center;
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
         .header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
         .header h1 { color: #3a596a; margin: 0; font-size: 22px; text-transform: uppercase; }
