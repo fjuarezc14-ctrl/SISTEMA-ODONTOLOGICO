@@ -2418,7 +2418,10 @@ if (!$paciente) {
 
         function obtenerMensajePresupuesto() {
             const total = parseFloat(presupuestoActivo.total).toFixed(2);
-            return `Hola *<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>*, te adjuntamos el detalle de tu presupuesto odontológico por un total de *S/ ${total}*.\n_Quedamos atentos a cualquier duda._\nAtte: *MahuDent*.`;
+            const token = presupuestoActivo.token || '';
+            const baseUrl = window.location.origin + window.location.pathname.replace('paciente_detalle.php', '');
+            const link = `${baseUrl}imprimir_presupuesto.php?id=${presupuestoActivo.id}&token=${token}`;
+            return `Hola *<?php echo htmlspecialchars(addslashes($paciente['nombre'])); ?>*, te adjuntamos el detalle de tu presupuesto odontológico en el siguiente enlace:\n${link}\n\n_Quedamos atentos a cualquier duda._\nAtte: *MahuDent*.`;
         }
 
         function enviarPorWhatsApp() {

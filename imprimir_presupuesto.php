@@ -1,7 +1,19 @@
 <?php
-require_once 'includes/auth_guard.php';if (!isset($_SESSION['usuario_id']) || !isset($_GET['id'])) {
-    header("Location: index.php");
-    exit;
+$is_public_access = false;
+if (isset($_GET['id']) && isset($_GET['token'])) {
+    $presupuesto_id = intval($_GET['id']);
+    $expected_token = md5($presupuesto_id . 'mahudent_shared_presupuesto_salt_2026');
+    if ($_GET['token'] === $expected_token) {
+        $is_public_access = true;
+    }
+}
+
+if (!$is_public_access) {
+    require_once 'includes/auth_guard.php';
+    if (!isset($_SESSION['usuario_id']) || !isset($_GET['id'])) {
+        header("Location: index.php");
+        exit;
+    }
 }
 
 require_once 'config/conexion.php';

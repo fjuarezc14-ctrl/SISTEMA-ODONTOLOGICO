@@ -41,6 +41,7 @@ class PresupuestoController {
         $presupuesto = $this->presupuestoModel->getById($id);
         if ($presupuesto) {
             $presupuesto['items'] = $this->presupuestoModel->getItems($id);
+            $presupuesto['token'] = md5($id . 'mahudent_shared_presupuesto_salt_2026');
         }
         return $presupuesto;
     }
