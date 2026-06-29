@@ -136,10 +136,21 @@ if ($receta['fecha_nacimiento']) {
         <!-- Firma del doctor -->
         <div style="position:absolute; bottom:100px; left:0; right:0; text-align:center;">
             <div style="width:260px; margin:0 auto; border-top:2px solid #334155; padding-top:10px;">
-                <p style="font-family:'Montserrat',sans-serif; font-weight:800; font-size:15px; color:#1e293b; margin:0;">Dr. <?php echo htmlspecialchars($receta['doctor_nombre']); ?></p>
-                <p style="font-family:'Montserrat',sans-serif; font-weight:700; font-size:11px; color:#3a596a; text-transform:uppercase; letter-spacing:2px; margin:5px 0 0 0;">Odont&#243;logo</p>
+                <?php
+                $doc_nombre = $receta['doctor_nombre'];
+                $prefijo = 'Dr.';
+                $especialidad = 'Cirujano dentista';
+                
+                if (stripos($doc_nombre, 'Lorena') !== false || stripos($doc_nombre, 'Dra') !== false) {
+                    $prefijo = 'Dra.';
+                }
+                
+                $nombre_limpio = preg_replace('/^(Dr\.|Dra\.|Dr|Dra)\s+/i', '', $doc_nombre);
+                ?>
+                <p style="font-family:'Montserrat',sans-serif; font-weight:800; font-size:15px; color:#1e293b; margin:0;"><?php echo $prefijo . ' ' . htmlspecialchars($nombre_limpio); ?></p>
+                <p style="font-family:'Montserrat',sans-serif; font-weight:700; font-size:11px; color:#3a596a; text-transform:uppercase; letter-spacing:2px; margin:5px 0 0 0;"><?php echo htmlspecialchars($especialidad); ?></p>
                 <?php if ($receta['colegiatura']): ?>
-                <p style="font-family:'Montserrat',sans-serif; font-weight:500; font-size:11px; color:#64748b; margin:3px 0 0 0;">COP: <?php echo htmlspecialchars($receta['colegiatura']); ?></p>
+                <p style="font-family:'Montserrat',sans-serif; font-weight:500; font-size:11px; color:#64748b; margin:3px 0 0 0;">COP <?php echo htmlspecialchars($receta['colegiatura']); ?></p>
                 <?php endif; ?>
             </div>
         </div>
