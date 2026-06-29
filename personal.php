@@ -148,7 +148,7 @@ require_once 'config/conexion.php';
         function toggleColegiatura() {
             const rol = document.getElementById('rol').value;
             const divCol = document.getElementById('div-colegiatura');
-            if(rol === 'Dentista') {
+            if(rol === 'Dentista' || rol === 'Admin') {
                 divCol.classList.remove('hidden');
             } else {
                 divCol.classList.add('hidden');
