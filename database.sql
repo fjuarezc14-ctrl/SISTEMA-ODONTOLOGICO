@@ -448,7 +448,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Dra. Lorena Espinoza Gutierrez','admin','$2y$10$V6dsIjYumwaE.LKlMWwprOsNalEYq/RBGBZdMRO0v/U.DxQRQbr/i','Admin','2026-05-06 03:49:16','55272',1,0,NULL),(2,'Dra. Lorena Espinoza Gutierrez','lorena','$2y$10$MovTJJIAhgpD7GJLElRaJ.2PI5oAr2eNH57O1ve8F8eSCah1NmGoq','Dentista','2026-05-20 23:54:53','55272',1,0,NULL),(3,'recepcionista01','recepcion','$2y$10$6IPE6zampJm/2elKSuiEPuoUOR/NzhqyCamc.Hxp5B1CNS5yjggg6','Recepcionista','2026-05-21 00:00:43','',1,0,NULL);
+INSERT INTO `usuarios` VALUES (1,'LORENA ESPINOZA GUTIERREZ','lorena','$2y$10$V6dsIjYumwaE.LKlMWwprOsNalEYq/RBGBZdMRO0v/U.DxQRQbr/i','Admin','2026-05-06 03:49:16','55272',1,0,NULL),(2,'Yerson Marin Lopez','yomarin','$2y$10$MovTJJIAhgpD7GJLElRaJ.2PI5oAr2eNH57O1ve8F8eSCah1NmGoq','Dentista','2026-05-20 23:54:53','',1,0,NULL),(3,'recepcionista01','recepcion','$2y$10$6IPE6zampJm/2elKSuiEPuoUOR/NzhqyCamc.Hxp5B1CNS5yjggg6','Recepcionista','2026-05-21 00:00:43','',1,0,NULL);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
