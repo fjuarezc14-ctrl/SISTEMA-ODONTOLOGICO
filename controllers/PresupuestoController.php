@@ -244,7 +244,9 @@ class PresupuestoController {
         $descuento_monto = $subtotal * ($descuento_porcentaje / 100);
         $total = $subtotal - $descuento_monto;
 
-        return $this->presupuestoModel->updateTotales($presupuesto_id, $subtotal, $descuento_porcentaje, $descuento_monto, $total);
+        $res = $this->presupuestoModel->updateTotales($presupuesto_id, $subtotal, $descuento_porcentaje, $descuento_monto, $total);
+        $this->actualizarSaldos($presupuesto_id);
+        return $res;
     }
 
     /**
