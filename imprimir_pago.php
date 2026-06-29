@@ -123,10 +123,21 @@ $fecha_pago = new DateTime($pago['fecha_pago']);
             <div class="value">S/ <?php echo number_format($pago['monto'], 2); ?></div>
         </div>
 
+        <?php
+        // Calcular el total pagado acumulado hasta la fecha de este pago
+        $stmt_sum = $conn->prepare("SELECT COALESCE(SUM(monto), 0) as total_hasta_pago FROM pagos WHERE presupuesto_id = ? AND id <= ?");
+        $stmt_sum->bind_param("ii", $pago['presupuesto_id'], $pago_id);
+        $stmt_sum->execute();
+        $res_sum = $stmt_sum->get_result()->fetch_assoc();
+        $total_pagado_hasta_este_pago = floatval($res_sum['total_hasta_pago']);
+        
+        $saldo_pendiente_a_esta_fecha = floatval($presupuesto['total']) - $total_pagado_hasta_este_pago;
+        ?>
         <div class="details">
             <p><strong>Tipo de Pago:</strong> <?php echo htmlspecialchars($pago['tipo']); ?></p>
             <p><strong>Total Tratamiento:</strong> S/ <?php echo number_format($presupuesto['total'], 2); ?></p>
-            <p><strong>Saldo Pendiente:</strong> S/ <?php echo number_format($presupuesto['saldo_pendiente'], 2); ?></p>
+            <p><strong>Total Pagado a la fecha:</strong> S/ <?php echo number_format($total_pagado_hasta_este_pago, 2); ?></p>
+            <p><strong>Saldo Pendiente:</strong> S/ <?php echo number_format($saldo_pendiente_a_esta_fecha, 2); ?></p>
             <?php if (!empty($pago['notas'])): ?>
                 <p><strong>Notas:</strong> <?php echo htmlspecialchars($pago['notas']); ?></p>
             <?php endif; ?>
