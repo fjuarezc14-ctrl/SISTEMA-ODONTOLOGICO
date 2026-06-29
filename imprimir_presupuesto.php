@@ -222,7 +222,7 @@ $p = $resumen['presupuesto'];
                 <li>El presente presupuesto tiene una validez de 30 días a partir de la fecha de emisión.</li>
                 <li>Los precios están sujetos a cambios si durante el tratamiento clínico se descubren condiciones no previstas.</li>
                 <li>Se requiere un adelanto para el inicio de tratamientos prolongados (ortodoncia, prótesis, implantes).</li>
-                <li>Los pagos pueden realizarse en Efectivo, Tarjeta, Transferencia Bancaria o Yape/Plin.</li>
+                <li>Los pagos pueden realizarse en Efectivo, Transferencia Bancaria o Yape/Plin.</li>
             </ul>
         </div>
         

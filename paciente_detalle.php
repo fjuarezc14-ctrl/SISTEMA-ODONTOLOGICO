@@ -1019,7 +1019,6 @@ if (!$paciente) {
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Método</label>
                         <select id="pagoMetodo" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500">
                             <option value="Efectivo">Efectivo</option>
-                            <option value="Tarjeta">Tarjeta</option>
                             <option value="Transferencia">Transferencia</option>
                             <option value="Yape/Plin">Yape/Plin</option>
                         </select>
