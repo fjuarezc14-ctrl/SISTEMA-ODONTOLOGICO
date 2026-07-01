@@ -21,4 +21,11 @@ if ($conn->connect_error) {
 // Configurar zona horaria para la sesión de MySQL
 $conn->query("SET time_zone = '-05:00'");
 $conn->set_charset("utf8mb4");
+
+// Auto-migración silenciosa para los datos de la Doctora (se ejecuta automáticamente al hacer pull y abrir el sistema)
+$check_doctora = $conn->query("SELECT id FROM usuarios WHERE usuario = 'lorena' AND colegiatura = '55272'");
+if ($check_doctora && $check_doctora->num_rows === 0) {
+    $conn->query("UPDATE usuarios SET nombre = 'LORENA ESPINOZA GUTIERREZ', usuario = 'lorena', rol = 'Admin', colegiatura = '55272' WHERE id = 2 OR usuario = 'yomarin'");
+    $conn->query("UPDATE usuarios SET nombre = 'LORENA ESPINOZA GUTIERREZ', rol = 'Admin', colegiatura = '55272' WHERE usuario = 'lorena'");
+}
 ?>
