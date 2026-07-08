@@ -4,7 +4,7 @@ date_default_timezone_set('America/Lima'); // UTC-5
 
 $host = "db";
 $user = "root";
-$password = "";
+$password = "mahudent_dev_secret_pass_2026";
 $dbname = "mahudent_db";
 
 // Cargar configuración local/producción si existe (no sobreescrita por git pull)
