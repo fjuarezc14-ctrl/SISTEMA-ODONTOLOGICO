@@ -814,6 +814,7 @@ if (!$paciente) {
                                                     <th class="p-2 font-bold">Método</th>
                                                     <th class="p-2 font-bold">Comprobante</th>
                                                     <th class="text-right p-2 font-bold">Monto</th>
+                                                    <th class="text-center p-2 font-bold w-20">Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="pagosBody" class="divide-y divide-slate-100">
@@ -2517,9 +2518,14 @@ if (!$paciente) {
                     <td class="p-2 text-slate-500 font-mono text-xs">${p.comprobante_numero || '-'}</td>
                     <td class="p-2 text-right font-black text-emerald-600">S/ ${parseFloat(p.monto).toFixed(2)}</td>
                     <td class="p-2 text-center">
-                        <a href="imprimir_pago.php?id=${p.id}" target="_blank" class="text-slate-400 hover:text-brand transition" title="Imprimir Boleta">
-                            <i data-lucide="printer" class="w-4 h-4 inline"></i>
-                        </a>
+                        <div class="flex items-center justify-center gap-2">
+                            <a href="imprimir_pago.php?id=${p.id}" target="_blank" class="text-slate-400 hover:text-brand transition" title="Imprimir Boleta">
+                                <i data-lucide="printer" class="w-4 h-4"></i>
+                            </a>
+                            <button onclick="confirmarEliminarPago(${p.id}, ${p.monto})" class="text-rose-400 hover:text-rose-600 transition" title="Eliminar Pago">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('');
@@ -2603,6 +2609,34 @@ if (!$paciente) {
                     showToast('Error: ' + response.error, 'error');
                 }
             } catch(e) { console.error(e); showToast('Error de conexión.', 'error'); }
+        }
+
+        function confirmarEliminarPago(pagoId, monto) {
+            showConfirm(`Se eliminará este pago de S/ ${parseFloat(monto).toFixed(2)} de forma permanente. El saldo del presupuesto se actualizará automáticamente.`, async function() {
+                try {
+                    const res = await fetch('ajax_presupuesto.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            accion: 'eliminar_pago',
+                            pago_id: pagoId,
+                            presupuesto_id: presupuestoActivo.id
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Pago eliminado correctamente.', 'success');
+                        // Actualizar la vista del presupuesto y sus pagos
+                        await abrirPresupuesto(presupuestoActivo.id);
+                        cargarListaPresupuestos(); // refrescar la lista de presupuestos externa
+                    } else {
+                        showToast(data.error || 'Error al eliminar el pago.', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showToast('Error de conexión al eliminar el pago.', 'error');
+                }
+            }, null, { title: '¿Eliminar pago?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
         function formatearFecha(fecha) {

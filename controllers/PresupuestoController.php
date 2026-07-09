@@ -398,5 +398,13 @@ class PresupuestoController {
             'esta_pagado' => $saldo <= 0.01
         ];
     }
+
+    public function eliminarPago($pago_id, $presupuesto_id) {
+        $res = $this->pagoModel->delete($pago_id);
+        if ($res) {
+            $this->actualizarSaldos($presupuesto_id);
+        }
+        return $res;
+    }
 }
 ?>

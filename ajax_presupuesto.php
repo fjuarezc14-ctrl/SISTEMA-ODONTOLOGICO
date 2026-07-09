@@ -204,6 +204,21 @@ switch ($accion) {
         }
         break;
 
+    case 'eliminar_pago':
+        $pago_id = $data['pago_id'] ?? null;
+        $presupuesto_id = $data['presupuesto_id'] ?? null;
+        if (!$pago_id || !$presupuesto_id) {
+            echo json_encode(['success' => false, 'error' => 'ID de pago y presupuesto requeridos'], $J);
+            break;
+        }
+        $res = $controller->eliminarPago($pago_id, $presupuesto_id);
+        if ($res) {
+            echo json_encode(['success' => true], $J);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al eliminar el pago'], $J);
+        }
+        break;
+
     case 'listar_pagos':
         $presupuesto_id = $data['presupuesto_id'] ?? null;
         if (!$presupuesto_id) {
