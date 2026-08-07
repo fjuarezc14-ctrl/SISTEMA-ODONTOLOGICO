@@ -1,0 +1,1 @@
+﻿<?php require 'config/conexion.php'; $conn->query('ALTER TABLE usuarios ADD COLUMN intentos_fallidos INT DEFAULT 0'); $conn->query('ALTER TABLE usuarios ADD COLUMN bloqueado_hasta DATETIME DEFAULT NULL'); echo 'Hecho'; ?>

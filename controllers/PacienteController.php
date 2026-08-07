@@ -1,0 +1,88 @@
+<?php
+require_once 'config/conexion.php';
+require_once 'models/Paciente.php';
+
+class PacienteController {
+    private $pacienteModel;
+    
+    public function __construct() {
+        global $conn;
+        $this->pacienteModel = new Paciente($conn);
+    }
+    
+    public function index() {
+        return $this->pacienteModel->getAll();
+    }
+    
+    public function show($id) {
+        return $this->pacienteModel->getById($id);
+    }
+    
+    public function store($data) {
+        if(empty(trim($data['dni'])) || empty(trim($data['nombre']))) {
+            return "El DNI y el Nombre son campos obligatorios.";
+        }
+        
+        $existente = $this->pacienteModel->getByDni($data['dni']);
+        if ($existente) {
+            return "El paciente con DNI " . $data['dni'] . " ya está registrado en el sistema.";
+        }
+
+        return $this->pacienteModel->create(
+            $data['dni'], 
+            $data['nombre'], 
+            $data['telefono'], 
+            $data['email'],
+            $data['alergias'] ?? null,
+            empty($data['fecha_nacimiento']) ? null : $data['fecha_nacimiento'],
+            $data['lugar_nacimiento'] ?? null,
+            $data['sexo'] ?? null,
+            $data['direccion'] ?? null,
+            $data['procedencia'] ?? null,
+            $data['ocupacion'] ?? null,
+            $data['contacto_emergencia'] ?? null,
+            $data['telefono_emergencia'] ?? null
+        );
+    }
+
+    public function update($id, $data) {
+        if(empty(trim($data['dni'])) || empty(trim($data['nombre']))) {
+            return "El DNI y el Nombre son campos obligatorios.";
+        }
+        
+        $existente = $this->pacienteModel->getByDni($data['dni']);
+        if ($existente && $existente['id'] != $id) {
+            return "El DNI " . $data['dni'] . " ya pertenece a otro paciente.";
+        }
+
+        return $this->pacienteModel->update(
+            $id,
+            $data['dni'], 
+            $data['nombre'], 
+            $data['telefono'], 
+            $data['email'],
+            $data['alergias'] ?? null,
+            empty($data['fecha_nacimiento']) ? null : $data['fecha_nacimiento'],
+            $data['lugar_nacimiento'] ?? null,
+            $data['sexo'] ?? null,
+            $data['direccion'] ?? null,
+            $data['procedencia'] ?? null,
+            $data['ocupacion'] ?? null,
+            $data['contacto_emergencia'] ?? null,
+            $data['telefono_emergencia'] ?? null
+        );
+    }
+
+    public function delete($id) {
+        return $this->pacienteModel->softDelete($id);
+    }
+
+    public function restore($id) {
+        return $this->pacienteModel->restore($id);
+    }
+
+    public function inhabilitados() {
+        return $this->pacienteModel->getInhabilitados();
+    }
+}
+?>

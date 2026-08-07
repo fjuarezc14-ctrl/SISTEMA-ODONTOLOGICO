@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Global de Presupuestos - MahuDent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f5f3fa',
+                            100: '#ede8f7',
+                            200: '#dcd3ef',
+                            300: '#c5b5e4',
+                            400: '#ab92d6',
+                            500: '#937ec2',
+                            600: '#7e64ab',
+                            700: '#3a596a',
+                            800: '#2f4958',
+                            900: '#1b2d38',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --brand-primary: #3a596a; 
+            --brand-secondary: #ede8f7; 
+            --brand-accent: #937ec2; 
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc; 
+        }
+        
+        .bg-brand { background-color: var(--brand-primary); }
+        .text-brand { color: var(--brand-primary); }
+        .bg-brand-light { background-color: var(--brand-secondary); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-brand text-white flex flex-col shadow-2xl z-20 hidden md:flex shrink-0">
+        <div class="h-20 flex items-center px-6 border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-brand shadow-md">
+                    <i data-lucide="smile" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-black tracking-widest text-white uppercase leading-tight">MAHUDENT</span>
+                    <span class="text-[9px] text-brand-secondary tracking-widest uppercase">Clínica Odontológica</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 py-6 px-3 space-y-2 overflow-y-auto">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Panel Principal
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="users" class="w-5 h-5"></i> Pacientes
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-brand-secondary hover:bg-white/10 hover:text-white transition-colors">
+                <i data-lucide="calendar-days" class="w-5 h-5"></i> Agenda
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white text-brand font-bold shadow-lg transition-transform hover:scale-105">
+                <i data-lucide="file-text" class="w-5 h-5"></i> Presupuestos
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm shrink-0">
+            <h1 class="text-xl font-black text-slate-800 uppercase tracking-tight">Gestión Financiera</h1>
+            
+            <div class="flex items-center gap-4">
+                <button class="bg-brand text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm hover:bg-teal-800 transition">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Nuevo Presupuesto
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-orange-100 p-2 rounded-lg text-orange-600"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                        <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-full uppercase">Este mes</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-500 uppercase">Pendientes de Cobro</p>
+                    <h3 class="text-2xl font-black text-slate-800">S/ 12,450.00</h3>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
+                        <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full uppercase">Total</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-500 uppercase">Presupuestos Aprobados</p>
+                    <h3 class="text-2xl font-black text-slate-800">S/ 45,200.00</h3>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i data-lucide="file-text" class="w-6 h-6"></i></div>
+                    </div>
+                    <p class="text-sm font-bold text-slate-500 uppercase">Ticket Promedio</p>
+                    <h3 class="text-2xl font-black text-slate-800">S/ 850.00</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                
+                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row gap-4 justify-between bg-slate-50/50">
+                    <div class="relative w-full md:w-96">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                        <input type="text" placeholder="Buscar por paciente o # de presupuesto..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition text-sm">
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <select class="px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 focus:outline-none">
+                            <option>Todos los estados</option>
+                            <option>Pendiente</option>
+                            <option>Aprobado</option>
+                            <option>Vencido</option>
+                        </select>
+                        <button class="bg-white border border-slate-200 px-4 py-2.5 rounded-xl text-sm font-bold text-slate-600 flex items-center gap-2 hover:bg-slate-50 transition">
+                            <i data-lucide="download" class="w-4 h-4"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[11px] uppercase tracking-widest font-bold">
+                                <th class="px-6 py-4">Presupuesto</th>
+                                <th class="px-6 py-4">Paciente</th>
+                                <th class="px-6 py-4">Fecha Emisión</th>
+                                <th class="px-6 py-4">Total</th>
+                                <th class="px-6 py-4">Estado</th>
+                                <th class="px-6 py-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm">
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-4 font-bold text-brand">#PR-1042</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-brand-light text-brand rounded-full flex items-center justify-center font-bold text-xs">AR</div>
+                                        <span class="font-bold text-slate-700">Ana María Robles</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">28 Abr 2026</td>
+                                <td class="px-6 py-4 font-black text-slate-800">S/ 1,200.00</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Pendiente</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-4 font-bold text-brand">#PR-1041</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-xs">JP</div>
+                                        <span class="font-bold text-slate-700">Juan Pérez</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">27 Abr 2026</td>
+                                <td class="px-6 py-4 font-black text-slate-800">S/ 450.00</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-emerald-100 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Aprobado</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                             <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-4 font-bold text-brand">#PR-1039</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold text-xs">CC</div>
+                                        <span class="font-bold text-slate-700">Carlos Castillo</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-500">20 Mar 2026</td>
+                                <td class="px-6 py-4 font-black text-slate-800">S/ 3,500.00</td>
+                                <td class="px-6 py-4">
+                                    <span class="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-1 rounded uppercase">Vencido</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="p-2 hover:bg-brand-light rounded-lg text-slate-400 hover:text-brand transition"><i data-lucide="more-vertical" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-6 border-t border-slate-100 flex items-center justify-between bg-slate-50/30 text-xs font-bold text-slate-500 uppercase">
+                    <span>Mostrando 3 de 154 presupuestos</span>
+                    <div class="flex gap-2">
+                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                        <button class="w-8 h-8 bg-brand text-white rounded flex items-center justify-center">1</button>
+                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition">2</button>
+                        <button class="w-8 h-8 border border-slate-200 rounded flex items-center justify-center hover:bg-white transition"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

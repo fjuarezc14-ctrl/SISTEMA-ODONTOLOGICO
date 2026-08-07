@@ -1,0 +1,162 @@
+<?php
+require_once 'includes/auth_guard.php';
+
+require_once 'config/conexion.php';
+require_once 'models/Pago.php';
+require_once 'models/Paciente.php';
+require_once 'models/Presupuesto.php';
+
+$pago_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($pago_id <= 0) die("ID de pago no válido.");
+
+$pagoModel = new Pago($conn);
+$pago = $pagoModel->getById($pago_id);
+if (!$pago) die("Pago no encontrado.");
+
+$pacienteModel = new Paciente($conn);
+$paciente = $pacienteModel->getById($pago['paciente_id']);
+
+$presupuestoModel = new Presupuesto($conn);
+$presupuesto = $presupuestoModel->getById($pago['presupuesto_id']);
+
+$nombre_clinica = "MahuDent Clínica Odontológica";
+$fecha_pago = new DateTime($pago['fecha_pago']);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recibo de Pago #<?php echo str_pad($pago_id, 6, '0', STR_PAD_LEFT); ?></title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap');
+        body { font-family: 'Roboto', Arial, sans-serif; background-color: #f4f4f4; color: #333; margin: 0; padding: 0; }
+        .receipt-container {
+            width: 148mm;
+            min-height: 210mm;
+            background: white;
+            margin: 20px auto;
+            padding: 15mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .receipt-container::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            width: 90mm;
+            height: 90mm;
+            background-image: url('assets/logo_watermark.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px; }
+        .header h1 { color: #3a596a; margin: 0; font-size: 22px; text-transform: uppercase; }
+        .header p { margin: 5px 0 0 0; font-size: 12px; color: #666; }
+        .receipt-title { text-align: center; font-size: 18px; font-weight: 900; margin-bottom: 20px; letter-spacing: 1px; color: #333; }
+        .info-grid { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 20px; }
+        .info-col { width: 48%; }
+        .info-col p { margin: 5px 0; border-bottom: 1px solid #f0f0f0; padding-bottom: 3px; }
+        .info-col strong { color: #555; display: inline-block; width: 80px; }
+        .amount-box { background-color: #f8fafc; border: 2px solid #3a596a; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .amount-box .label { font-size: 12px; color: #666; text-transform: uppercase; font-weight: bold; }
+        .amount-box .value { font-size: 32px; font-weight: 900; color: #3a596a; margin-top: 5px; }
+        .details { font-size: 13px; margin-bottom: 30px; }
+        .details p { margin: 5px 0; }
+        .signatures { margin-top: 60px; display: flex; justify-content: space-between; }
+        .signature-box { width: 45%; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 12px; font-weight: bold; }
+        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background-color: #3a596a; color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 5px; cursor: pointer; border: none; }
+        .footer { text-align: center; font-size: 10px; color: #999; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; }
+        @media print {
+            body { background: white; margin: 0; }
+            .receipt-container { margin: 0; box-shadow: none; width: 100%; border: none; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="window.print()" class="print-btn">🖨️ Imprimir Recibo</button>
+
+    <div class="receipt-container">
+        <div class="header" style="display:flex; flex-direction:column; align-items:center; gap:8px; border-bottom: 2px dashed #ccc; padding-bottom: 15px; margin-bottom: 20px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px;height:40px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e2e8f0;padding:3px;">
+                    <img src="assets/logo_icon.png" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+                    <img src="assets/logo_text_dark.png" alt="MahuDent" style="height:20px;width:auto;object-fit:contain;">
+                    <p style="font-family:sans-serif; font-weight:bold; font-size:8px; color:#555; letter-spacing:1px; margin:2px 0 0 0; text-transform:uppercase;">Clínica Odontológica</p>
+                </div>
+            </div>
+            <div style="text-align:center; font-size:11px; color:#666; margin-top:2px;">
+                <p style="margin:2px 0;">RUC: 20123456789 | Jr. San Sebastián 116</p>
+                <p style="margin:2px 0;">Cel/WhatsApp: 941124848</p>
+            </div>
+        </div>
+
+        <div class="receipt-title">
+            RECIBO DE CAJA N° <?php echo str_pad($pago_id, 6, '0', STR_PAD_LEFT); ?>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-col">
+                <p><strong>Paciente:</strong> <?php echo htmlspecialchars($paciente['nombre']); ?></p>
+                <p><strong>DNI:</strong> <?php echo htmlspecialchars($paciente['dni']); ?></p>
+                <p><strong>Atención:</strong> Presupuesto #<?php echo str_pad($presupuesto['id'], 5, '0', STR_PAD_LEFT); ?></p>
+            </div>
+            <div class="info-col">
+                <p><strong>Fecha:</strong> <?php echo $fecha_pago->format('d/m/Y'); ?></p>
+                <p><strong>Hora:</strong> <?php echo $fecha_pago->format('H:i'); ?></p>
+                <p><strong>Cajero:</strong> Administración</p>
+            </div>
+        </div>
+
+        <div class="amount-box">
+            <div class="label">Monto Pagado (<?php echo htmlspecialchars($pago['metodo_pago']); ?>)</div>
+            <div class="value">S/ <?php echo number_format($pago['monto'], 2); ?></div>
+        </div>
+
+        <?php
+        // Calcular el total pagado acumulado hasta la fecha de este pago
+        $stmt_sum = $conn->prepare("SELECT COALESCE(SUM(monto), 0) as total_hasta_pago FROM pagos WHERE presupuesto_id = ? AND id <= ?");
+        $stmt_sum->bind_param("ii", $pago['presupuesto_id'], $pago_id);
+        $stmt_sum->execute();
+        $res_sum = $stmt_sum->get_result()->fetch_assoc();
+        $total_pagado_hasta_este_pago = floatval($res_sum['total_hasta_pago']);
+        
+        $saldo_pendiente_a_esta_fecha = floatval($presupuesto['total']) - $total_pagado_hasta_este_pago;
+        ?>
+        <div class="details">
+            <p><strong>Tipo de Pago:</strong> <?php echo htmlspecialchars($pago['tipo']); ?></p>
+            <p><strong>Total Tratamiento:</strong> S/ <?php echo number_format($presupuesto['total'], 2); ?></p>
+            <p><strong>Total Pagado a la fecha:</strong> S/ <?php echo number_format($total_pagado_hasta_este_pago, 2); ?></p>
+            <p><strong>Saldo Pendiente:</strong> S/ <?php echo number_format($saldo_pendiente_a_esta_fecha, 2); ?></p>
+            <?php if (!empty($pago['notas'])): ?>
+                <p><strong>Notas:</strong> <?php echo htmlspecialchars($pago['notas']); ?></p>
+            <?php endif; ?>
+        </div>
+
+        <div class="signatures">
+            <div class="signature-box">
+                Firma Conforme<br>
+                Paciente
+            </div>
+            <div class="signature-box">
+                Sello y Firma<br>
+                <?php echo $nombre_clinica; ?>
+            </div>
+        </div>
+
+        <div class="footer">
+            Generado automáticamente por el Sistema MahuDent. Documento válido como comprobante de pago interno.
+        </div>
+    </div>
+</body>
+</html>
