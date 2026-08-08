@@ -25,6 +25,79 @@ class PresupuestoController {
         return $this->catalogoModel->getByEstadoOdontograma($estado);
     }
 
+    /**
+     * Actualiza nombre, categoría y precio de un ítem del catálogo de tratamientos.
+     * Solo afecta a futuros presupuestos (no modifica presupuesto_items ya registrados).
+     * Valida: nombre obligatorio, precio >= 0, sin duplicados de nombre.
+     */
+    public function actualizarItemCatalogo($id, $nombre, $precio_base, $categoria = null) {
+        $id = intval($id);
+        $nombre = trim($nombre ?? '');
+        $precio_base = floatval($precio_base ?? 0);
+        $categoria = trim($categoria ?? '');
+
+        if ($id <= 0) {
+            return ['success' => false, 'error' => 'ID de ítem inválido'];
+        }
+        if ($nombre === '') {
+            return ['success' => false, 'error' => 'El nombre es obligatorio'];
+        }
+        if ($precio_base < 0) {
+            return ['success' => false, 'error' => 'El precio no puede ser negativo'];
+        }
+
+        $item = $this->catalogoModel->getById($id);
+        if (!$item) {
+            return ['success' => false, 'error' => 'El ítem no existe'];
+        }
+
+        if ($this->catalogoModel->existeNombre($nombre, $id)) {
+            return ['success' => false, 'error' => 'Ya existe un tratamiento con ese nombre'];
+        }
+
+        // Si no se envía categoría, conservar la existente
+        if ($categoria === '') {
+            $categoria = $item['categoria'];
+        }
+
+        $ok = $this->catalogoModel->update($id, $nombre, $item['descripcion'], $precio_base, $categoria, $item['estado_odontograma']);
+        if ($ok) {
+            return ['success' => true, 'item' => $this->catalogoModel->getById($id)];
+        }
+        return ['success' => false, 'error' => 'No se pudo actualizar el ítem'];
+    }
+
+    /**
+     * Crea un nuevo ítem en el catálogo de tratamientos.
+     * Solo afecta a futuros presupuestos.
+     * Valida: nombre obligatorio, precio >= 0, sin duplicados de nombre.
+     */
+    public function crearItemCatalogo($nombre, $precio_base, $categoria = null) {
+        $nombre = trim($nombre ?? '');
+        $precio_base = floatval($precio_base ?? 0);
+        $categoria = trim($categoria ?? '');
+
+        if ($nombre === '') {
+            return ['success' => false, 'error' => 'El nombre es obligatorio'];
+        }
+        if ($precio_base < 0) {
+            return ['success' => false, 'error' => 'El precio no puede ser negativo'];
+        }
+        if ($categoria === '') {
+            return ['success' => false, 'error' => 'La categoría es obligatoria'];
+        }
+
+        if ($this->catalogoModel->existeNombre($nombre)) {
+            return ['success' => false, 'error' => 'Ya existe un tratamiento con ese nombre'];
+        }
+
+        $nuevo_id = $this->catalogoModel->create($nombre, null, $precio_base, $categoria, null);
+        if ($nuevo_id) {
+            return ['success' => true, 'item' => $this->catalogoModel->getById($nuevo_id)];
+        }
+        return ['success' => false, 'error' => 'No se pudo crear el ítem'];
+    }
+
     // --- Presupuestos ---
     public function getPresupuestosPaciente($paciente_id) {
         return $this->presupuestoModel->getByPaciente($paciente_id);

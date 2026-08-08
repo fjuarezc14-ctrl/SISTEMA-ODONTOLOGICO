@@ -39,6 +39,31 @@ switch ($accion) {
         echo json_encode(['success' => true, 'catalogo' => $catalogo], $J);
         break;
 
+    case 'actualizar_item_catalogo':
+        if ($_SESSION['usuario_rol'] !== 'Admin') {
+            echo json_encode(['success' => false, 'error' => 'No autorizado'], $J);
+            break;
+        }
+        $id = $data['id'] ?? null;
+        $nombre = $data['nombre'] ?? '';
+        $precio_base = $data['precio_base'] ?? 0;
+        $categoria = $data['categoria'] ?? null;
+        $result = $controller->actualizarItemCatalogo($id, $nombre, $precio_base, $categoria);
+        echo json_encode($result, $J);
+        break;
+
+    case 'crear_item_catalogo':
+        if ($_SESSION['usuario_rol'] !== 'Admin') {
+            echo json_encode(['success' => false, 'error' => 'No autorizado'], $J);
+            break;
+        }
+        $nombre = $data['nombre'] ?? '';
+        $precio_base = $data['precio_base'] ?? 0;
+        $categoria = $data['categoria'] ?? null;
+        $result = $controller->crearItemCatalogo($nombre, $precio_base, $categoria);
+        echo json_encode($result, $J);
+        break;
+
     case 'generar_desde_odontograma':
         $paciente_id = $data['paciente_id'] ?? null;
         $hallazgos = $data['hallazgos'] ?? [];

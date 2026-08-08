@@ -25,6 +25,27 @@ class CatalogoTratamiento {
         return $result->num_rows > 0 ? $result->fetch_assoc() : null;
     }
 
+    /**
+     * Verifica si ya existe un tratamiento con el mismo nombre (activo), excluyendo opcionalmente un id.
+     * Retorna true si existe un conflicto/duplicado.
+     */
+    public function existeNombre($nombre, $excluir_id = null) {
+        $sql = "SELECT id FROM catalogo_tratamientos WHERE nombre = ? AND activo = 1";
+        $params = [$nombre];
+        $types = "s";
+        if ($excluir_id !== null) {
+            $sql .= " AND id != ?";
+            $params[] = $excluir_id;
+            $types .= "i";
+        }
+        $sql .= " LIMIT 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->num_rows > 0;
+    }
+
     public function getByEstadoOdontograma($estado) {
         $sql = "SELECT * FROM catalogo_tratamientos WHERE estado_odontograma = ? AND activo = 1 ORDER BY nombre";
         $stmt = $this->conn->prepare($sql);
