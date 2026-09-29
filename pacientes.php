@@ -156,7 +156,15 @@ if ($ver_inhabilitados) {
                                             <div class="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center text-[10px] font-bold text-brand uppercase">
                                                 <?php echo substr($paciente['nombre'], 0, 2); ?>
                                             </div>
-                                            <span class="text-sm font-bold text-slate-700"><?php echo htmlspecialchars($paciente['nombre']); ?></span>
+                                            <div>
+                                                <span class="text-sm font-bold text-slate-700 block"><?php echo htmlspecialchars($paciente['nombre']); ?></span>
+                                                <?php if (!empty($paciente['fecha_nacimiento'])): ?>
+                                                    <span class="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                                        <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i>
+                                                        <?php echo date('d/m/Y', strtotime($paciente['fecha_nacimiento'])); ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-600"><?php echo htmlspecialchars($paciente['telefono']); ?></td>

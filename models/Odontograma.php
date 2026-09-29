@@ -59,5 +59,35 @@ class Odontograma {
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }
+
+    public function saveBatch($paciente_id, $items) {
+        $this->conn->begin_transaction();
+        try {
+            $sqlDelete = "DELETE FROM odontograma_estado WHERE paciente_id = ?";
+            $stmtDel = $this->conn->prepare($sqlDelete);
+            $stmtDel->bind_param("i", $paciente_id);
+            $stmtDel->execute();
+
+            if (!empty($items) && is_array($items)) {
+                $sqlIns = "INSERT INTO odontograma_estado (paciente_id, diente_numero, cara_afectada, estado, notas) VALUES (?, ?, ?, ?, ?)";
+                $stmtIns = $this->conn->prepare($sqlIns);
+                foreach ($items as $item) {
+                    $diente = intval($item['diente_numero'] ?? $item['tooth'] ?? 0);
+                    $cara = strval($item['cara_afectada'] ?? $item['surface'] ?? '0');
+                    $estado = strval($item['estado'] ?? $item['damage'] ?? '');
+                    $notas = strval($item['notas'] ?? $item['note'] ?? '');
+                    if ($diente > 0) {
+                        $stmtIns->bind_param("iisss", $paciente_id, $diente, $cara, $estado, $notas);
+                        $stmtIns->execute();
+                    }
+                }
+            }
+            $this->conn->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->conn->rollback();
+            return false;
+        }
+    }
 }
 ?>

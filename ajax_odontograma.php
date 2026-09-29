@@ -23,7 +23,13 @@ if (!$data) {
 require_once 'controllers/OdontogramaController.php';
 $controller = new OdontogramaController();
 
-$resultado = $controller->store($data);
+if (isset($data['action']) && $data['action'] === 'save_batch') {
+    $paciente_id = $data['paciente_id'] ?? null;
+    $items = $data['items'] ?? [];
+    $resultado = $controller->saveBatch($paciente_id, $items);
+} else {
+    $resultado = $controller->store($data);
+}
 
 if ($resultado) {
     echo json_encode(['success' => true]);

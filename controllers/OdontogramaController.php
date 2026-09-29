@@ -27,5 +27,10 @@ class OdontogramaController {
 
         return $this->odontogramaModel->store($paciente_id, $diente_numero, $cara_afectada, $estado, $notas);
     }
+
+    public function saveBatch($paciente_id, $items) {
+        if (!$paciente_id) return false;
+        return $this->odontogramaModel->saveBatch($paciente_id, $items);
+    }
 }
 ?>

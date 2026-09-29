@@ -131,7 +131,8 @@ switch ($accion) {
         }
         $result = $controller->actualizarItem($item_id, $data);
         if ($result && $presupuesto_id) {
-            $controller->recalcularTotales($presupuesto_id, $data['descuento_porcentaje'] ?? 0);
+            $desc = isset($data['descuento_porcentaje']) ? floatval($data['descuento_porcentaje']) : null;
+            $controller->recalcularTotales($presupuesto_id, $desc);
             $presupuesto = $controller->getPresupuesto($presupuesto_id);
             echo json_encode(['success' => true, 'presupuesto' => $presupuesto], $J);
         } else {
@@ -189,7 +190,11 @@ switch ($accion) {
             break;
         }
         $result = $controller->eliminar($presupuesto_id);
-        echo json_encode(['success' => (bool)$result], $J);
+        if (is_array($result)) {
+            echo json_encode($result, $J);
+        } else {
+            echo json_encode(['success' => (bool)$result], $J);
+        }
         break;
 
     case 'crear_vacio':
@@ -230,6 +235,10 @@ switch ($accion) {
         break;
 
     case 'eliminar_pago':
+        if (($_SESSION['usuario_rol'] ?? '') !== 'Admin') {
+            echo json_encode(['success' => false, 'error' => 'Solo el Administrador tiene autorización para eliminar pagos de caja'], $J);
+            break;
+        }
         $pago_id = $data['pago_id'] ?? null;
         $presupuesto_id = $data['presupuesto_id'] ?? null;
         if (!$pago_id || !$presupuesto_id) {

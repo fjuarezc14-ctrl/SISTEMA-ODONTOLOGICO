@@ -50,6 +50,8 @@ if (!$paciente) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial Clínico - <?php echo htmlspecialchars($paciente['nombre']); ?> - MahuDent</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -73,9 +75,24 @@ if (!$paciente) {
             }
         }
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Toast & Confirm helper -->
     <script src="assets/js/toast_alerts.js"></script>
+
+    <!-- Motor Odontograma Canvas Assets -->
+    <script src="assets/odontograma/js/constants.js"></script>
+    <script src="assets/odontograma/js/settings.js"></script>
+    <script src="assets/odontograma/js/rect.js"></script>
+    <script src="assets/odontograma/js/damage.js"></script>
+    <script src="assets/odontograma/js/textBox.js"></script>
+    <script src="assets/odontograma/js/tooth.js"></script>
+    <script src="assets/odontograma/js/menuItem.js"></script>
+    <script src="assets/odontograma/js/renderer.js"></script>
+    <script src="assets/odontograma/js/odontogramaGenerator.js"></script>
+    <script src="assets/odontograma/js/collisionHandler.js"></script>
+    <script src="assets/odontograma/js/engine.js"></script>
+    <script src="assets/odontograma/js/pricingCatalog.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
@@ -225,9 +242,9 @@ if (!$paciente) {
                 </button>
             </div>
             <?php endif; ?>
-            <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex flex-col lg:flex-row gap-8 items-start">
 
-                <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6 pt-4 md:pt-8">
+                <div class="w-full lg:w-1/3 xl:w-1/4 space-y-6 pt-4 md:pt-8 lg:sticky lg:top-4 self-start max-h-[calc(100vh-2rem)] overflow-y-auto pr-1">
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                         <div class="bg-brand h-24 relative">
                             <div class="absolute -bottom-10 left-6">
@@ -263,12 +280,21 @@ if (!$paciente) {
                                 
                                 <?php
                                     $edad = '-';
+                                    $fecha_nac_formateada = '';
                                     if (!empty($paciente['fecha_nacimiento'])) {
                                         $fecha_nac = new DateTime($paciente['fecha_nacimiento']);
                                         $hoy = new DateTime();
                                         $edad = $hoy->diff($fecha_nac)->y . ' años';
+                                        $fecha_nac_formateada = $fecha_nac->format('d/m/Y');
                                     }
                                 ?>
+                                <div class="flex items-center gap-3 text-sm text-slate-600">
+                                    <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                    <span class="font-medium">
+                                        <strong>F. Nac.:</strong> <?php echo $fecha_nac_formateada ? $fecha_nac_formateada . " ({$edad})" : 'No registrada'; ?>
+                                    </span>
+                                </div>
+
                                 <div class="flex flex-wrap gap-2 pt-2">
                                     <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-md uppercase border border-slate-200" title="Edad / Fecha Nacimiento">
                                         <?php echo $edad; ?>
@@ -510,136 +536,125 @@ if (!$paciente) {
                         </div>
                     </div>
 
-                    <div id="seccion_odontograma" class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-8 mb-8">
-                        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-10">
-                            <div>
-                                <h2 class="text-2xl font-black text-slate-800">Odontograma General</h2>
-                                <p class="text-sm text-slate-500">Selecciona un diente para registrar hallazgos.</p>
-                            </div>
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-inner w-full lg:w-auto">
-                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-2">
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-500 rounded-full shadow-sm shrink-0"></span> Caries</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-red-700 rounded-full shadow-sm shrink-0"></span> Extracción</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-orange-500 rounded-full shadow-sm shrink-0"></span> Defectuosa</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-rose-600 rounded-full shadow-sm shrink-0"></span> Fractura</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-blue-500 rounded-full shadow-sm shrink-0"></span> Resina</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-purple-500 rounded-full shadow-sm shrink-0"></span> Endodoncia</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-cyan-500 rounded-full shadow-sm shrink-0"></span> Corona</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-slate-600 rounded-full shadow-sm shrink-0"></span> Implante</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-emerald-500 rounded-full shadow-sm shrink-0"></span> Sellante</div>
-                                    <div class="flex items-center gap-2 text-[11px] font-bold text-slate-600"><span class="w-3 h-3 bg-slate-300 rounded-full shadow-sm shrink-0"></span> Ausente</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-16 gap-2 max-w-5xl mx-auto overflow-x-auto pb-8">
-                            <div class="flex justify-center gap-1.5 md:gap-3 mb-8">
-                                <?php for ($i = 18; $i >= 11; $i--): ?>
-                                    <div class="text-center group">
-                                        <span
-                                            class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                        <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                            onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                            <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
-                                                stroke-width="1.5" />
-                                        </svg>
-                                    </div>
-                                <?php endfor; ?>
-                                <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
-                                <?php for ($i = 21; $i <= 28; $i++): ?>
-                                    <div class="text-center group">
-                                        <span
-                                            class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                        <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                            onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                            <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
-                                                stroke-width="1.5" />
-                                        </svg>
-                                    </div>
-                                <?php endfor; ?>
-                            </div>
-
-                            <div class="flex justify-center gap-1.5 md:gap-3">
-                                <?php for ($i = 48; $i >= 41; $i--): ?>
-                                    <div class="text-center group">
-                                        <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                            onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                            <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
-                                                stroke="#94a3b8" stroke-width="1.5" />
-                                        </svg>
-                                        <span
-                                            class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                    </div>
-                                <?php endfor; ?>
-                                <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
-                                <?php for ($i = 31; $i <= 38; $i++): ?>
-                                    <div class="text-center group">
-                                        <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                            onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                            <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
-                                                stroke="#94a3b8" stroke-width="1.5" />
-                                        </svg>
-                                        <span
-                                            class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                    </div>
-                                <?php endfor; ?>
-                            </div>
+                    <!-- SECCION ODONTOGRAMA INTERACTIVO 2.0 CON PRESUPUESTO EN VIVO -->
+                    <div id="seccion_odontograma" class="space-y-6 mb-8">
+                        
+                        <!-- Card 1: Lienzo Canvas Odontograma en Ancho Completo Completo -->
+                        <div class="bg-white rounded-3xl shadow-md border border-slate-200 border-t-4 border-t-teal-500 p-6 md:p-8 flex flex-col items-center">
                             
-                            <!-- Divisor y Dentadura Infantil -->
-                            <div class="border-t border-slate-100 my-8 pt-6">
-                                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest text-center mb-6">Dentadura Infantil / Temporal</h3>
-                                
-                                <!-- Superior Infantil -->
-                                <div class="flex justify-center gap-1.5 md:gap-3 mb-6">
-                                    <?php for ($i = 55; $i >= 51; $i--): ?>
-                                        <div class="text-center group">
-                                            <span class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                                <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
-                                                    stroke-width="1.5" />
-                                            </svg>
-                                        </div>
-                                    <?php endfor; ?>
-                                    <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
-                                    <?php for ($i = 61; $i <= 65; $i++): ?>
-                                        <div class="text-center group">
-                                            <span class="text-[11px] font-bold text-slate-400 block mb-2 group-hover:text-brand transition"><?php echo $i; ?></span>
-                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                                <path id="path-diente-<?php echo $i; ?>" d="M10 5 Q20 0 30 5 L35 35 Q20 45 5 35 Z" fill="#f8fafc" stroke="#94a3b8"
-                                                    stroke-width="1.5" />
-                                            </svg>
-                                        </div>
-                                    <?php endfor; ?>
+                            <!-- Header de la Card del Canvas (Idéntico al proyecto standalone) -->
+                            <div class="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-3">
+                                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                        <span>Odontograma Interactivo</span>
+                                        <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full font-medium">Notación FDI</span>
+                                    </h2>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div id="odontogramaSaveStatus" class="flex items-center gap-2 text-xs text-slate-500">
+                                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <span class="font-medium">Listo para registros</span>
+                                    </div>
+                                    <?php if ($_SESSION['usuario_rol'] !== 'Recepcionista'): ?>
+                                    <button onclick="guardarOdontogramaEnBD(true)" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-xl shadow-md transition flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                                        <i data-lucide="save" class="w-4 h-4"></i> Guardar Odontograma
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <!-- Contenedor del Lienzo Canvas a Tamaño Real -->
+                            <div class="w-full flex justify-center bg-slate-50/50 rounded-2xl p-4 border border-slate-200 shadow-inner overflow-x-auto">
+                                <canvas id="odontogramaCanvasMain" width="648" height="800" class="cursor-pointer shadow-sm rounded-xl bg-white"></canvas>
+                            </div>
+
+                            <!-- Leyenda de Simbología Odontológica y Códigos (Idéntico a proyecto standalone) -->
+                            <div class="w-full mt-4 bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 text-xs">
+                                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <h3 class="font-bold text-slate-800 flex items-center gap-1.5 text-xs">
+                                        <span>🎨</span> Leyenda de Colores & Guía de Códigos Clínicos
+                                    </h3>
+                                    <span class="text-[10px] text-slate-500 font-medium">Norma Odontológica FDI</span>
                                 </div>
 
-                                <!-- Inferior Infantil -->
-                                <div class="flex justify-center gap-1.5 md:gap-3">
-                                    <?php for ($i = 85; $i >= 81; $i--): ?>
-                                        <div class="text-center group">
-                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                                <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
-                                                    stroke="#94a3b8" stroke-width="1.5" />
-                                            </svg>
-                                            <span class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                <!-- Grilla de Categorías de Color -->
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                                    <div class="bg-rose-50 border border-rose-200 p-2 rounded-xl flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-rose-600 flex-shrink-0"></span>
+                                        <div>
+                                            <div class="font-bold text-rose-900">Patologías</div>
+                                            <div class="text-[10px] text-rose-700 leading-tight">Caries, Fractura, Desgaste, Impactado</div>
                                         </div>
-                                    <?php endfor; ?>
-                                    <div class="w-6 border-l-2 border-dashed border-slate-200 mx-2"></div>
-                                    <?php for ($i = 71; $i <= 75; $i++): ?>
-                                        <div class="text-center group">
-                                            <svg width="35" height="45" viewBox="0 0 40 50" class="diente-svg"
-                                                onclick="abrirModalDiente(<?php echo $i; ?>)">
-                                                <path id="path-diente-<?php echo $i; ?>" d="M5 15 Q20 5 35 15 L30 45 Q20 50 10 45 Z" fill="#f8fafc"
-                                                    stroke="#94a3b8" stroke-width="1.5" />
-                                            </svg>
-                                            <span class="text-[11px] font-bold text-slate-400 block mt-2 group-hover:text-brand transition"><?php echo $i; ?></span>
+                                    </div>
+
+                                    <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-blue-600 flex-shrink-0"></span>
+                                        <div>
+                                            <div class="font-bold text-blue-900">Restauraciones</div>
+                                            <div class="text-[10px] text-blue-700 leading-tight">Obturación, Coronas, Prótesis, Implante</div>
                                         </div>
-                                    <?php endfor; ?>
+                                    </div>
+
+                                    <div class="bg-purple-50 border border-purple-200 p-2 rounded-xl flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-purple-600 flex-shrink-0"></span>
+                                        <div>
+                                            <div class="font-bold text-purple-900">Ortodoncia</div>
+                                            <div class="text-[10px] text-purple-700 leading-tight">Orto. Fija/Removible, Giroversión</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-xl flex items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-emerald-600 flex-shrink-0"></span>
+                                        <div>
+                                            <div class="font-bold text-emerald-900">Prevención / Cirugía</div>
+                                            <div class="text-[10px] text-emerald-700 leading-tight">Sellante, Ausente, Remanente, Pulpar</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Siglas Clínicas Habituales -->
+                                <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-1">
+                                    <div class="font-semibold text-slate-700 text-[11px] flex items-center gap-1">
+                                        <span>📝</span> Siglas Frecuentes para la Casilla de Código del Diente:
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 text-[10px] text-slate-600">
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">EXT</strong>: Extracción</span>
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">END</strong>: Endodoncia / Conducto</span>
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">RES</strong>: Resina / Restauración</span>
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">IMP</strong>: Impactado</span>
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">SEL</strong>: Sellante</span>
+                                        <span class="bg-slate-100 px-2 py-0.5 rounded font-mono border border-slate-200"><strong class="text-slate-800">PF</strong>: Prótesis Fija</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Card 2: Presupuesto & Detalle de Hallazgos Registrados -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <!-- Presupuesto / Proforma en Vivo -->
+                            <div class="lg:col-span-7">
+                                <div id="odontogramaBudgetContainer"></div>
+                            </div>
+
+                            <!-- Lista Técnica de Registros -->
+                            <div class="lg:col-span-5 flex flex-col gap-3">
+                                <div class="bg-white rounded-3xl shadow-md border border-slate-200 p-6 space-y-3">
+                                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                                        <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                            <i data-lucide="list-checks" class="w-4 h-4 text-teal-600"></i> Detalle de Hallazgos Registrados
+                                        </h4>
+                                        <span id="odontogramaCountBadge" class="text-xs font-bold bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full">0 registrados</span>
+                                    </div>
+
+                                    <div id="odontogramaFindingsList" class="bg-slate-50 rounded-xl border border-slate-200 p-3 max-h-64 overflow-y-auto text-xs space-y-2">
+                                        <div class="text-slate-400 text-center py-6 italic">
+                                            Sin hallazgos en la dentadura.<br>Haz clic en el odontograma para ingresar datos.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     
                     <!-- HISTORIAL EVOLUTIVO -->
@@ -1020,6 +1035,7 @@ if (!$paciente) {
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Método</label>
                         <select id="pagoMetodo" class="w-full border-2 border-slate-200 rounded-xl p-2.5 text-sm font-bold text-slate-700 outline-none focus:border-teal-500">
                             <option value="Efectivo">Efectivo</option>
+                            <option value="Tarjeta">Tarjeta (Débito / Crédito)</option>
                             <option value="Transferencia">Transferencia</option>
                             <option value="Yape/Plin">Yape/Plin</option>
                         </select>
@@ -1287,8 +1303,13 @@ if (!$paciente) {
         };
 
         const coloresTratamiento = {
-            'caries': 0xef4444, 'resina': 0x3b82f6, 'corona': 0xf59e0b,
-            'ausente': 0x94a3b8, 'normal': 0xffffff
+            'caries': 0xef4444, '1': 0xef4444,
+            'resina': 0x3b82f6, '11': 0x3b82f6,
+            'corona': 0xf59e0b, '2': 0xf59e0b, '3': 0xf59e0b,
+            'fractura': 0xd97706, '5': 0xd97706,
+            'sellante': 0x10b981, '39': 0x10b981,
+            'ausente': 0x94a3b8, '4': 0x94a3b8,
+            'normal': 0xffffff
         };
 
         init3D();
@@ -1774,8 +1795,6 @@ if (!$paciente) {
         }
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
     <script>
         // --- MÓDULO DE PRESUPUESTOS ---
         let presupuestoActivo = null;
@@ -1937,6 +1956,17 @@ if (!$paciente) {
         }
 
         function abrirModalImportar() {
+            // Sincronizar directamente desde el lienzo interactivo si está activo
+            if (typeof engineOdontMain !== 'undefined' && engineOdontMain) {
+                const liveData = engineOdontMain.getData();
+                hallazgosOdontograma = (liveData || []).map(item => ({
+                    diente_numero: parseInt(item.diente_numero || item.tooth),
+                    cara_afectada: String(item.cara_id || item.surface || '0'),
+                    estado: String(item.estado || item.damage || ''),
+                    notas: item.note || ''
+                }));
+            }
+
             if (!hallazgosOdontograma || hallazgosOdontograma.length === 0) {
                 showToast('No hay hallazgos en el odontograma. Marque al menos un diente antes de generar.', 'warning');
                 return;
@@ -1969,19 +1999,39 @@ if (!$paciente) {
             });
             
             const nombresEstados = {
-                'caries': 'Caries', 'extraccion_indicada': 'Extracción Indicada',
-                'restauracion_defectuosa': 'Restauración Defectuosa', 'fractura': 'Fractura',
-                'endodoncia': 'Endodoncia', 'resina': 'Resina/Amalgama',
-                'corona': 'Corona/Incrustación', 'implante': 'Implante',
-                'sellante': 'Sellante', 'ausente': 'Ausente'
+                '1': 'Caries Dental', 'caries': 'Caries',
+                '2': 'Corona Definitiva', 'corona': 'Corona/Incrustación',
+                '3': 'Corona Temporal', 'corona_temporal': 'Corona Temporal',
+                '4': 'Extracción Indicada', 'extraccion_indicada': 'Extracción Indicada',
+                '5': 'Fractura Dental', 'fractura': 'Fractura',
+                '6': 'Implante Dental', 'implante': 'Implante',
+                '8': 'Cierre de Diastema', 'diastema': 'Cierre de Diastema',
+                '11': 'Restauración Defectuosa', 'restauracion_defectuosa': 'Restauración Defectuosa', 'resina': 'Resina/Amalgama',
+                '20': 'Tratamiento Pulpar / Endodoncia', 'endodoncia': 'Endodoncia', 'pulpar': 'Endodoncia',
+                '28': 'Tratamiento de Conducto Pulpar',
+                '30': 'Perno Muñón / Fibra', 'perno_munon': 'Perno Muñón',
+                '39': 'Sellante Dental', 'sellante': 'Sellante',
+                'ausente': 'Ausente'
             };
             
             const container = document.getElementById('listaImportarCheckboxes');
             container.innerHTML = '';
             
+            const mapCaraNombre = (c) => {
+                if (!c || c === '0') return 'Pieza Completa';
+                const cu = String(c).toUpperCase();
+                if (cu.endsWith('_0') || cu.endsWith('_O') || cu === 'O' || cu === 'OCLUSAL') return 'Oclusal';
+                if (cu.endsWith('_V') || cu === 'V' || cu === 'VESTIBULAR') return 'Vestibular';
+                if (cu.endsWith('_M') || cu === 'M' || cu === 'MESIAL') return 'Mesial';
+                if (cu.endsWith('_D') || cu === 'D' || cu === 'DISTAL') return 'Distal';
+                if (cu.endsWith('_L') || cu === 'L' || cu === 'LINGUAL') return 'Lingual';
+                if (cu.endsWith('_P') || cu === 'P' || cu === 'PALATINA') return 'Palatina';
+                return c;
+            };
+
             Object.values(agrupados).forEach(h => {
                 const labelEstado = nombresEstados[h.estado] || h.estado;
-                const carasTexto = h.caras.join(', ');
+                const carasTexto = h.caras.map(mapCaraNombre).join(', ');
                 
                 const label = document.createElement('label');
                 label.className = "flex items-center gap-3 p-3 hover:bg-white rounded-xl transition cursor-pointer select-none border-b border-slate-100 last:border-0";
@@ -2384,8 +2434,22 @@ if (!$paciente) {
                         presupuestoActivo = null;
                         cerrarEditorPresupuesto();
                         cargarListaPresupuestos();
+                        if (typeof showToast === 'function') {
+                            showToast('Presupuesto eliminado con éxito', 'success');
+                        }
+                    } else {
+                        if (typeof showToast === 'function') {
+                            showToast(data.error || 'No se pudo eliminar el presupuesto', 'error');
+                        } else {
+                            alert(data.error || 'No se pudo eliminar el presupuesto');
+                        }
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) { 
+                    console.error(e); 
+                    if (typeof showToast === 'function') {
+                        showToast('Error de conexión al eliminar presupuesto', 'error');
+                    }
+                }
             }, null, { title: '¿Eliminar presupuesto?', confirmText: 'Sí, eliminar', type: 'danger' });
         }
 
@@ -3322,6 +3386,175 @@ if (!$paciente) {
                         btn.className = "px-6 py-3 border-b-2 border-transparent text-slate-500 font-bold text-sm hover:text-slate-700 hover:bg-teal-100 rounded-t-lg transition whitespace-nowrap";
                     }
                 });
+            });
+        }
+    </script>
+
+    <!-- Inicialización del Odontograma Canvas 2.0 y Sincronización BD -->
+    <script>
+        var pacienteIdOdont = <?php echo json_encode($paciente_id); ?>;
+        var hallazgosBD = <?php echo json_encode($hallazgos); ?>;
+        var engineOdontMain = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var canvasElem = document.getElementById('odontogramaCanvasMain');
+            if (!canvasElem) return;
+
+            engineOdontMain = new Engine();
+            engineOdontMain.setCanvas(canvasElem);
+            if (engineOdontMain.odontogramaGenerator) {
+                engineOdontMain.odontogramaGenerator.imagesPath = "assets/odontograma/images/";
+            }
+            engineOdontMain.init();
+
+            // Cargar hallazgos previos desde MySQL
+            if (Array.isArray(hallazgosBD) && hallazgosBD.length > 0) {
+                hallazgosBD.forEach(function(h) {
+                    let toothId = Number(h.diente_numero);
+                    let dmgId = isNaN(Number(h.estado)) ? 0 : Number(h.estado);
+                    let surface = String(h.cara_afectada || "0");
+                    let note = String(h.notas || h.note || "");
+                    engineOdontMain.load(toothId, dmgId, surface, note);
+                });
+            }
+
+            var autoSaveTimer = null;
+            var isInitialLoad = true;
+
+            // Registrar escuchador en vivo para recalcular el presupuesto y auto-guardar
+            if (typeof engineOdontMain.setOnChangeCallback === 'function') {
+                engineOdontMain.setOnChangeCallback(function(data) {
+                    sincronizarOdontogramaUI(data);
+
+                    // Auto-guardado en segundo plano después de 1 segundo de inactividad
+                    if (!isInitialLoad) {
+                        clearTimeout(autoSaveTimer);
+                        var statusEl = document.getElementById('odontogramaSaveStatus');
+                        if (statusEl) {
+                            statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Guardando cambios...</span>';
+                        }
+                        autoSaveTimer = setTimeout(function() {
+                            guardarOdontogramaEnBD(false);
+                        }, 1200);
+                    }
+                });
+            }
+
+            setTimeout(function() {
+                isInitialLoad = false;
+            }, 500);
+
+            // Eventos de ratón y teclado
+            canvasElem.addEventListener('mousedown', function (e) {
+                engineOdontMain.onMouseClick(e);
+            }, false);
+
+            canvasElem.addEventListener('mousemove', function (e) {
+                engineOdontMain.onMouseMove(e);
+            }, false);
+
+            window.addEventListener('keydown', function (e) {
+                engineOdontMain.onButtonClick(e);
+            }, false);
+
+            // Sincronizar UI inicial
+            sincronizarOdontogramaUI(engineOdontMain.getData());
+        });
+
+        function sincronizarOdontogramaUI(data) {
+            data = data || (engineOdontMain ? engineOdontMain.getData() : []);
+
+            // 1. Proforma / Presupuesto en vivo con PricingCatalog
+            if (window.PricingCatalog) {
+                var budgetData = PricingCatalog.calculateBudget(data);
+                PricingCatalog.renderBudgetTable('odontogramaBudgetContainer', budgetData);
+            }
+
+            // 2. Lista técnica de hallazgos
+            var container = document.getElementById('odontogramaFindingsList');
+            var countBadge = document.getElementById('odontogramaCountBadge');
+            if (!container || !countBadge) return;
+
+            countBadge.innerText = data.length + " registrado" + (data.length !== 1 ? "s" : "");
+
+            if (data.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 text-center py-4 italic">Sin hallazgos en la dentadura.<br>Haz clic en el odontograma para ingresar datos.</div>';
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < data.length; i++) {
+                var item = data[i];
+                var info = window.PricingCatalog ? PricingCatalog.getItemInfo(item) : { precio: 0, nombre: item.estado_nombre };
+                html += '<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex justify-between items-center text-xs">';
+                html += '  <div>';
+                html += '    <div class="font-bold text-slate-800 flex items-center gap-1.5">';
+                html += '      <span class="text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded font-mono">#' + item.diente_numero + '</span>';
+                html += '      <span>' + (info.nombre || item.estado_nombre || 'Hallazgo') + '</span>';
+                html += '    </div>';
+                html += '    <div class="text-[11px] text-slate-500 font-medium">' + item.cara_nombre + (item.note ? ' • Nota: ' + item.note : '') + '</div>';
+                html += '  </div>';
+                html += '  <div class="font-bold text-emerald-700 text-xs">S/ ' + info.precio.toFixed(2) + '</div>';
+                html += '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function guardarOdontogramaEnBD(esManual) {
+            if (!engineOdontMain) return;
+            var data = engineOdontMain.getData();
+            var statusEl = document.getElementById('odontogramaSaveStatus');
+
+            if (statusEl && !esManual) {
+                statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-teal-600 bg-teal-50 px-2.5 py-1 rounded-lg text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span> Guardando en BD...</span>';
+            }
+
+            fetch('ajax_odontograma.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'save_batch',
+                    paciente_id: pacienteIdOdont,
+                    items: data
+                })
+            })
+            .then(res => res.json())
+            .then(res => {
+                if (res.success) {
+                    if (statusEl) {
+                        statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Guardado ✓</span>';
+                        if (window.lucide) lucide.createIcons();
+                    }
+                    if (esManual) {
+                        if (typeof showToast === 'function') {
+                            showToast('Odontograma e historial guardados con éxito (' + data.length + ' hallazgos)', 'success');
+                        } else {
+                            alert('Odontograma guardado con éxito (' + data.length + ' hallazgos)');
+                        }
+                    }
+                } else {
+                    if (statusEl) {
+                        statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Error al guardar</span>';
+                    }
+                    if (esManual) {
+                        if (typeof showToast === 'function') {
+                            showToast('Error al guardar odontograma: ' + (res.error || 'Desconocido'), 'error');
+                        } else {
+                            alert('Error al guardar odontograma: ' + (res.error || 'Desconocido'));
+                        }
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span class="inline-flex items-center gap-1 text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg text-xs font-semibold"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Error de red</span>';
+                }
+                if (esManual) {
+                    if (typeof showToast === 'function') {
+                        showToast('Error de red al guardar odontograma', 'error');
+                    }
+                }
             });
         }
     </script>

@@ -186,9 +186,29 @@ class PresupuestoController {
             
             foreach ($caras as $cara) {
                 $estado = $cara['estado'] ?? '';
-                if (empty($estado)) continue;
+                $nota = strtoupper(trim($cara['notas'] ?? ''));
+
+                // Mapear siglas de notas clínicas rápidas
+                if (($estado === 'NOTA' || empty($estado)) && !empty($nota)) {
+                    if ($nota === 'RES') {
+                        $caras_patologia_restauracion[] = $cara['cara_afectada'] ?? '0';
+                        continue;
+                    } elseif ($nota === 'EXT') {
+                        $estado = 'extraccion_indicada';
+                    } elseif ($nota === 'END') {
+                        $estado = 'endodoncia';
+                    } elseif ($nota === 'SEL') {
+                        $estado = 'sellante';
+                    } elseif ($nota === 'COR') {
+                        $estado = 'corona';
+                    } elseif ($nota === 'IMP') {
+                        $estado = 'implante';
+                    }
+                }
+
+                if (empty($estado) || $estado === 'NOTA') continue;
                 
-                if ($estado === 'caries' || $estado === 'fractura' || $estado === 'restauracion_defectuosa') {
+                if ($estado === 'caries' || $estado === '1' || $estado === 'fractura' || $estado === '5' || $estado === 'restauracion_defectuosa' || $estado === '11' || $estado === 'resina') {
                     $caras_patologia_restauracion[] = $cara['cara_afectada'];
                 } else {
                     $otras_patologias[$estado] = true;
@@ -234,11 +254,11 @@ class PresupuestoController {
                 }
             }
             
-            // 2. Procesar otras patologías (e.g. extracción indicada, endodoncia)
+            // 2. Procesar otras patologías (e.g. extracción indicada, endodoncia, sellante)
             foreach (array_keys($otras_patologias) as $estado) {
                 $trat = null;
                 
-                if ($estado === 'extraccion_indicada') {
+                if ($estado === 'extraccion_indicada' || $estado === '4' || $estado === 'ausente') {
                     $diente_int = intval($diente);
                     $es_incisivo_canino = in_array($diente_int, [11, 12, 13, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 61, 62, 63, 71, 72, 73, 81, 82, 83]);
                     $es_premolar = in_array($diente_int, [14, 15, 24, 25, 34, 35, 44, 45]);
@@ -258,7 +278,7 @@ class PresupuestoController {
                     if (!$trat) {
                         $trat = $this->buscarTratamientoPorNombre('Extraccion Simple');
                     }
-                } elseif ($estado === 'endodoncia') {
+                } elseif ($estado === 'endodoncia' || $estado === '28' || $estado === '20' || $estado === 'pulpar') {
                     $diente_int = intval($diente);
                     $es_anterior = in_array($diente_int, [11, 12, 13, 21, 22, 23, 31, 32, 33, 41, 42, 43, 51, 52, 53, 61, 62, 63, 71, 72, 73, 81, 82, 83]);
                     $es_premolar = in_array($diente_int, [14, 15, 24, 25, 34, 35, 44, 45]);
@@ -271,6 +291,19 @@ class PresupuestoController {
                     } else {
                         $trat = $this->buscarTratamientoPorNombre('Endodoncia Molar');
                     }
+                } elseif ($estado === 'sellante' || $estado === '39') {
+                    $trat = $this->buscarTratamientoPorNombre('Sellante Dental');
+                    if (!$trat) $trat = $this->buscarTratamientoPorNombre('Sellante');
+                } elseif ($estado === 'corona' || $estado === '2') {
+                    $trat = $this->buscarTratamientoPorNombre('Corona Dental');
+                } elseif ($estado === 'corona_temporal' || $estado === '3') {
+                    $trat = $this->buscarTratamientoPorNombre('Corona Temporal');
+                } elseif ($estado === 'implante' || $estado === '6') {
+                    $trat = $this->buscarTratamientoPorNombre('Implante Dental');
+                } elseif ($estado === 'perno_munon' || $estado === '30') {
+                    $trat = $this->buscarTratamientoPorNombre('Perno de Fibra de Vidrio');
+                } elseif ($estado === 'diastema' || $estado === '8') {
+                    $trat = $this->buscarTratamientoPorNombre('Cierre de Diastema');
                 } else {
                     $sugeridos = $this->catalogoModel->getByEstadoOdontograma($estado);
                     if (!empty($sugeridos)) {
@@ -305,7 +338,17 @@ class PresupuestoController {
     /**
      * Recalcula los totales del presupuesto incluyendo descuentos.
      */
-    public function recalcularTotales($presupuesto_id, $descuento_porcentaje = 0) {
+    public function recalcularTotales($presupuesto_id, $descuento_porcentaje = null) {
+        $presupuesto = $this->presupuestoModel->getById($presupuesto_id);
+        if (!$presupuesto) return false;
+
+        // Si no se especifica el descuento, conservar el que ya tiene el presupuesto
+        if ($descuento_porcentaje === null) {
+            $descuento_porcentaje = floatval($presupuesto['descuento_porcentaje'] ?? 0);
+        } else {
+            $descuento_porcentaje = floatval($descuento_porcentaje);
+        }
+
         $items = $this->presupuestoModel->getItems($presupuesto_id);
         $subtotal = 0;
 
@@ -340,8 +383,7 @@ class PresupuestoController {
         );
 
         if ($result) {
-            $presupuesto = $this->presupuestoModel->getById($presupuesto_id);
-            $this->recalcularTotales($presupuesto_id, $presupuesto['descuento_porcentaje']);
+            $this->recalcularTotales($presupuesto_id);
         }
 
         return $result;
@@ -366,8 +408,7 @@ class PresupuestoController {
     public function eliminarItem($presupuesto_id, $item_id) {
         $result = $this->presupuestoModel->removeItem($item_id);
         if ($result) {
-            $presupuesto = $this->presupuestoModel->getById($presupuesto_id);
-            $this->recalcularTotales($presupuesto_id, $presupuesto['descuento_porcentaje']);
+            $this->recalcularTotales($presupuesto_id);
         }
         return $result;
     }
@@ -377,7 +418,22 @@ class PresupuestoController {
     }
 
     public function eliminar($id) {
-        return $this->presupuestoModel->delete($id);
+        // 1. Proteger: No permitir eliminar presupuestos que ya tienen pagos registrados
+        $pagos = $this->pagoModel->getByPresupuesto($id);
+        if (!empty($pagos)) {
+            return ['success' => false, 'error' => 'No se puede eliminar un presupuesto que ya tiene pagos registrados en caja. Anule o elimine los pagos primero.'];
+        }
+
+        // 2. Limpiar ítems hijos para evitar registros huérfanos
+        global $conn;
+        $stmtItems = $conn->prepare("DELETE FROM presupuesto_items WHERE presupuesto_id = ?");
+        if ($stmtItems) {
+            $stmtItems->bind_param("i", $id);
+            $stmtItems->execute();
+        }
+
+        $del = $this->presupuestoModel->delete($id);
+        return ['success' => (bool)$del];
     }
 
     // --- PAGOS ---

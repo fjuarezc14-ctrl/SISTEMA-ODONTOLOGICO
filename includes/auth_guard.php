@@ -4,10 +4,27 @@
 // Iniciar sesión si no está iniciada
 require_once __DIR__ . '/session_init.php';
 
-// 1. Verificación básica de autenticación
-if (!isset($_SESSION['usuario_id'])) {
+// Helper para responder JSON en caso de petición AJAX
+function handle_unauthorized_access($mensaje = 'No autorizado') {
+    $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+        || (strpos($_SERVER['SCRIPT_NAME'] ?? '', 'ajax_') !== false)
+        || (strpos($_SERVER['REQUEST_URI'] ?? '', 'ajax_') !== false);
+
+    if ($is_ajax) {
+        http_response_code(401);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => false, 'error' => $mensaje, 'session_expired' => true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     header('Location: index.php');
     exit;
+}
+
+// 1. Verificación básica de autenticación
+if (!isset($_SESSION['usuario_id'])) {
+    handle_unauthorized_access('Sesión no iniciada. Por favor, ingresa al sistema.');
 }
 
 // 2. Cierre de sesión por inactividad (2 horas = 7200 segundos)
@@ -22,8 +39,7 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     require __DIR__ . '/session_init.php';
     $_SESSION['timeout_msg'] = "Tu sesión ha expirado por inactividad (2 horas). Por favor, ingresa nuevamente.";
     
-    header('Location: index.php');
-    exit;
+    handle_unauthorized_access('Tu sesión ha expirado por inactividad. Por favor, ingresa nuevamente.');
 }
 // Actualizar la marca de tiempo de la última actividad
 $_SESSION['last_activity'] = time();

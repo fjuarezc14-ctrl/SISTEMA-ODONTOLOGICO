@@ -1,0 +1,3 @@
+# Bloquear acceso web directo a scripts de mantenimiento y migraciones
+Order Deny,Allow
+Deny from all

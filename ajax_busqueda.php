@@ -16,8 +16,6 @@ if ($q === '') {
 }
 
 $search = "%" . $q . "%";
-$stmt = $conn->prepare("SELECT id, nombre, dni, telefono FROM pacientes WHERE (nombre LIKE ? OR dni LIKE ?) AND estado_active = 1 OR estado_activo = 1 LIMIT 8");
-// Let's check if estado_activo column exists. Yes, we saw it is estado_activo
 $stmt = $conn->prepare("SELECT id, nombre, dni, telefono FROM pacientes WHERE (nombre LIKE ? OR dni LIKE ?) AND estado_activo = 1 LIMIT 8");
 $stmt->bind_param('ss', $search, $search);
 $stmt->execute();

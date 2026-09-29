@@ -126,15 +126,20 @@ class Dashboard {
 
     // Distribucion de tratamientos mas solicitados
     public function getTratamientosMasSolicitados() {
-        $sql = "SELECT descripcion, COUNT(*) as cantidad 
-                FROM presupuesto_items 
-                GROUP BY descripcion 
+        $sql = "SELECT 
+                    COALESCE(NULLIF(ct.nombre, ''), SUBSTRING_INDEX(pi.descripcion, ' (Pieza', 1)) as descripcion, 
+                    COUNT(*) as cantidad 
+                FROM presupuesto_items pi
+                LEFT JOIN catalogo_tratamientos ct ON pi.tratamiento_id = ct.id
+                GROUP BY COALESCE(NULLIF(ct.nombre, ''), SUBSTRING_INDEX(pi.descripcion, ' (Pieza', 1))
                 ORDER BY cantidad DESC 
                 LIMIT 5";
         $result = $this->conn->query($sql);
         $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
         }
         return $data;
     }
